@@ -2,21 +2,27 @@
 
 ![Static Badge](https://img.shields.io/badge/21.0%2B-x?style=flat&logo=Node.js&logoColor=green&label=Node.js&color=green)
 ![Static Badge](https://img.shields.io/badge/1.20.0%2B-x?style=flat&logo=Wechat&logoColor=green&label=WechatY&color=green)
-![Static Badge](https://img.shields.io/badge/1.20.1%2B-x?style=flat&logo=github&logoColor=whitee&label=wechat4u&color=orange)
+![Static Badge](https://img.shields.io/badge/1.14%2B-x?style=flat&logo=github&logoColor=whitee&label=wechat4u&color=orange)
 ![Static Badge](https://img.shields.io/badge/v3-x?style=flat&logo=github&logoColor=white&label=silk-v3-decoder&color=purple)
 ![Static Badge](https://img.shields.io/badge/6.1.1-x?style=flat&logo=ffmpeg&logoColor=orange&label=ffmpeg&color=orange)
 ![Static Badge](https://img.shields.io/badge/cognitiveservices_speech-x?style=flat&logo=microsoft&logoColor=blue&label=Azure&color=blue)
 ![Static Badge](https://img.shields.io/badge/Doubao-x?style=flat&logo=Dify&logoColor=white&label=Dify&color=darkgreen)
 
+<center>
 <img src="public/bot.jpg" alt="logo" width="300"/>
+</center>
 
-本项目为基于GPT-4的微信机器人，其目的在于为各类B端商户提供数字员工服务。已实现和计划实现功能如下：
+这是一款基于WechatY、Dify API服务、微软Azure ASR语音服务微信机器人开源项目。用户在配置文件中填入Dify API信息、微软ASR KEY之后，
+用户可以快速部署自己的AI机器人。
 
 1. AI聊天；✅
 2. 语音识别；✅
 3. 阅读并理解文件，支持格式XSL、DOCS、PDF、TXT ✅
 4. 理解转账、红包、地理位置等非文本数据 ✅
 5. 微信群聊天管理；✅
+6. 微信群定时消息推送；✅
+7. 第三方知识库接入；✅
+8. 管理员邮件通知；✅
 
 ## Quick Started
 
@@ -30,8 +36,6 @@ pm2 start index.js
 
 ## Configuration
 
-### Silk格式转码
-本项目上游微信接入技术支持为开源项目WechatY，其中登录网关部分为[付费](http://pad-local.com/)项目[puppet-padlocal](https://github.com/wechaty/puppet-padlocal/wiki/)，每月费用为200元。在微信语音silk格式解码上则使用的是开源项目[silk-v3-decoder](https://github.com/kn007/silk-v3-decoder)的部分代码。在silk加密上则使用的是Python包[graiax-silkcoder](https://pypi.org/project/graiax-silkcoder/)。这二者均基于ffmpeg，所以本机环境也需要安装ffmpeg。
 
 ### 语音识别及合成服务
 
