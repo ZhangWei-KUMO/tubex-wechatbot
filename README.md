@@ -8,9 +8,9 @@
 ![Static Badge](https://img.shields.io/badge/cognitiveservices_speech-x?style=flat&logo=microsoft&logoColor=blue&label=Azure&color=blue)
 ![Static Badge](https://img.shields.io/badge/Doubao-x?style=flat&logo=Dify&logoColor=white&label=Dify&color=darkgreen)
 
-<center>
+<div align="center">
 <img src="public/bot.jpg" alt="logo" width="300"/>
-</center>
+</div>
 
 这是一款基于WechatY、Dify API服务、微软Azure ASR语音服务微信机器人开源项目。用户在配置文件中填入Dify API信息、微软ASR KEY之后，
 用户可以快速部署自己的AI机器人。
