@@ -4,16 +4,27 @@ import { config } from 'dotenv';
 config();
 import { PuppetWechat4u } from 'wechaty-puppet-wechat4u';
 import Redis from 'ioredis';
+import fs from 'fs';
+
 const redis = new Redis();
 
 export const difyChat = async (talkid,query) => {
   try{
+    const filePath = `./logger/${talkid}.json`;
+    let longMemory = "";
+    if (fs.existsSync(filePath)) {
+      longMemory = fs.readFileSync(filePath, 'utf-8');
+      // 清空该文件
+      fs.writeFileSync(filePath, '[]', 'utf-8');
+    }
     let lastConversationId = await redis.get(`talkid:${talkid}`);
     let params = {
-      inputs:{},
+      inputs:{
+        longMemory:"",
+      },
       response_mode:'blocking',
       user:talkid,
-      query: query,
+      query: query+"回答之前，可以参考之前的聊天记录"+longMemory,
     }
     if (lastConversationId) {
       params.conversation_id = lastConversationId;

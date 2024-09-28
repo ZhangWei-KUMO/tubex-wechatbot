@@ -1,13 +1,12 @@
 import { FileBox } from 'file-box'
 import {exec} from 'child_process'
 import fs from 'fs'
+import path from 'path'
 import pdf from 'pdf-parse/lib/pdf-parse.js'
 import mammoth from 'mammoth'
 import XLSX from 'xlsx'
 import {bot} from './init.js';
 import ffmpeg from 'fluent-ffmpeg';
-
-const dataPath = './logger'
 
 export const sendMessage = async (toUserId, payload)=> {
   if(payload === undefined || payload === null){
@@ -84,7 +83,6 @@ export const readTxt = async (filename,buffer)=>{
 
 export const convertSilkToWav = (silkBuffer)=> {
   return new Promise((resolve, reject) => {
-    // 生成一个时间戳随机名
     let t = new Date().getTime()
     const tempFilePath = `${t}.silk`;
     fs.writeFileSync(tempFilePath, silkBuffer);
@@ -92,7 +90,6 @@ export const convertSilkToWav = (silkBuffer)=> {
       if (err) {
         reject(new Error('input.silk文件'));
       } else {
-        // 将silk文件移动到silk-v3-decoder目录下
         exec(`sh converter.sh ${tempFilePath} wav`, (error, stdout) => {
           console.log('stdout:', stdout); 
           if (error) {
@@ -147,25 +144,41 @@ export const getAudioDuration = (wavPath)=> {
 }
 
 export const saveInLongMemory = (text,name) => {
-  const filePath = `${dataPath}/chathistory/${name}.json`;
-  const record = {
-    name,
-    text
-  };
+  // 获取项目根目录路径
+const rootDir = path.dirname(new URL(import.meta.url).pathname);
+// 设置数据存储路径
+const dataPath = path.join(rootDir, '../logger');
+const filePath = path.join(dataPath, `${name}.json`);
+
+// 创建文件夹
+if (!fs.existsSync(dataPath)) {
+  fs.mkdirSync(dataPath, { recursive: true });
+}
+
+
   try {
-    if (!fs.existsSync(filePath)) {
+    // 读取已有数据
+    let records = [];
+    if (fs.existsSync(filePath)) {
+      const data = fs.readFileSync(filePath, 'utf-8');
+      records = JSON.parse(data);
+    }else{
+      // 写入[]
       fs.writeFileSync(filePath, '[]', 'utf-8');
     }
-    const data = fs.readFileSync(filePath, 'utf-8');
-    if (data) {
-      while (data.length > 10000) {
-        records.shift();
-      }
-      records = JSON.parse(data);
-      records.push(record);
-      fs.writeFileSync(dataPath, JSON.stringify(records, null, 2), { encoding: 'utf-8' });
+
+    // 控制文件大小，最多存储100条记录
+    while (records.length >= 100) { 
+      records.shift();
     }
-  }catch(e){
-    console.error(e)
+
+    // 添加新记录
+    records.push({ name, text });
+
+    // 写入文件
+    fs.writeFileSync(filePath, JSON.stringify(records, null, 2), 'utf-8');
+
+  } catch (e) {
+    console.error(e);
   }
 }

@@ -1,5 +1,6 @@
 import {bot,difyChat} from './util/init.js';
 import fs from 'fs';
+import xml2js from 'xml2js';
 import {sendMessage,convertSilkToWav,readSheet,readTxt,
   readWord, readPDF,saveInLongMemory} from './util/util.js'
 import {recognizeSpeech} from './util/azure.js'
@@ -97,9 +98,7 @@ export async function prepareBot() {
         if (text.includes('pictype=location')) {
           const lines = text.split(':');
           const locationText = `我的地址是：${lines[0]}`;
-          saveInLongMemory(locationText,talkerId)
-          // 存入长记忆中
-          
+          saveInLongMemory(locationText,talkerId)          
         }else{
           let answer = await difyChat(talkerId,text)          
           if(answer){ 
@@ -135,8 +134,8 @@ export async function prepareBot() {
       const title = result.msg.appmsg[0].des[0];
       const regex = /\d+(\.\d+)?/;
       const num = title.match(regex);
-      payload.text = `这是${num[0]}元转账，请查收`;
       await sendMessage(talkerId, '收到');
+      saveInLongMemory(`好友转账给你${num[0]}元`,talkerId)
     }
   });
       break;
@@ -144,16 +143,10 @@ export async function prepareBot() {
       let xmlstr2 = payload.text;
       xml2js.parseString(xmlstr2, async (err, result) => {
     if (err) {
-      payload.text = '对方发了一篇微信文章';
-      mainWindow.webContents.send('chat', payload);
-      const text = '好的，我看下';
-      mainWindow.webContents.send('chat', new FrontEndRecord(username, friendId, text));
-      await sendMessage(bot, talkerId, text);
+      console.error(err);
     } else {
       const title = result.msg.appmsg[0].title[0];
-      payload.text = `分享给你一篇微信文章：《${title}》`;
-      mainWindow.webContents.send('chat', payload);
-      await saveChatRecordSync(new Record(friendId, `分享给你一篇微信文章：《${title}》`));
+      saveInLongMemory( `分享给你一篇微信文章：《${title}》`,talkerId)
     }
   });
       break;
@@ -208,16 +201,16 @@ export async function prepareBot() {
         const attachData = await attachFileBox.toBuffer();
         if(mediaType.includes('pdf')){
           let text = await readPDF(filename,attachData);
-          saveInLongMemory(text,talkerId)
+          saveInLongMemory(`对方发来一份PDF文件，内容如下：${text}`,talkerId)
         }else if(mediaType.includes('sheet')){
           let text = await readSheet(filename,attachData)
-          saveInLongMemory(text,talkerId)
+          saveInLongMemory(`对方发来一份EXCEL文件，内容如下：${text}`,talkerId)
         }else if(mediaType.includes('document')){
           let text = await readWord(filename,attachData)
-          saveInLongMemory(text,talkerId)
+          saveInLongMemory(`对方发来一份WORD文件，内容如下：${text}`,talkerId)
         }else if(mediaType.includes('txt')){
           let text = await readTxt(filename,attachData)
-          saveInLongMemory(text,talkerId)
+          saveInLongMemory(`对方发来一份TXT文件，内容如下：${text}`,talkerId)
         }else{
           await sendMessage(talkerId, "好的，我先看下");
         }
@@ -275,21 +268,23 @@ export async function prepareBot() {
         id = room.id
       }
     });
-    const rule = new schedule.RecurrenceRule();
-    rule.hour = process.env.SCHEDULE_HOUR
-    rule.minute =  process.env.SCHEDULE_MINUES
-    // 中国上海时间
-    rule.tz = 'Asia/Shanghai';
-    schedule.scheduleJob(rule, async()=>{
-      let {data} = await getNews();
-      if(data){
-        console.log("ding")
-        let answer = await difyChat(id,`这是今天的经济新闻：${data}。请用简洁的语言告诉微信群中的群友们今天的投资机会和理由。`)
-        // 过滤文字中的*
-        answer = answer.replace(/\*/g, '');                
-        await sendMessage(id, answer);
-      }
-    });
+
+    if(process.env.IS_PUSH_MESSAGE){
+      const rule = new schedule.RecurrenceRule();
+      rule.hour = process.env.SCHEDULE_HOUR
+      rule.minute =  process.env.SCHEDULE_MINUES
+      // 中国上海时间
+      rule.tz = 'Asia/Shanghai';
+      schedule.scheduleJob(rule, async()=>{
+        let {data} = await getNews();
+        if(data){
+          let answer = await difyChat(id,`这是今天的经济新闻：${data}。请用简洁的语言告诉微信群中的群友们今天的投资机会和理由。`)
+          // 过滤文字中的*
+          answer = answer.replace(/\*/g, '');                
+          await sendMessage(id, answer);
+        }
+      });
+    }
   })
 
   await bot.start();

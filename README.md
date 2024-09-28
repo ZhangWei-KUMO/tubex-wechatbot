@@ -18,8 +18,8 @@ This is an open-source WeChat robot project based on WechatY, Dify API services,
 |--|--|--|
 |AI chat by any LLM| 任意大模型AI聊天|✅|
 |WeChat chat voice recognition |微信聊天语音识别|✅|
-|AI reads and understands files, supporting formats XSL, DOCS, PDF, TXT |AI阅读并理解文件，支持格式XSL、DOCS、PDF、TXT|🏃🏻‍♀️|
-|AI understands non-text data such as transfers, red envelopes, and geographical locations. |AI理解转账、红包、地理位置等非文本数据|🏃🏻‍♀️|
+|AI reads and understands files, supporting formats XSL, DOCS, PDF, TXT |AI阅读并理解文件，支持格式XSL、DOCS、PDF、TXT|✅|
+|AI understands non-text data such as transfers, red envelopes, and geographical locations. |AI理解转账、红包、地理位置等非文本数据|✅|
 |WeChat room chat management |微信群聊天管理|✅|
 |Regular message push in WeChat group |微信群定时消息推送|✅|
 |Third-party knowledge base access |第三方知识库接入|✅|

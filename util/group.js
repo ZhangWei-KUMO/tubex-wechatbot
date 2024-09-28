@@ -2,12 +2,10 @@
 
 export const getNews = async () => {
   try {
-    const URL = 'https://api-one-wscn.awtmt.com/apiv1/search/live?channel=global-channel&limit=40&score=2';
-    const etag = 'VKikV7rHg+OhU+DW+HiofA=='; 
-    const res = await fetch(URL, {
+    const res = await fetch(process.env.NEWS_ENDPOINT, {
       method: 'GET',
       headers: {
-        'If-None-Match': etag
+        'If-None-Match': process.env.NEWS_ETAG
       },
     });
     const wallstreetNews = await res.json();

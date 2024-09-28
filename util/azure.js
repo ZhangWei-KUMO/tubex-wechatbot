@@ -44,7 +44,6 @@ export function recognizeSpeech(wav) {
         let { text } = result;
         resolve(text);
       } else {
-        console.log(result);
         reject('生成的WAV文件无法解析'+`ERROR: ${result.privErrorDetails}`);
       }
     });
