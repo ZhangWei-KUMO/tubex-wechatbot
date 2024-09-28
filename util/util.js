@@ -7,6 +7,8 @@ import XLSX from 'xlsx'
 import {bot} from './init.js';
 import ffmpeg from 'fluent-ffmpeg';
 
+const dataPath = './logger'
+
 export const sendMessage = async (toUserId, payload)=> {
   if(payload === undefined || payload === null){
     return
@@ -144,3 +146,26 @@ export const getAudioDuration = (wavPath)=> {
   });
 }
 
+export const saveInLongMemory = (text,name) => {
+  const filePath = `${dataPath}/chathistory/${name}.json`;
+  const record = {
+    name,
+    text
+  };
+  try {
+    if (!fs.existsSync(filePath)) {
+      fs.writeFileSync(filePath, '[]', 'utf-8');
+    }
+    const data = fs.readFileSync(filePath, 'utf-8');
+    if (data) {
+      while (data.length > 10000) {
+        records.shift();
+      }
+      records = JSON.parse(data);
+      records.push(record);
+      fs.writeFileSync(dataPath, JSON.stringify(records, null, 2), { encoding: 'utf-8' });
+    }
+  }catch(e){
+    console.error(e)
+  }
+}

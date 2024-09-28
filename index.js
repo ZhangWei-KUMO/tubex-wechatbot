@@ -1,30 +1,16 @@
-/* eslint-disable no-undef */
 import {bot,difyChat} from './util/init.js';
-import {sendMessage,convertSilkToWav,readSheet,readTxt,
-  readWord, readPDF} from './util/util.js'
-import {recognizeSpeech} from './util/azure.js'
 import fs from 'fs';
-import {sendBlessing} from './util/group.js'
+import {sendMessage,convertSilkToWav,readSheet,readTxt,
+  readWord, readPDF,saveInLongMemory} from './util/util.js'
+import {recognizeSpeech} from './util/azure.js'
 import { config } from 'dotenv';
-// import { WebSocketServer } from 'ws';
 import {splitTextIntoArray} from './util/reply-filter.js'
 import qrcode from 'qrcode-terminal';
 import {transporter,mailOptions} from './util/mailer.js';
 import schedule from 'node-schedule';
 import {getNews} from './util/group.js'
 config();
-/**
- * 参考文档https://github.com/wechaty/puppet-padlocal/wiki/API-%E4%BD%BF%E7%94%A8%E6%96%87%E6%A1%A3-(TypeScript-JavaScript)
- */
-// const wss = new WebSocketServer({ port: 9090 });
 console.log("微信机器人启动，版本号：",bot.version());
-
-// wss.on('connection', function connection(ws) {
-//   console.log('Frontend connected to WebSocket server');
-//   ws.on('close', () => {
-//     console.log('Frontend disconnected from WebSocket server');
-//   });
-// });
 
 function qrcodeToTerminal(url) {
   qrcode.generate(url, { small: true });
@@ -41,8 +27,6 @@ export async function prepareBot() {
     if (message.room()) {
       let roomMsg = message.room()
       // 获取当前群聊名称
-   
-
       let mentionText = await message.mentionText();
       if (await message.mentionSelf()) {
         if (roomMsg) {
@@ -54,9 +38,6 @@ export async function prepareBot() {
         // 监听是否有人加入群聊
         let {payload} = message;
         let {text} = payload;
-        // const announcement = await roomMsg.announce();
-        // 设置
-        // await room.announce("新的群公告");
         if(text.includes("加入群聊")){
           if (roomMsg) {
             await sendMessage(roomMsg.id, process.env.GROUP_GREET);
@@ -65,6 +46,9 @@ export async function prepareBot() {
         }else{
           // 正常聊天
           switch (message.type()) {
+            case 0:
+              await sendMessage(roomMsg.id, "老板大气")
+              break;
           case 2:
             try{
               const audioFileBox = await message.toFileBox();
@@ -105,29 +89,36 @@ export async function prepareBot() {
     let {talkerId,listenerId,text} = payload;
 
     switch (message.type()) {
+      case 0:
+        await sendMessage(talkerId, "老板大气")
+        break;
     case 7:
       if(talkerId!==listenerId && talkerId!=='weixin' && text!==''){
-        // 如果文本不包含URL，则进行对话回复
-        if(talkerId==="wxid_e0u9h9uhl18e22"){
-          return
-        }
-        let answer = await difyChat(talkerId,text)          
-        if(answer){ 
-          answer = answer.replace(/\*/g, '');                
-          answer = answer.trim()
-          if(answer.includes("\n")){
-            let array =  await splitTextIntoArray(answer)
-            const interval = setInterval(async () => {
-              if (array.length) {
-                console.log(talkerId,"多句：")
-                await sendMessage(talkerId, array.shift())
-              } else {
-                clearInterval(interval);
-              }
-            }, 3000);
-          }else{
-            await sendMessage(talkerId, answer);
-          }   
+        if (text.includes('pictype=location')) {
+          const lines = text.split(':');
+          const locationText = `我的地址是：${lines[0]}`;
+          saveInLongMemory(locationText,talkerId)
+          // 存入长记忆中
+          
+        }else{
+          let answer = await difyChat(talkerId,text)          
+          if(answer){ 
+            answer = answer.replace(/\*/g, '');                
+            answer = answer.trim()
+            if(answer.includes("\n")){
+              let array =  await splitTextIntoArray(answer)
+              const interval = setInterval(async () => {
+                if (array.length) {
+                  console.log(talkerId,"多句：")
+                  await sendMessage(talkerId, array.shift())
+                } else {
+                  clearInterval(interval);
+                }
+              }, 3000);
+            }else{
+              await sendMessage(talkerId, answer);
+            }   
+          }
         }
         return
       }
@@ -135,8 +126,36 @@ export async function prepareBot() {
       // 图片消息
     case 6:
       break;
-      // 链接卡片消息
+    case 11:
+      const xmlstr = payload.text;
+      xml2js.parseString(xmlstr, async (err, result) => {
+    if (err) {
+      await sendMessage(talkerId, '收到');
+    } else {
+      const title = result.msg.appmsg[0].des[0];
+      const regex = /\d+(\.\d+)?/;
+      const num = title.match(regex);
+      payload.text = `这是${num[0]}元转账，请查收`;
+      await sendMessage(talkerId, '收到');
+    }
+  });
+      break;
     case 14:
+      let xmlstr2 = payload.text;
+      xml2js.parseString(xmlstr2, async (err, result) => {
+    if (err) {
+      payload.text = '对方发了一篇微信文章';
+      mainWindow.webContents.send('chat', payload);
+      const text = '好的，我看下';
+      mainWindow.webContents.send('chat', new FrontEndRecord(username, friendId, text));
+      await sendMessage(bot, talkerId, text);
+    } else {
+      const title = result.msg.appmsg[0].title[0];
+      payload.text = `分享给你一篇微信文章：《${title}》`;
+      mainWindow.webContents.send('chat', payload);
+      await saveChatRecordSync(new Record(friendId, `分享给你一篇微信文章：《${title}》`));
+    }
+  });
       break;
       // 小程序卡片消息
     case 9:
@@ -148,7 +167,6 @@ export async function prepareBot() {
         await sendMessage(talkerId, e)
         return
       }
-  
       break;
       // 语音消息
     case 2:
@@ -190,12 +208,16 @@ export async function prepareBot() {
         const attachData = await attachFileBox.toBuffer();
         if(mediaType.includes('pdf')){
           let text = await readPDF(filename,attachData);
+          saveInLongMemory(text,talkerId)
         }else if(mediaType.includes('sheet')){
           let text = await readSheet(filename,attachData)
+          saveInLongMemory(text,talkerId)
         }else if(mediaType.includes('document')){
           let text = await readWord(filename,attachData)
+          saveInLongMemory(text,talkerId)
         }else if(mediaType.includes('txt')){
           let text = await readTxt(filename,attachData)
+          saveInLongMemory(text,talkerId)
         }else{
           await sendMessage(talkerId, "好的，我先看下");
         }
@@ -230,7 +252,6 @@ export async function prepareBot() {
     let {payload} = user;
     let {name} = payload;
     console.log("机器人登录成功，账号名：", name);
-    sendBlessing(bot);
   })
 
   bot.on("logout", async () => {

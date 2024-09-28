@@ -23,7 +23,9 @@ This is an open-source WeChat robot project based on WechatY, Dify API services,
 |WeChat room chat management |微信群聊天管理|✅|
 |Regular message push in WeChat group |微信群定时消息推送|✅|
 |Third-party knowledge base access |第三方知识库接入|✅|
-|email notification to Administrator |管理员邮件通知|✅|
+|Email notification to Administrator |管理员邮件通知|✅|
+| Long Memeory for chat | 聊天长记忆 |✅|
+
 
 
 ## Quick Started
@@ -41,7 +43,7 @@ pm2 start index.js
 The speech recognition and synthesis services of this project are connected to [Azure Speech Services](https://azure.microsoft.com/zh-cn/free/ai-services/). Developers need to apply for an API KEY.
 The large model of this project is connected to [Dify](https://dify.ai). Developers need to apply for an API KEY.
 
-
+[wechatY docs](https://github.com/wechaty/puppet-padlocal/wiki/API-%E4%BD%BF%E7%94%A8%E6%96%87%E6%A1%A3-(TypeScript-JavaScript))
 ### Wechat Room for users
 
 <img src="https://www.tubex.chat/service.jpg" alt="logo" width="200"/>
@@ -51,3 +53,5 @@ The large model of this project is connected to [Dify](https://dify.ai). Develop
 lewis.q.zhang@gmail.com
 
 https://tubex.chat
+
+
