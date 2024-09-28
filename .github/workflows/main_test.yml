@@ -1,0 +1,36 @@
+name: Deploy Wechat bot
+
+on:
+  push:
+    branches:
+      - main 
+    paths-ignore: 
+      - LICENSE
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest 
+
+    steps: 
+      - uses: actions/checkout@v2 
+      - name: 下载机器人源码 
+        uses: appleboy/scp-action@master 
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          source: "./"
+          target: "/home/ubuntu/wechat-bot-demo"
+      - name: 安装依赖并启动机器人
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+            cd /home/ubuntu/.nvm
+            source ./nvm.sh
+            cd /home/ubuntu/wechat-bot-demo
+            npm install -g yarn
+            yarn 
