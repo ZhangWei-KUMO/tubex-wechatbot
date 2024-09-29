@@ -28,6 +28,24 @@ This is an open-source WeChat robot project based on WechatY, Dify API services,
 | Inpainting | 老照片修复 |🏃🏻‍♀️|
 | Self-running business | 自我运维 |🏃🏻‍♀️|
 
+## Dependencies Install
+
+```bash
+# e.g Ubuntu 22
+sudo apt update
+sudo apt install ffmpeg
+npm install -g pm2
+```
+
+## Configuration API
+
+The speech recognition and synthesis services of this project are connected to [Azure Speech Services](https://azure.microsoft.com/zh-cn/free/ai-services/). Developers need to apply for an API KEY.
+The large model of this project is connected to [Dify](https://dify.ai). Developers need to apply for an API KEY.
+
+[wechatY docs](https://github.com/wechaty/puppet-padlocal/wiki/API-%E4%BD%BF%E7%94%A8%E6%96%87%E6%A1%A3-(TypeScript-JavaScript))
+
+create `.env` file in the project root directory, and set the configuration for your wechat bot.
+
 ## Quick Started
 
 ```bash
@@ -40,17 +58,12 @@ pm2 start index.js -n tubex-wechatbot
 pm2 logs tubex-wechatbot
 ```
 
-### Configuration API
 
-The speech recognition and synthesis services of this project are connected to [Azure Speech Services](https://azure.microsoft.com/zh-cn/free/ai-services/). Developers need to apply for an API KEY.
-The large model of this project is connected to [Dify](https://dify.ai). Developers need to apply for an API KEY.
-
-[wechatY docs](https://github.com/wechaty/puppet-padlocal/wiki/API-%E4%BD%BF%E7%94%A8%E6%96%87%E6%A1%A3-(TypeScript-JavaScript))
 ### Wechat Room for users
 
 <img src="https://www.tubex.chat/service.jpg" alt="logo" width="200"/>
 
-### 定制化商务合作
+### Cooperation
 
 lewis.q.zhang@gmail.com
 
