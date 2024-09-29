@@ -34,6 +34,7 @@ This is an open-source WeChat robot project based on WechatY, Dify API services,
 # e.g. Ubuntu 22
 sudo apt update
 sudo apt install ffmpeg
+sudo apt install redis-server
 npm install -g pm2
 ```
 
