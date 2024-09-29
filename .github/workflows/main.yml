@@ -34,3 +34,4 @@ jobs:
             npm install cnpm -g --registry=https://registry.npmmirror.com
             cd /home/ubuntu/tubex-wechatbot
             yarn 
+            pm2 start index.js -n tubex-wechatbot

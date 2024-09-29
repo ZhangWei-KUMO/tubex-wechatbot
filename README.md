@@ -32,10 +32,12 @@ This is an open-source WeChat robot project based on WechatY, Dify API services,
 
 ```bash
 npm install
-# Production
-node index.js
 # Development
-pm2 start index.js
+node index.js
+# Production
+pm2 start index.js -n tubex-wechatbot
+# open logs and scan login QRcode
+pm2 logs tubex-wechatbot
 ```
 
 ### Configuration API
