@@ -20,7 +20,7 @@ jobs:
           username: ${{ secrets.SERVER_USERNAME }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           source: "./"
-          target: "/home/ubuntu/wechat-bot-demo"
+          target: "/home/ubuntu/tubex-wechatbot"
       - name: 安装依赖并启动机器人
         uses: appleboy/ssh-action@master
         with:
@@ -28,9 +28,9 @@ jobs:
           username: ${{ secrets.SERVER_USERNAME }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
-            curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+            curl -o- https://gitee.com/RubyMetric/nvm-cn/raw/main/install.sh | bash
             cd /home/ubuntu/.nvm
             source ./nvm.sh
-            cd /home/ubuntu/wechat-bot-demo
-            npm install -g yarn
+            npm install cnpm -g --registry=https://registry.npmmirror.com
+            cd /home/ubuntu/tubex-wechatbot
             yarn 
