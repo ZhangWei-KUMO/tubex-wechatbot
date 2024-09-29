@@ -28,8 +28,6 @@ This is an open-source WeChat robot project based on WechatY, Dify API services,
 | Inpainting | 老照片修复 |🏃🏻‍♀️|
 | Self-running business | 自我运维 |🏃🏻‍♀️|
 
-
-
 ## Quick Started
 
 ```bash
