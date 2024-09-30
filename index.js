@@ -10,7 +10,8 @@ import {splitTextIntoArray} from './util/reply-filter.js'
 import qrcode from 'qrcode-terminal';
 import {transporter,mailOptions} from './util/mailer.js';
 import schedule from 'node-schedule';
-import {getNews} from './util/group.js'
+import {getNews,getStockPlan} from './util/group.js'
+
 config();
 console.log("微信机器人启动，版本号：",bot.version());
 
@@ -279,16 +280,27 @@ export async function prepareBot() {
       schedule.scheduleJob(rule, async()=>{
         let {data} = await getNews();
         if(data){
-          let answer = await difyChat(id,`这是今天的经济新闻：${data}。请用简洁的语言告诉微信群中的群友们今天的投资机会和理由。`)
+          let answer = await difyChat(id,`这是今天的经济新闻：${data}。请用专业的语言跟大家分析一下当前经济情况并预测未来。`)
           // 过滤文字中的*
           answer = answer.replace(/\*/g, '');                
           await sendMessage(id, answer);
         }
       });
     }
-    const contact = await bot.Friendship.search({handle: 'tubexchat'});
-    console.log(contact)
-    // await bot.Friendship.add(contact, "朋友，你好");
+
+    if(process.env.IS_BIGQUANT_MESSAGE){
+      const rule = new schedule.RecurrenceRule();
+      rule.hour = process.env.SCHEDULE_HOUR_2
+      rule.minute =  process.env.SCHEDULE_MINUES_2
+      // 中国上海时间
+      rule.tz = 'Asia/Shanghai';
+      schedule.scheduleJob(rule, async()=>{
+        let result = await getStockPlan();
+        if(result){
+          await sendMessage(id, result);
+        }
+      });
+    }
   })
 
   await bot.start();

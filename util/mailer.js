@@ -19,3 +19,11 @@ export let mailOptions = {
   html: process.env.EMAIL_HTML // 邮件内容
 };
 
+
+export let mailOptionsBigquant = {
+  from: `<${process.env.EMAIL_FROM}>`, // 发送人
+  to: process.env.EMAIL_TO, // 接收人
+  subject: 'Bigquant Session登录过期', // 邮件主题
+  html: 'Bigquant Session登录过期，请重新登录后配置' // 邮件内容
+};
+
