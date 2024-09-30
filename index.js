@@ -34,7 +34,19 @@ export async function prepareBot() {
       if (await message.mentionSelf()) {
         if (roomMsg) {
           let answer = await difyChat(roomMsg.id,mentionText)
-          await sendMessage(roomMsg.id, answer);
+          if(answer.includes("\n")){
+            let array =  await splitTextIntoArray(answer)
+            const interval = setInterval(async () => {
+              if (array.length) {
+                console.log(talkerId,"多句：")
+                await sendMessage(talkerId, array.shift())
+              } else {
+                clearInterval(interval);
+              }
+            }, 3000);
+          }else{
+            await sendMessage(talkerId, answer);
+          }   
           return;
         }
       }else{
