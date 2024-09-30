@@ -22,7 +22,8 @@ export const difyChat = async (talkid,query) => {
     let {data} = await getNews();
     let params = {
       inputs:{
-        longMemory:longMemory+"。今天的经济新闻:"+data,
+        longMemory:longMemory,
+        data:data
       },
       response_mode:'blocking',
       user:talkid,
