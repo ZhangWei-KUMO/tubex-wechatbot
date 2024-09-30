@@ -5,6 +5,7 @@ config();
 import { PuppetWechat4u } from 'wechaty-puppet-wechat4u';
 import Redis from 'ioredis';
 import fs from 'fs';
+import {getNews} from './group.js'
 
 const redis = new Redis();
 
@@ -18,13 +19,14 @@ export const difyChat = async (talkid,query) => {
       fs.writeFileSync(filePath, '[]', 'utf-8');
     }
     let lastConversationId = await redis.get(`talkid:${talkid}`);
+    let {data} = await getNews();
     let params = {
       inputs:{
         longMemory:"",
       },
       response_mode:'blocking',
       user:talkid,
-      query: query+"回答之前，可以参考之前的聊天记录"+longMemory,
+      query: query+"回答之前，可以参考之前的聊天记录"+longMemory+",和今天的经济新闻:"+data,
     }
     if (lastConversationId) {
       params.conversation_id = lastConversationId;

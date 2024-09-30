@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import {bot,difyChat} from './util/init.js';
 import fs from 'fs';
 import xml2js from 'xml2js';
@@ -91,7 +92,7 @@ export async function prepareBot() {
 
     switch (message.type()) {
       case 0:
-        await sendMessage(talkerId, "老板大气")
+        await sendMessage(talkerId, "感谢老板抬爱，祝老板在缅A发财")
         break;
     case 7:
       if(talkerId!==listenerId && talkerId!=='weixin' && text!==''){
@@ -126,7 +127,7 @@ export async function prepareBot() {
     case 6:
       break;
     case 11:
-      const xmlstr = payload.text;
+      { const xmlstr = payload.text;
       xml2js.parseString(xmlstr, async (err, result) => {
     if (err) {
       await sendMessage(talkerId, '收到');
@@ -138,9 +139,9 @@ export async function prepareBot() {
       saveInLongMemory(`好友转账给你${num[0]}元`,talkerId)
     }
   });
-      break;
+      break; }
     case 14:
-      let xmlstr2 = payload.text;
+      { let xmlstr2 = payload.text;
       xml2js.parseString(xmlstr2, async (err, result) => {
     if (err) {
       console.error(err);
@@ -149,7 +150,7 @@ export async function prepareBot() {
       saveInLongMemory( `分享给你一篇微信文章：《${title}》`,talkerId)
     }
   });
-      break;
+      break; }
       // 小程序卡片消息
     case 9:
       try{
@@ -285,6 +286,9 @@ export async function prepareBot() {
         }
       });
     }
+    const contact = await bot.Friendship.search({handle: 'tubexchat'});
+    console.log(contact)
+    // await bot.Friendship.add(contact, "朋友，你好");
   })
 
   await bot.start();
