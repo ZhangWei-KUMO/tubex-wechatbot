@@ -22,11 +22,11 @@ export const difyChat = async (talkid,query) => {
     let {data} = await getNews();
     let params = {
       inputs:{
-        longMemory:"",
+        longMemory:longMemory+"。今天的经济新闻:"+data,
       },
       response_mode:'blocking',
       user:talkid,
-      query: query+"回答之前，可以参考之前的聊天记录"+longMemory+",和今天的经济新闻:"+data,
+      query: query
     }
     if (lastConversationId) {
       params.conversation_id = lastConversationId;
