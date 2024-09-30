@@ -45,7 +45,7 @@ export async function prepareBot() {
               }
             }, 3000);
           }else{
-            await sendMessage(talkerId, answer);
+            await sendMessage(roomMsg.id, answer);
           }   
           return;
         }
