@@ -34,6 +34,7 @@ export async function prepareBot() {
       if (await message.mentionSelf()) {
         if (roomMsg) {
           let answer = await difyChat(roomMsg.id,mentionText)
+          answer = answer.replace(/\*/g, '');         
           if(answer.includes("\n")){
             let array =  await splitTextIntoArray(answer)
             const interval = setInterval(async () => {
