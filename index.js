@@ -38,8 +38,7 @@ export async function prepareBot() {
             let array =  await splitTextIntoArray(answer)
             const interval = setInterval(async () => {
               if (array.length) {
-                console.log(talkerId,"多句：")
-                await sendMessage(talkerId, array.shift())
+                await sendMessage(oomMsg.id, array.shift())
               } else {
                 clearInterval(interval);
               }
