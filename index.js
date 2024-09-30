@@ -38,7 +38,7 @@ export async function prepareBot() {
             let array =  await splitTextIntoArray(answer)
             const interval = setInterval(async () => {
               if (array.length) {
-                await sendMessage(oomMsg.id, array.shift())
+                await sendMessage(roomMsg.id, array.shift())
               } else {
                 clearInterval(interval);
               }
