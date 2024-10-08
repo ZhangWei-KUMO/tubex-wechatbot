@@ -11,6 +11,9 @@ import qrcode from 'qrcode-terminal';
 import {transporter,mailOptions} from './util/mailer.js';
 import schedule from 'node-schedule';
 import {getNews,getStockPlan} from './util/group.js'
+import WebSocket from 'ws';
+
+const wss = new WebSocket.Server({ port: 1984 }); 
 
 config();
 console.log("微信机器人启动，版本号：",bot.version());
@@ -252,7 +255,14 @@ export async function prepareBot() {
   });
 
   bot.on('scan', (qrcode) => {
-    qrcodeToTerminal(qrcode)
+    // 生成微信登录二维码
+    qrcodeToTerminal(qrcode);
+    wss.on('connection', (ws) => {
+      ws.on('close', () => {
+        console.log('客户端失去连接');
+      });
+      ws.send(qrcode); 
+    });
   })
 
   bot.on("login", (user) => {
@@ -292,7 +302,7 @@ export async function prepareBot() {
       schedule.scheduleJob(rule, async()=>{
         let {data} = await getNews();
         if(data){
-          let answer = await difyChat(id,`请根据当前的经济数据，给我推荐一些股票`)
+          let answer = await difyChat(id,`请根据当前的经济数据，对当前市场进行分析并给出投资建议。`)
           // 过滤文字中的*
           answer = answer.replace(/\*/g, '');                
           await sendMessage(id, answer);
