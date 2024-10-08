@@ -13,7 +13,7 @@ import schedule from 'node-schedule';
 import {getNews,getStockPlan} from './util/group.js'
 import { WebSocketServer } from "ws"
 
-const wss = new WebSocketServer({ port: 8080 })
+const wss = new WebSocketServer({ port: 1984 })
 
 config();
 console.log("微信机器人启动，版本号：",bot.version());
