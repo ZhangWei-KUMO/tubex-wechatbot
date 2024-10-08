@@ -11,9 +11,9 @@ import qrcode from 'qrcode-terminal';
 import {transporter,mailOptions} from './util/mailer.js';
 import schedule from 'node-schedule';
 import {getNews,getStockPlan} from './util/group.js'
-import WebSocket from 'ws';
+import { WebSocketServer } from "ws"
 
-const wss = new WebSocket.Server({ port: 1984 }); 
+const wss = new WebSocketServer({ port: 8080 })
 
 config();
 console.log("微信机器人启动，版本号：",bot.version());
@@ -125,7 +125,6 @@ export async function prepareBot() {
               let array =  await splitTextIntoArray(answer)
               const interval = setInterval(async () => {
                 if (array.length) {
-                  console.log(talkerId,"多句：")
                   await sendMessage(talkerId, array.shift())
                 } else {
                   clearInterval(interval);
