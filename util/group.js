@@ -44,7 +44,7 @@ export const getStockPlan = async () => {
     const jsonp = await res.json();
     if(jsonp.data.planned_order_lists){
       let first = jsonp.data.planned_order_lists[0]
-      if(first.name.includes("*")){
+      if(first && first.name && first.name.includes("*")){
          // 发送邮件
          transporter.sendMail(mailOptionsBigquant, (error) => {
           if (error) {
