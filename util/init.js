@@ -20,6 +20,10 @@ export const difyChat = async (talkid,query) => {
     }
     let lastConversationId = await redis.get(`talkid:${talkid}`);
     let {data} = await getNews();
+    if(!data){
+      return "机器人调取今天新闻失败，所以暂时还不能分析";
+    }
+    console.log("当天的经济新闻：",data)
     let params = {
       inputs:{
         longMemory:longMemory,
