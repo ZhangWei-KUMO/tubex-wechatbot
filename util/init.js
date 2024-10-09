@@ -10,6 +10,7 @@ import {getNews} from './group.js'
 const redis = new Redis();
 
 export const difyChat = async (talkid,query) => {
+  console.log("query",query)
   try{
     const filePath = `./logger/${talkid}.json`;
     let longMemory = "";
@@ -57,6 +58,8 @@ export const difyChat = async (talkid,query) => {
       dataInfo = data
     }
 
+    console.log("dataInfo",dataInfo)
+
     let params = {
       inputs:{
         longMemory:longMemory,
@@ -86,6 +89,7 @@ export const difyChat = async (talkid,query) => {
         await redis.set(`talkid:${talkid}`, res.conversation_id);
       }
     }
+    console.log(res)
     if(res.answer){
       return res.answer;
     }else{
