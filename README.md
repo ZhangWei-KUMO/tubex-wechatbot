@@ -25,8 +25,9 @@ This is an open-source WeChat robot project based on WechatY, Dify API services,
 |Third-party knowledge base access |第三方知识库接入|✅|
 |Email notification to Administrator |管理员邮件通知|✅|
 | Long Memeory for chat | 聊天长记忆 |✅|
+| Self-running business | 自我运维 |✅|
+| Crypto Coin Market Analysis | 数字货币市场分析 |✅|
 | Inpainting | 老照片修复 |🏃🏻‍♀️|
-| Self-running business | 自我运维 |🏃🏻‍♀️|
 
 ## Dependencies Install
 

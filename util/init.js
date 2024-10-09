@@ -19,15 +19,48 @@ export const difyChat = async (talkid,query) => {
       fs.writeFileSync(filePath, '[]', 'utf-8');
     }
     let lastConversationId = await redis.get(`talkid:${talkid}`);
-    let {data} = await getNews();
-    if(!data){
-      return "机器人调取今天新闻失败，所以暂时还不能分析";
+    /**
+     * 如果用户提及币安、比特币、以太坊、BTC、ETH、数字货币、加密货币等关键词请求，直接返回说自己不知道。
+     * 请使用正则表达式匹配
+     */
+    let dataInfo = ""
+    if(/币安|比特币|以太坊|BTC|ETH|数字货币|加密货币|加密市场/.test(query)){
+        try {
+          let res = await fetch(process.env.BINANCE_TOPSEARCH);
+          let topsearchList = await res.json();
+          let { data } = topsearchList;
+      
+          // 使用 map 并行获取价格信息
+          const pricePromises = data.slice(0, 5).map(async (element) => {
+            let res = await fetch(process.env.BINANCE_PRICE + element.symbol);
+            let symbolInfo = await res.json();
+            return `名称：${symbolInfo.symbol} | 
+                    最新价格：${symbolInfo.lastPrice}| 
+                    开盘价：${symbolInfo.openPrice}| 
+                    最高价：${symbolInfo.highPrice}| 
+                    最低价：${symbolInfo.lowPrice};
+                   `;
+          });
+      
+          // 等待所有价格信息获取完毕
+          const priceInfo = await Promise.all(pricePromises);
+      
+          // 使用 join 拼接字符串
+          dataInfo = "今天的热门币种为：" + priceInfo.join("");
+      
+        } catch (error) {
+          console.error("获取热门币种信息出错:", error);
+          return "获取热门币种信息出错，请稍后再试";
+        }
+    }else{
+      let {data} = await getNews();
+      dataInfo = data
     }
-    console.log("当天的经济新闻：",data)
+
     let params = {
       inputs:{
         longMemory:longMemory,
-        data:data
+        data:dataInfo
       },
       response_mode:'blocking',
       user:talkid,
