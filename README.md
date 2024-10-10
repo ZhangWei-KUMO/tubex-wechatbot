@@ -28,6 +28,7 @@ This is an open-source WeChat robot project based on WechatY, Dify API services,
 | Self-running business | 自我运维 |✅|
 | Crypto Coin Market Analysis | 数字货币市场分析 |✅|
 | Inpainting | 老照片修复 |🏃🏻‍♀️|
+| Inpainting | 机器人集群启动 |🏃🏻‍♀️|
 
 ## Dependencies Install
 
@@ -59,11 +60,13 @@ pm2 start index.js -n tubex-wechatbot
 # open logs and scan login QRcode
 pm2 logs tubex-wechatbot
 ```
-
-
 ### Wechat Room for users
 
 <img src="https://www.tubex.chat/service.jpg" alt="logo" width="200"/>
+
+### 微信风控提示
+
+本机器人在登录账号实名认证后自身不会出现微信风控的问题，但是在群聊过程中高频率出现股票投资、比特币投资等话题情况下会导致群聊、朋友圈等功能被封一个月的情况。使用者请注意管控好机器人的言行。
 
 ### Cooperation
 
