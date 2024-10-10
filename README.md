@@ -9,7 +9,7 @@
 ![Static Badge](https://img.shields.io/badge/Doubao-x?style=flat&logo=Dify&logoColor=white&label=Dify&color=darkgreen)
 
 <div align="center">
-<img src="public/bot.jpg" alt="logo" width="300"/>
+    <img src="public/bot.jpg" alt="logo" width="300"/>
 </div>
 
 This is an open-source WeChat robot project based on WechatY, Dify API services, and Microsoft Azure ASR voice services. After users fill in the Dify API information and Microsoft ASR KEY in the configuration file, they can quickly deploy their own AI robot.
@@ -27,10 +27,18 @@ This is an open-source WeChat robot project based on WechatY, Dify API services,
 | Long Memeory for chat | 聊天长记忆 |✅|
 | Self-running business | 自我运维 |✅|
 | Crypto Coin Market Analysis | 数字货币市场分析 |✅|
-| Crypto Coin Market Analysis | 传统金融市场数据获取及分析 |✅|
-
+| Chinese Financial Market Analysis | 中国金融市场数据获取及分析 |✅|
+| USNG | 天然气CFD |✅|
+| UKOIL | 布伦特原油 |✅|
+| USGC | 纽约黄金价格 |✅|
 | Inpainting | 老照片修复 |🏃🏻‍♀️|
 | Inpainting | 机器人集群启动 |🏃🏻‍♀️|
+
+## Workflow
+
+<div align="center">
+    <img src="public/workflow.png" alt="workflow" width="400"/>
+</div>
 
 ## Dependencies Install
 
