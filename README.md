@@ -27,6 +27,8 @@ This is an open-source WeChat robot project based on WechatY, Dify API services,
 | Long Memeory for chat | 聊天长记忆 |✅|
 | Self-running business | 自我运维 |✅|
 | Crypto Coin Market Analysis | 数字货币市场分析 |✅|
+| Crypto Coin Market Analysis | 传统金融市场数据获取及分析 |✅|
+
 | Inpainting | 老照片修复 |🏃🏻‍♀️|
 | Inpainting | 机器人集群启动 |🏃🏻‍♀️|
 
@@ -67,6 +69,12 @@ pm2 logs tubex-wechatbot
 ### 微信风控提示
 
 本机器人在登录账号实名认证后自身不会出现微信风控的问题，但是在群聊过程中高频率出现股票投资、比特币投资等话题情况下会导致群聊、朋友圈等功能被封一个月的情况。使用者请注意管控好机器人的言行。
+
+### 数字货币功能的部署与使用
+
+本机器人接入的数字货币信息均来源于币安实时信息，但是由于Binance API在中国境内无法访问，在部署服务器上请选择海外服务器。
+在涉及数字货币的问题上，用户应该携带关键词如：数字货币、加密货币、趋势、走势等。目前仅支持当日币安最热门的5个币种的趋势分析。
+由于市场分析的难度较大，建议开发者使用GPT-4o、Gemini 1.5、Gemini flash等海外大模型。
 
 ### Cooperation
 

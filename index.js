@@ -10,7 +10,7 @@ import {splitTextIntoArray} from './util/reply-filter.js'
 import qrcode from 'qrcode-terminal';
 import {transporter,mailOptions} from './util/mailer.js';
 import schedule from 'node-schedule';
-import {getNews,getStockPlan} from './util/group.js'
+import {getNews} from './util/group.js'
 import { WebSocketServer } from "ws"
 
 const wss = new WebSocketServer({ port: 1984 })
@@ -305,20 +305,6 @@ export async function prepareBot() {
           // 过滤文字中的*
           answer = answer.replace(/\*/g, '');                
           await sendMessage(id, answer);
-        }
-      });
-    }
-
-    if(process.env.IS_BIGQUANT_MESSAGE){
-      const rule = new schedule.RecurrenceRule();
-      rule.hour = process.env.SCHEDULE_HOUR_2
-      rule.minute =  process.env.SCHEDULE_MINUES_2
-      // 中国上海时间
-      rule.tz = 'Asia/Shanghai';
-      schedule.scheduleJob(rule, async()=>{
-        let result = await getStockPlan();
-        if(result){
-          await sendMessage(id, result);
         }
       });
     }
