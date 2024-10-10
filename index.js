@@ -53,7 +53,6 @@ export async function prepareBot() {
           return;
         }
       }else{
-        // 监听是否有人加入群聊
         let {payload} = message;
         let {text} = payload;
         if(text.includes("加入群聊")){
@@ -64,8 +63,9 @@ export async function prepareBot() {
         }else{
           // 正常聊天
           switch (message.type()) {
+            // 被人拍了拍
             case 0:
-              await sendMessage(roomMsg.id, "老板大气")
+              await sendMessage(roomMsg.id, "找我搞么事？");
               break;
           case 2:
             try{
@@ -83,7 +83,19 @@ export async function prepareBot() {
                   // 获取群名称
 
                   let answer = await difyChat(roomMsg.id,q)
-                  await sendMessage(roomMsg.id,answer)
+                  answer = answer.replace(/\*/g, '');         
+                  if(answer.includes("\n")){
+                    let array =  await splitTextIntoArray(answer)
+                    const interval = setInterval(async () => {
+                      if (array.length) {
+                        await sendMessage(roomMsg.id, array.shift())
+                      } else {
+                        clearInterval(interval);
+                      }
+                    }, 3000);
+                  }else{
+                    await sendMessage(roomMsg.id, answer);
+                  }   
                 }catch(e){
                   await sendMessage(roomMsg.id, e)
                   return

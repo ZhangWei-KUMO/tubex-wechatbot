@@ -10,6 +10,7 @@ import moment from 'moment';
 const redis = new Redis();
 
 export const difyChat = async (talkid,query) => {
+  console.log("query:",query)
   try{
     const filePath = `./logger/${talkid}.json`;
     let longMemory = "";
@@ -100,7 +101,8 @@ export const difyChat = async (talkid,query) => {
       dataInfo = data
     }
 
-  
+    console.log("dataInfo:",dataInfo)
+
     let params = {
       inputs:{
         longMemory:longMemory,
