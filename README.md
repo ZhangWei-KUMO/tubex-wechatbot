@@ -50,14 +50,11 @@ sudo apt install redis-server
 npm install -g pm2
 ```
 
-## Configuration API
+## 部署前环境变量配置
 
-The speech recognition and synthesis services of this project are connected to [Azure Speech Services](https://azure.microsoft.com/zh-cn/free/ai-services/). Developers need to apply for an API KEY.
-The large model of this project is connected to [Dify](https://dify.ai). Developers need to apply for an API KEY.
+用户需要在微软Azure上申请 [Azure Speech Services](https://azure.microsoft.com/zh-cn/free/ai-services/) API KEY.
+在 [Dify](https://dify.ai) 上申请一个AI API KEY。并填写在`.env`文件中。
 
-[wechatY docs](https://github.com/wechaty/puppet-padlocal/wiki/API-%E4%BD%BF%E7%94%A8%E6%96%87%E6%A1%A3-(TypeScript-JavaScript))
-
-create `.env` file in the project root directory, and set the configuration for your wechat bot.
 
 ## Quick Started
 
