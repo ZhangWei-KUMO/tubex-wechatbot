@@ -37,7 +37,7 @@ This is an open-source WeChat robot project based on WechatY, Dify API services,
 ## Workflow
 
 <div align="center">
-    <img src="public/workflow.png" alt="workflow" width="400"/>
+    <img src="public/workflow.png" alt="workflow"/>
 </div>
 
 ## Dependencies Install
