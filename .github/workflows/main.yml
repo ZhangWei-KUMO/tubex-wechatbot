@@ -29,9 +29,10 @@ jobs:
           username: ${{ secrets.SERVER_USERNAME }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
-            curl -o- https://gitee.com/RubyMetric/nvm-cn/raw/main/install.sh | bash
+            curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
             cd /home/ubuntu/.nvm
             source ./nvm.sh
-            npm install cnpm -g --registry=https://registry.npmmirror.com
+            npm install -g yarn
+            yarn 
             cd /home/ubuntu/tubex-wechatbot
             yarn 
