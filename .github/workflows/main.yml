@@ -32,7 +32,7 @@ jobs:
             curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
             cd /home/ubuntu/.nvm
             source ./nvm.sh
+            nvm use 21
             npm install -g yarn
-            yarn 
             cd /home/ubuntu/tubex-wechatbot
             yarn 
