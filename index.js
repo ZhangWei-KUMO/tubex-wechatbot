@@ -313,7 +313,7 @@ export async function prepareBot() {
       schedule.scheduleJob(rule, async()=>{
         let {data} = await getNews();
         if(data){
-          let answer = await difyChat(id,`请根据当前的经济数据，对当前市场进行分析并给出投资建议。`)
+          let answer = await difyChat(id,`请根据当前的经济数据，对当前市场进行分析`)
           // 过滤文字中的*
           answer = answer.replace(/\*/g, '');                
           await sendMessage(id, answer);
