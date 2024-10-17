@@ -21,4 +21,3 @@ export const classfication = async (query) => {
     return result.response.text()
 }
 
-recgonizeImage("你知道我赚了多少吗|输出语言为中文")

@@ -129,7 +129,7 @@ export async function prepareBot() {
           const locationText = `我的地址是：${lines[0]}`;
           saveInLongMemory(locationText,talkerId)          
         }else{
-          let answer = await difyChat(talkerId,text)          
+          let answer = await difyChat(talkerId,text) 
           if(answer){ 
             answer = answer.replace(/\*/g, '');                
             answer = answer.trim()
