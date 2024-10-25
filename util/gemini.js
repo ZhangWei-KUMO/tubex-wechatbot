@@ -23,13 +23,13 @@ export const classfication = async (query) => {
 }
 
 export const symbolCheck = async (query) => {
-    const prompt = `Acounding to"""${query}""",if it contains Crypto TOKEN NAME,please output or output 0`
+    const prompt = `Acounding to"""${query}""",if it contains Crypto TOKEN NAME,please  return STOCK NAME or return 0`
     const result = await model.generateContent(prompt);
     return result.response.text()
 }
 
 export const stockCheck = async (query) => {
-    const prompt = `请根据"""${query}"""中的内容判断当前语句中是否包含股票名称，如果有则返回股票名称，否则返回“0”`
+    const prompt = `Acounding to"""${query}""",if it contains STOCK NAME or INDEX NAME,please return NAME or return 0`
     const result = await model.generateContent(prompt);
     return result.response.text()
 }

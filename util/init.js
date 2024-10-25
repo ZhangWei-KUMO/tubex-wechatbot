@@ -5,7 +5,7 @@ config();
 import { PuppetWechat4u } from 'wechaty-puppet-wechat4u';
 import fs from 'fs';
 import {getNews} from './group.js'
-import {classfication, symbolCheck,chat} from './gemini.js'
+import {classfication, stockCheck,chat} from './gemini.js'
 import moment from 'moment';
 import 'dotenv/config'
 // import Redis from 'ioredis';
@@ -18,11 +18,11 @@ const fetchStockInfo = async (stockName) => {
     if(timenews.code===20000){
       let timelines = timenews.data.items.map((item) => {
         return {
-          time:moment(item.display_time).format("YYYY-MM-DD HH"),
+          // time:moment(item.display_time).format("YYYY-MM-DD HH"),
           content:item.content_text
         }
       })
-      return `股票${stockName}的相关信息：${JSON.stringify(timelines)}`
+      return `${JSON.stringify(timelines)}`
     }else{
       return "无相关股票信息"
     }
@@ -90,11 +90,11 @@ const fetchBasicCryptoMarketInfo = async () => {
       
       if(symbolInfo.symbol && Number(symbolInfo.lastPrice)){
         return `数字货币：${symbolInfo.symbol} | 
-              最新价格：${Number(symbolInfo.lastPrice)>1?Number(symbolInfo.highPrice).toFixed(0):Number(symbolInfo.lastPrice)}| 
-              开盘价：${Number(symbolInfo.openPrice)>1?Number(symbolInfo.openPrice).toFixed(0):Number(symbolInfo.openPrice)}| 
-              最高价：${Number(symbolInfo.highPrice)>1?Number(symbolInfo.highPrice).toFixed(0):Number(symbolInfo.highPrice)}| 
-              最低价：${Number(symbolInfo.lowPrice)>1?Number(symbolInfo.lowPrice).toFixed(0):Number(symbolInfo.lowPrice)}|
-              交易量：${Number(symbolInfo.volume)>1?Number(symbolInfo.volume).toFixed(0):Number(symbolInfo.volume)}
+              最新价格：${Number(symbolInfo.lastPrice)>100?Number(symbolInfo.highPrice).toFixed(0):Number(symbolInfo.lastPrice)}| 
+              开盘价：${Number(symbolInfo.openPrice)>100?Number(symbolInfo.openPrice).toFixed(0):Number(symbolInfo.openPrice)}| 
+              最高价：${Number(symbolInfo.highPrice)>100?Number(symbolInfo.highPrice).toFixed(0):Number(symbolInfo.highPrice)}| 
+              最低价：${Number(symbolInfo.lowPrice)>100?Number(symbolInfo.lowPrice).toFixed(0):Number(symbolInfo.lowPrice)}|
+              交易量：${Number(symbolInfo.volume)>100?Number(symbolInfo.volume).toFixed(0):Number(symbolInfo.volume)}
               ;
              `;
       }
@@ -116,7 +116,7 @@ export const difyChat = async (talkid,query) => {
       // 清空该文件
       fs.writeFileSync(filePath, '[]', 'utf-8');
   }
-  console.log("长记忆::",longMemory)
+  console.log("文件记忆::",longMemory)
   try{
     let type =  await classfication(query);
     type = type.trim()
@@ -130,8 +130,21 @@ export const difyChat = async (talkid,query) => {
         }
       case "股票":
           { 
-            let news = await getNews(query);
-            query = query +"。这是今天的经济新闻："+news.data
+            let stock = await stockCheck(query);
+            if(stock=="0"){
+              let news = await getNews(query);
+              query = `扮演一名与客户对话的金融专家，已经获取的知识储备如下:${news.data},你可以参考这些信息回答问题。问题：${query}`
+            }else{
+              let stockInfo = await fetchStockInfo(stock);
+              console.log(stockInfo)
+              if(stockInfo=='[]'){
+                let news = await getNews(query);
+                query = `扮演一名与客户对话的金融专家，已经获取的知识储备如下:${news.data},你可以参考这些信息回答问题。问题：${query}`
+              }else{
+                query = `扮演一名与客户对话的金融专家，已经获取的知识储备如下:${stockInfo},你可以参考这些信息回答问题。问题：${query}`
+              }
+            }
+           
             break; 
           }
       case "原油":
@@ -141,8 +154,24 @@ export const difyChat = async (talkid,query) => {
         query = query +"。已知信息：外汇信息"
         break;
       case "其他":
-        query = query +"。已知信息：其他信息"
-        break;
+        { 
+          let stock = await stockCheck(query);
+          if(stock=="0"){
+            let news = await getNews(query);
+            query = query +"before you'r:"+news.data
+          }else{
+            let stockInfo = await fetchStockInfo(stock);
+            console.log(stockInfo)
+            if(stockInfo=='[]'){
+              let news = await getNews(query);
+              query = `扮演一名与客户对话的金融专家，已经获取的知识储备如下:${news.data},你可以参考这些信息回答问题。问题：${query}`
+            }else{
+              query = `扮演一名与客户对话的金融专家，已经获取的知识储备如下:${news.data},你可以参考这些信息回答问题。问题：${stockInfo}`
+            }
+          }
+         
+          break; 
+        }
       default:
         break;
     }
