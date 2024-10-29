@@ -126,8 +126,9 @@ const getBinanceRanker = async () => {
          
           // 过滤涨幅小于10%和交易量小于5000万的交易对
           if(parseFloat(item.priceChangePercent) < 10 || parseFloat(item.quoteVolume) < 50000000) return
-          // 如果交易对位AGIXUSDT、OCEANUSDT则过滤
-          if(item.symbol === "AGIXUSDT" || item.symbol === "OCEANUSDT") return
+          // 如果交易对位AGIXUSDT、OCEANUSDT则过滤，如果包含USDC则过滤
+          if(item.symbol === "AGIXUSDT" || item.symbol === "OCEANUSDT" || item.symbol.includes("USDC")) return
+          
           // 如果交易量大于10亿则为市场热点
           if(parseFloat(item.quoteVolume) > 1000000000) item.市场热点 = true
           const obj = {
