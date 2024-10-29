@@ -139,8 +139,12 @@ const getBinanceRanker = async () => {
           }
           newItems.push(obj)
       });
+      // 转换成字符串输出
+      let str = newItems.map((item) => {
+        return `数字货币：${item.数字货币} | 交易额：${item.交易额} | 涨幅：${item.涨幅} | 当前价格：${item.当前价格}`;
+      }).join("\n");
    
-     return newItems
+     return str
   } catch (err) {
     console.error(err);
    
