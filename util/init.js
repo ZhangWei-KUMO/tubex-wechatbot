@@ -164,7 +164,8 @@ export const difyChat = async (talkid,query) => {
      
       case "数字货币":
         { let basicCryptoMarketInfo = await getBinanceRanker();
-          query = query +"。"+basicCryptoMarketInfo+"。判断标准：数字货币交易额超过10亿或者涨幅超过40%表示当前数字货币处于狂热状态，否则为正常状态，如果所有的交易对的涨幅都为负数则表示当前市场处于恐慌状态。"
+          console.log("。当前币安涨幅榜："+basicCryptoMarketInfo)
+          query = query +"。当前币安涨幅榜："+basicCryptoMarketInfo+"。判断标准：数字货币交易额超过10亿或者涨幅超过40%表示当前数字货币处于狂热状态，否则为正常状态，如果所有的交易对的涨幅都为负数则表示当前市场处于恐慌状态。"
           break; 
         }
       case "股票":
