@@ -1,0 +1,4 @@
+[[d1_databases]]
+binding = "DB" 
+database_name = "prod-d1-tutorial"
+database_id = "d61555af-08ac-4c52-b45c-8051966382fb"
