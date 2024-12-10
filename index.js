@@ -265,12 +265,13 @@ export async function prepareBot() {
   bot.on('scan', (qrcode) => {
     // 生成微信登录二维码
     qrcodeToTerminal(qrcode);
-    wss.on('connection', (ws) => {
-      ws.on('close', () => {
-        console.log('客户端失去连接');
-      });
-      console.log("发送二维码")
-      ws.send(qrcode); 
+
+    wss.clients.forEach((client) => {
+      console.log("发送二维码",client)
+
+      if (client.readyState === WebSocket.OPEN) { // Ensure the client is open
+        client.send(qrcode);
+      }
     });
   })
 
@@ -285,6 +286,9 @@ export async function prepareBot() {
       if (error) {
         return console.error(error);
       }
+    });
+    wss.clients.forEach((client) => {
+      client.close(); // Important: Close client after login
     });
   })
 
