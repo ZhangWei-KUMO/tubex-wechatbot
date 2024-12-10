@@ -13,7 +13,7 @@ import schedule from 'node-schedule';
 import {getNews} from './util/group.js'
 import { WebSocketServer } from "ws"
 
-const wss = new WebSocketServer({ port: 1988 })
+const wss = new WebSocketServer({ port: 1982 })
 config();
 console.log("微信机器人启动，版本号：",bot.version());
 function qrcodeToTerminal(url) {
@@ -265,14 +265,10 @@ export async function prepareBot() {
   bot.on('scan', (qrcode) => {
     // 生成微信登录二维码
     qrcodeToTerminal(qrcode);
-
-    wss.clients.forEach((client) => {
-      console.log("发送二维码",client)
-
-      if (client.readyState === WebSocket.OPEN) { // Ensure the client is open
-        client.send(qrcode);
-      }
-    });
+    wss.on('connection', function connection(ws) {
+      // 发送二维码给前端
+      ws.send(qrcode);
+    })
   })
 
   bot.on("login", (user) => {
