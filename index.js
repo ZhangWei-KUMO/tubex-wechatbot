@@ -13,11 +13,9 @@ import schedule from 'node-schedule';
 import {getNews} from './util/group.js'
 import { WebSocketServer } from "ws"
 
-const wss = new WebSocketServer({ port: 1984 })
-
+const wss = new WebSocketServer({ port: 1988 })
 config();
 console.log("微信机器人启动，版本号：",bot.version());
-
 function qrcodeToTerminal(url) {
   qrcode.generate(url, { small: true });
 }
@@ -81,7 +79,6 @@ export async function prepareBot() {
                   let q = await recognizeSpeech(wav)
                   fs.unlinkSync(wav)
                   // 获取群名称
-
                   let answer = await difyChat(roomMsg.id,q)
                   answer = answer.replace(/\*/g, '');         
                   if(answer.includes("\n")){

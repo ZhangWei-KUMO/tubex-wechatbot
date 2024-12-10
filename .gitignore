@@ -2,3 +2,5 @@ node_modules
 .env
 logger
 script
+yarn.lock
+xuyue.memory-card.json
