@@ -1,1 +1,1 @@
-ssh -i ~/Documents/tencent_vpn ubuntu@43.163.216.8
+ssh -i ~/Documents/shanghai_key.pem ubuntu@124.220.108.218
