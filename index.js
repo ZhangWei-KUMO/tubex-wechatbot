@@ -7,18 +7,24 @@ import {sendMessage,convertSilkToWav,readSheet,readTxt,
 import {recognizeSpeech} from './util/azure.js'
 import { config } from 'dotenv';
 import {splitTextIntoArray} from './util/reply-filter.js'
-import qrcode from 'qrcode-terminal';
+// import qrcode from 'qrcode-terminal';
 import {transporter,mailOptions} from './util/mailer.js';
 import schedule from 'node-schedule';
 import {getNews} from './util/group.js'
 import { WebSocketServer } from "ws"
+import express from 'express';
+import path from 'path';
+import open from 'open';
 
 const wss = new WebSocketServer({ port: 1982 })
+const app = express();
+const port = 3000;
+
 config();
 console.log("微信机器人启动，版本号：",bot.version());
-function qrcodeToTerminal(url) {
-  qrcode.generate(url, { small: true });
-}
+// function qrcodeToTerminal(url) {
+//   qrcode.generate(url, { small: true });
+// }
 
 export async function prepareBot() {
   bot.on("message", async (message) => {  
@@ -264,7 +270,7 @@ export async function prepareBot() {
 
   bot.on('scan', (qrcode) => {
     // 生成微信登录二维码
-    qrcodeToTerminal(qrcode);
+    // qrcodeToTerminal(qrcode);
     wss.on('connection', function connection(ws) {
       // 发送二维码给前端
       ws.send(qrcode);
@@ -326,7 +332,20 @@ export async function prepareBot() {
 }
 
 async function startBot() {
+    // Serve static files from the 'public' directory
+    app.use(express.static(path.join(process.cwd(), 'public'))); // Assuming your HTML is in 'public'
+    console.log("---")
+     app.get('/', (req, res) => {
+       res.sendFile(path.join(__dirname, './public/index.html')); // or wherever your index.html is
+     });
+   
+     app.listen(port, async () => {
+       console.log(`Web server listening at http://localhost:${port}`);
+        // Open the browser automatically
+       await open(`http://localhost:${port}`);
+     });
   await prepareBot();
+
 }
 
 startBot().catch(console.error);

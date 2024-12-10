@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>TubeX微信机器人</title>
+</head>
+<body>
+  <center>
+    <h1>TubeX微信机器人</h1>
+    <div id="qrcode"></div>
+  </center>
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
+   <script>
+    const qrcodeContainer = document.getElementById('qrcode');
+    let ws; // 将ws声明提到外部作用域
+    let refreshInterval;
+
+    function generateQRCode(qrcodeData) {
+      console.log(qrcodeData);
+      qrcodeContainer.innerHTML = '';
+      new QRCode(qrcodeContainer, {
+        text: qrcodeData,
+        width: 228,
+        height: 228,
+        correctLevel: QRCode.CorrectLevel.H
+      });
+    }
+
+    function connectAndRequestQRCode() {
+        ws = new WebSocket('ws://localhost:1982');
+
+        ws.onmessage = (event) => {
+            const qrcodeData = event.data;
+            console.log('Received QR Code Data:', qrcodeData);
+            generateQRCode(qrcodeData);
+
+            // 获取到二维码后，停止刷新，等待扫描
+            clearInterval(refreshInterval); 
+        };
+
+        ws.onclose = () => {
+            console.log("websocket closed");
+            // 连接关闭后，重新启动定时器
+            refreshInterval = setInterval(refreshPage, 10000); 
+        };
+
+        ws.onerror = (error) => {
+            console.error("WebSocket error:", error);
+            // 出错后，重新启动定时器
+            refreshInterval = setInterval(refreshPage, 10000);
+        };
+    }
+
+    function refreshPage() {
+        console.log("Refreshing page...");
+        if (ws) {
+            ws.close(); // 关闭现有连接
+        }
+        connectAndRequestQRCode(); // 建立新的连接并请求二维码
+        // location.reload();  // 或者直接刷新页面，如果你的后端支持自动重新生成二维码
+    }
+
+    // 初始连接
+    connectAndRequestQRCode();
+
+    // 设置定时器，每10秒刷新一次
+    refreshInterval = setInterval(refreshPage, 10000);
+
+  </script>
+</body>
+</html>
