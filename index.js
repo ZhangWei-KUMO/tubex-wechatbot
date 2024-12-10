@@ -269,6 +269,7 @@ export async function prepareBot() {
       ws.on('close', () => {
         console.log('客户端失去连接');
       });
+      console.log("发送二维码")
       ws.send(qrcode); 
     });
   })

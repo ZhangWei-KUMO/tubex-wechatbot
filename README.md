@@ -31,8 +31,8 @@ This is an open-source WeChat robot project based on WechatY, Dify API services,
 | USNG | 天然气CFD |✅|
 | UKOIL | 布伦特原油 |✅|
 | USGC | 纽约黄金价格 |✅|
-| Inpainting | 老照片修复 |🏃🏻‍♀️|
-| Inpainting | 机器人集群启动 |🏃🏻‍♀️|
+| Inpainting | 机器人集群启动 |✅|
+| Websocket监听通信 | Websocket监听通信 |✅|
 
 ## Workflow
 
