@@ -2,11 +2,68 @@
 <html>
 <head>
   <title>TubeX微信机器人</title>
+  <style>
+    #logsTable {
+      width: 80%;
+      margin: 20px auto;
+      border-collapse: collapse;
+    }
+
+    #logsTable th, #logsTable td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+
+    #logsTable th {
+      background-color: #f2f2f2;
+    }
+
+    #chatsTable {
+      width: 80%;
+      margin: 20px auto;
+      border-collapse: collapse;
+    }
+
+    #chatsTable th, #chatsTable td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+
+    #chatsTable th {
+      background-color: #f2f2f2;
+    }
+  </style>
 </head>
 <body>
   <center>
     <h1>TubeX微信机器人</h1>
     <div id="qrcode"></div>
+    <h1>聊天记录</h1>
+    <table id="chatsTable">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>时间戳</th>
+          <th>用户名/群名</th>
+          <th>消息</th>
+        </tr>
+      </thead>
+      <tbody></tbody>  <!--  Logs will be added here -->
+    </table>
+    <h1>日志记录</h1>
+    <table id="logsTable">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>时间戳</th>
+          <th>等级</th>
+          <th>消息</th>
+        </tr>
+      </thead>
+      <tbody></tbody>  
+    </table>
   </center>
   <script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
    <script>
@@ -15,13 +72,48 @@
     let refreshInterval;
 
     function generateQRCode(qrcodeData) {
-      console.log(qrcodeData);
       qrcodeContainer.innerHTML = '';
       new QRCode(qrcodeContainer, {
         text: qrcodeData,
         width: 228,
         height: 228,
         correctLevel: QRCode.CorrectLevel.H
+      });
+    }
+
+    function displayLogs(logs) {
+      const tableBody = document.querySelector('#logsTable tbody');
+      tableBody.innerHTML = ''; // Clear existing rows
+
+      logs.forEach(log => {
+        const row = tableBody.insertRow();
+        const idCell = row.insertCell();
+        const timestampCell = row.insertCell();
+        const levelCell = row.insertCell();
+        const messageCell = row.insertCell();
+
+        idCell.textContent = log.id;
+        timestampCell.textContent = log.timestamp;
+        levelCell.textContent = log.level;
+        messageCell.textContent = log.message;
+      });
+    }
+
+    function displayChats(chats) {
+      const tableBody = document.querySelector('#chatsTable tbody');
+      tableBody.innerHTML = ''; // Clear existing rows
+
+      chats.forEach(log => {
+        const row = tableBody.insertRow();
+        const idCell = row.insertCell();
+        const timestampCell = row.insertCell();
+        const nameCell = row.insertCell();
+        const messageCell = row.insertCell();
+
+        idCell.textContent = log.id;
+        timestampCell.textContent = log.timestamp;
+        nameCell.textContent = log.name;
+        messageCell.textContent = log.message;
       });
     }
 
@@ -44,7 +136,7 @@
         };
 
         ws.onerror = (error) => {
-            console.error("WebSocket error:", error);
+            // console.error("WebSocket error:", error);
             // 出错后，重新启动定时器
             refreshInterval = setInterval(refreshPage, 10000);
         };
@@ -56,7 +148,6 @@
             ws.close(); // 关闭现有连接
         }
         connectAndRequestQRCode(); // 建立新的连接并请求二维码
-        // location.reload();  // 或者直接刷新页面，如果你的后端支持自动重新生成二维码
     }
 
     // 初始连接
@@ -64,6 +155,35 @@
 
     // 设置定时器，每10秒刷新一次
     refreshInterval = setInterval(refreshPage, 10000);
+    
+    async function getLogs() {
+      try {
+        const response = await fetch('/api/logs'); //  Make sure this route is correct
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const logs = await response.json();
+        displayLogs(logs);
+      } catch (error) {
+        console.error("Error retrieving or displaying logs:", error);
+        //  You could also display an error message on the page here.
+      }
+    }
+    async function getChats() {
+      try {
+        const response = await fetch('/api/chats'); //  Make sure this route is correct
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const chats = await response.json();
+        displayChats(chats);
+      } catch (error) {
+        console.error("Error retrieving or displaying logs:", error);
+        //  You could also display an error message on the page here.
+      }
+    }
+    getLogs();
+    getChats();
 
   </script>
 </body>

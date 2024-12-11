@@ -13,7 +13,6 @@
         };
 
         ws.onmessage = (event) => {
-            console.log("Received QR code:", event.data);
             // Display the QR code (assuming it's a string)
              document.getElementById('qrcode').innerText = event.data;
         };

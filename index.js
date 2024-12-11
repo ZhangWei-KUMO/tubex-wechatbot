@@ -7,14 +7,18 @@ import {sendMessage,convertSilkToWav,readSheet,readTxt,
 import {recognizeSpeech} from './util/azure.js'
 import { config } from 'dotenv';
 import {splitTextIntoArray} from './util/reply-filter.js'
-// import qrcode from 'qrcode-terminal';
-import {transporter,mailOptions} from './util/mailer.js';
 import schedule from 'node-schedule';
 import {getNews} from './util/group.js'
 import { WebSocketServer } from "ws"
 import express from 'express';
 import path from 'path';
 import open from 'open';
+import {log,getLogs} from './db/logs.js'
+import {chat,getChats} from './db/chats.js'
+import { fileURLToPath } from 'url';  // Import fileURLToPath
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 
 const wss = new WebSocketServer({ port: 1982 })
 const app = express();
@@ -22,9 +26,6 @@ const port = 3000;
 
 config();
 console.log("微信机器人启动，版本号：",bot.version());
-// function qrcodeToTerminal(url) {
-//   qrcode.generate(url, { small: true });
-// }
 
 export async function prepareBot() {
   bot.on("message", async (message) => {  
@@ -36,6 +37,9 @@ export async function prepareBot() {
     // 属于群聊的聊天信息
     if (message.room()) {
       let roomMsg = message.room()
+      let {payload} = roomMsg;
+      // 群名称
+      let {topic} = payload;
       // 获取当前群聊名称
       let mentionText = await message.mentionText();
       if (await message.mentionSelf()) {
@@ -109,7 +113,7 @@ export async function prepareBot() {
             }
             break;
           case 7:
-            console.log(message)
+            chat(topic, message.payload.text);
             break;
           default:
             return
@@ -132,6 +136,8 @@ export async function prepareBot() {
           const locationText = `我的地址是：${lines[0]}`;
           saveInLongMemory(locationText,talkerId)          
         }else{
+         
+          chat(talkerId, text);
           let answer = await difyChat(talkerId,text) 
           if(answer){ 
             answer = answer.replace(/\*/g, '');                
@@ -155,6 +161,7 @@ export async function prepareBot() {
       break;
       // 图片消息
     case 6:
+      chat(talkerId, '图片消息');
       break;
     case 11:
       { const xmlstr = payload.text;
@@ -269,10 +276,7 @@ export async function prepareBot() {
   });
 
   bot.on('scan', (qrcode) => {
-    // 生成微信登录二维码
-    // qrcodeToTerminal(qrcode);
     wss.on('connection', function connection(ws) {
-      // 发送二维码给前端
       ws.send(qrcode);
     })
   })
@@ -280,27 +284,21 @@ export async function prepareBot() {
   bot.on("login", (user) => {
     let {payload} = user;
     let {name} = payload;
-    console.log("机器人登录成功，账号名：", name);
+    log('info', "机器人登录成功，账号名："+name);
   })
 
-  bot.on("logout", async () => {
-    transporter.sendMail(mailOptions, (error) => {
-      if (error) {
-        return console.error(error);
-      }
-    });
-    wss.clients.forEach((client) => {
-      client.close(); // Important: Close client after login
-    });
+  bot.on("logout", async (user) => {
+    let {payload} = user;
+    let {name} = payload;
+    log('info', name+"退出登录");
   })
 
   bot.on("error", (e) => {
-    console.error(e);
+    log('error', e);
   })
   // 启动的时间会比较久
   bot.on("ready",async ()=>{
     let rooms = await bot.Room.findAll()
-    // 过滤rooms中payload.topic是否有匹配
     let id = ""
     rooms.filter(room=>{
       if(process.env.MANAGE_ROOMS.includes(room.payload.topic)){
@@ -332,18 +330,28 @@ export async function prepareBot() {
 }
 
 async function startBot() {
-    // Serve static files from the 'public' directory
     app.use(express.static(path.join(process.cwd(), 'public'))); // Assuming your HTML is in 'public'
-    console.log("---")
-     app.get('/', (req, res) => {
-       res.sendFile(path.join(__dirname, './public/index.html')); // or wherever your index.html is
-     });
-   
-     app.listen(port, async () => {
+  
+    app.get('/api/logs', (req, res) => {
+      getLogs().then((data) => {
+        res.json(data);
+      });
+    });
+    app.get('/api/chats', (req, res) => {
+      getChats().then((data) => {
+          res.json(data);
+      });
+    });
+    app.get('/settings', (req, res) => {
+      res.sendFile(path.join(__dirname, './public/settings.html')); 
+    });
+    app.get('/', (req, res) => {
+        res.sendFile(path.join(__dirname, './public/index.html')); 
+    });
+    app.listen(port, async () => {
        console.log(`Web server listening at http://localhost:${port}`);
-        // Open the browser automatically
        await open(`http://localhost:${port}`);
-     });
+    });
   await prepareBot();
 
 }
@@ -351,11 +359,11 @@ async function startBot() {
 startBot().catch(console.error);
 
 process.on('exit', async(code) => {
-  console.log(`WechatY程序中断: ${code}`);
+  log('warning', "程序退出"+code);
 });
 
 process.on('SIGINT', async () => {
-  console.log(`WechatY程序中断:SIGINT`);
+  log('warning', "程序退出");
   await bot.logout();
   process.exit();
 });

@@ -4,3 +4,4 @@ logger
 script
 yarn.lock
 xuyue.memory-card.json
+*.db

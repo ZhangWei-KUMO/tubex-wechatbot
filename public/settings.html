@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TubeX微信机器人</title>
+    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+
+    <script src="https://unpkg.com/@douyinfe/semi-ui@2.27.0/dist/umd/semi-ui.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/@douyinfe/semi-ui@2.27.0/dist/css/semi.css">
+
+    <script src="https://unpkg.com/@douyinfe/semi-icons@latest/dist/umd/semi-icons.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/@douyinfe/semi-icons@latest/dist/css/semi-icons.css">
+
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background: var(--semi-color-bg-1);
+        }
+
+        .components-layout-demo .semi-layout-sider {
+            background: var(--semi-color-fill-2);
+            overflow: auto;
+        }
+
+        .content-container {
+            padding: 24px;
+            background: var(--semi-color-bg-0);
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .input-group {
+            margin-bottom: 16px;
+        }
+
+        .input-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        /*  侧边栏整体样式 */
+.semi-layout-sider {
+    background: #fff; /* 白色背景 */
+    overflow-y: auto; /* 允许纵向滚动 */
+    border-right: 1px solid var(--semi-color-border); /* 添加右边框 */
+}
+
+
+/*  侧边栏头部样式  */
+.sider-header {
+    padding: 24px 0;
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: 600; /* 加粗字体 */
+    color: var(--semi-color-text-1);  /*  深色文字 */
+    border-bottom: 1px solid var(--semi-color-border); /* 底部分隔线 */
+}
+
+/*  导航链接样式 */
+.sider-nav a {
+    display: block;
+    padding: 12px 20px; /*  增加 padding */
+    color: var(--semi-color-text-2);  /*  较浅的文字颜色 */
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 0.3s, color 0.3s; /* 添加颜色过渡 */
+}
+
+.sider-nav a:hover {
+    background-color: var(--semi-color-fill-0);  /* 悬停背景颜色 */
+    color: var(--semi-color-text-0);  /*  悬停文字颜色 */
+}
+
+
+.sider-nav a.active { /* 当前页面的链接样式 */
+    background-color: var(--semi-color-primary-light); /*  高亮背景 */
+    color: var(--semi-color-primary);  /* 高亮文字颜色 */
+    font-weight: 500; /*  加粗字体 */
+}
+    </style>
+</head>
+
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+        const { Menu,Input, Button, Switch, TimePicker, TagInput, Layout, Icon,Row,Col } = SemiUI;
+        const { IconHome } = SemiIcons;
+        const { Header, Sider, Content } = Layout;
+
+        const commonStyle = {
+            height: 64,
+            lineHeight: '64px',
+            background: 'var(--semi-color-fill-0)',
+            padding: '0 24px'
+        };
+
+        function App() { // 函数组件
+            const [geminiKey, setGeminiKey] = React.useState('');
+            const [difyKey, setDifyKey] = React.useState('');
+            const [greeting, setGreeting] = React.useState('');
+            const [groupGreeting, setGroupGreeting] = React.useState('');
+            const [pushTime, setPushTime] = React.useState(null);
+            const [pushGroups, setPushGroups] = React.useState([]);
+            const [isPushEnabled, setIsPushEnabled] = React.useState(true);
+            const [isAiEnabled, setIsAiEnabled] = React.useState(true);
+
+            const handleSubmit = async () => {
+                const data = {
+                    geminiKey,
+                    difyKey,
+                    greeting,
+                    groupGreeting,
+                    pushTime: pushTime ? pushTime.format('HH:mm') : null, // 格式化时间
+                    pushGroups,
+                    isPushEnabled,
+                    isAiEnabled,
+                };
+
+                try {
+                    const response = await fetch('/api/settings', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(data),
+                    });
+
+                    if (response.ok) {
+                        Message.success('保存成功');
+                    } else {
+                        const errorData = await response.json(); // 获取错误信息
+                        Message.error(`保存失败: ${errorData.message || '未知错误'}`); // 显示错误信息
+                    }
+                } catch (error) {
+                    Message.error(`保存失败: ${error.message}`); // 处理网络错误
+                }
+            };
+        return (
+            <Layout className="components-layout-demo">
+                <Sider style={{ width: '200px',background:"#fff" }} className="sider-nav">
+                    <div style={{ padding: '24px 0', textAlign: 'center' }}>       
+                    </div>
+                    <div><a href="/" style={{ display: 'block', padding: '8px 16px' }}>首页</a></div>
+                    <div><a href="/chats" style={{ display: 'block', padding: '8px 16px' }}>聊天记录</a></div>
+                    <div><a href="/logs" style={{ display: 'block', padding: '8px 16px' }}>日志记录</a></div>
+                    <div><a href="/settings" style={{ display: 'block', padding: '8px 16px' }}>设置</a></div>
+                    <div><a href="/docs" style={{ display: 'block', padding: '8px 16px' }}>开发文档</a></div>
+                    <div><a href="/poster" style={{ display: 'block', padding: '8px 16px' }}>宣传海报</a></div>
+                    <div><a href="/knowledge" style={{ display: 'block', padding: '8px 16px' }}>知识库</a></div>
+                </Sider>
+                <Layout>
+                    <Header style={commonStyle}>微信机器人 Linux版本 后台管理系统</Header>
+                    <Content style={{ padding: '24px', minHeight: 'calc(100vh - 64px)' }}>
+                        <div className="content-container">
+                            <div className="input-group">
+                                <label className="input-label">Gemini API KEY</label>
+                                <Input placeholder="请输入Gemini API KEY,该KEY用于图片识别"  />
+                            </div>
+                            <div className="input-group">
+                                <label className="input-label">Dify API KEY</label>
+                                <Input placeholder="Dify API KEY,该KEY用于大语言模型" />
+                            </div>
+                            <div className="input-group">
+                                <label className="input-label">问候语</label>
+                                <Input placeholder="添加好友后问候语"  />
+                            </div>
+                            <div className="input-group">
+                                <label className="input-label">群聊问候语</label>
+                                <Input placeholder="新人加群后问候语" />
+                            </div>
+                         
+                            <div className="input-group">
+                                <label className="input-label">推送时间</label>
+                                <TimePicker insetLabel='推送定时消息时间'/>
+                            </div>
+                            <div className="input-group">
+                                <label className="input-label">推送群</label>
+                                <TagInput
+                                    separator={['-', '/', '|', '++']}
+                                    placeholder='推送消息的群名称'
+                                    value={pushGroups}
+                                />
+                            </div>
+                            <Row>
+                                <Col lg={6}>
+                            <div className="input-group">
+                                <label className="input-label">开启推送</label>
+                                <Switch defaultChecked checkedText="开" uncheckedText="关" size="large" />
+                            </div>
+                            </Col>
+                            <Col lg={6}>
+                            <div className="input-group">
+                                <label className="input-label">AI启动状态</label>
+                                <Switch defaultChecked checkedText="开" uncheckedText="关" size="large" />
+                            </div>
+                        </Col>
+                        <Col lg={6}>
+                            <div style={{ marginTop: '16px' }}>
+                                <Button type="primary" theme="solid" onClick={handleSubmit}>保存</Button>
+                            </div>
+                        </Col>
+                            </Row>
+                        </div>
+                    </Content>
+                </Layout>
+            </Layout>
+          
+        )}
+        ReactDOM.render(<App />, document.getElementById('root'));
+
+    </script>
+
+</body>
+
+</html>

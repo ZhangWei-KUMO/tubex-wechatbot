@@ -33,6 +33,10 @@ This is an open-source WeChat robot project based on WechatY, Dify API services,
 | USGC | 纽约黄金价格 |✅|
 | Inpainting | 机器人集群启动 |✅|
 | Websocket监听通信 | Websocket监听通信 |✅|
+| SQLite | 支持SQLite数据库 |✅|
+| Group Chat Export | 群聊天记录的导出 |✅|
+
+
 
 ## Workflow
 
@@ -45,7 +49,9 @@ This is an open-source WeChat robot project based on WechatY, Dify API services,
 ```bash
 # e.g. Ubuntu 22
 sudo apt update
+# 启动语音识别功能需要安装ffmpeg
 sudo apt install ffmpeg
+# redis记录临时ID
 sudo apt install redis-server
 npm install -g pm2
 ```
@@ -99,5 +105,6 @@ pm2 logs tubex-wechatbot
 lewis.q.zhang@gmail.com
 
 https://tubex.chat
+
 
 
