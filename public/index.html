@@ -159,13 +159,13 @@
                                     correctLevel: QRCode.CorrectLevel.H
                                 });
                             } else {
-                                // console.error("QRCode container not found.");
+                                console.error("QRCode container not found.");
                             }
                         }
                     };
 
                     ws.onerror = (error) => {
-                        // console.error("WebSocket error:", error);
+                        console.error("WebSocket error:", error);
                     };
                 }
 

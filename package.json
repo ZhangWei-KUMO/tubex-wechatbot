@@ -5,7 +5,7 @@
   "type": "module",
   "bin": "index.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "nodemon index.js",
     "build": "pkg . --target node16-macos-arm64 --output wechaty-client"
   },
   "pkg": {
@@ -15,6 +15,7 @@
     "@google/generative-ai": "^0.21.0",
     "dotenv": "^16.4.5",
     "express": "^4.21.2",
+    "express-session": "^1.18.1",
     "fluent-ffmpeg": "^2.1.2",
     "ioredis": "^5.3.2",
     "mammoth": "^1.6.0",
@@ -23,6 +24,7 @@
     "moment-timezone": "^0.5.46",
     "node-schedule": "^2.1.1",
     "nodemailer": "^6.9.15",
+    "nodemon": "^3.1.7",
     "open": "^10.1.0",
     "openai": "^4.28.0",
     "pdf-parse": "^1.1.1",

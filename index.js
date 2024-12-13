@@ -17,8 +17,10 @@ import {log,getLogs,deleteLogs} from './db/logs.js'
 import {chat,getChats,deleteChats} from './db/chats.js'
 import {getConfig,saveConfig} from './db/config.js'
 import { fileURLToPath } from 'url';  // Import fileURLToPath
+import session from 'express-session';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const noAuthRequiredRoutes = ['/login', '/register', '/forgot-password']; //  不需要授权的路径列表
 
 
 const wss = new WebSocketServer({ port: 1983 })
@@ -26,13 +28,31 @@ const wss = new WebSocketServer({ port: 1983 })
 wss.setMaxListeners(20);  //  或者设置为更合适的数值
 
 const app = express();
+app.use(express.static(path.join(process.cwd(), 'public'))); 
 app.use(express.json()); // 解析 JSON 格式的请求体
 app.use(express.urlencoded({ extended: true })); // 解析 URL 编码的请求体
+app.use(isAuthenticated); // 所有路由都需要登录
+app.use(session({
+  secret: 'tubex', 
+  resave: false,
+  saveUninitialized: false,
+}));
 
 const port = 3000;
 
 config();
 console.log("微信机器人启动，版本号：",bot.version());
+
+function isAuthenticated(req, res, next) {
+  // 检查用户是否已登录，例如检查 session 或 cookie
+  if (noAuthRequiredRoutes.includes(req.path) || (req.session && req.session.user)) {
+    return next(); //  如果已登录，继续执行下一个中间件或路由处理程序
+  } else {
+    console.log("路由没有授权")
+    res.redirect('http://localhost:3000/settings'); // 使用绝对 URL
+  }
+}
+
 
 export async function prepareBot() {
   bot.on("message", async (message) => {  
@@ -345,8 +365,28 @@ export async function prepareBot() {
 }
 
 async function startBot() {
-    app.use(express.static(path.join(process.cwd(), 'public'))); // Assuming your HTML is in 'public'
-  
+
+    app.post('/api/login', (req, res) => {
+      const { username, password } = req.body;
+      //  验证用户名和密码 (替换为你实际的验证逻辑)
+      if (username === 'admin' && password === 'password') {
+        req.session.user = username; // 设置登录标识
+        res.redirect('/settings'); // 登录成功后重定向到设置页面
+      } else {
+        res.send('Login failed');
+      }
+    });
+    // 退出
+    app.get('/api/logout', (req, res) => {
+      req.session.destroy((err) => { // 清除 session 数据
+        if (err) {
+          console.error("Error destroying session:", err);
+          // 可以选择返回错误信息或重定向到错误页面
+          return res.status(500).send("Logout failed"); 
+        }
+        res.redirect('/login'); // 重定向到登录页面
+      });
+    });
     app.get('/api/logs', (req, res) => {
       getLogs().then((data) => {
         res.json(data);
@@ -385,6 +425,9 @@ async function startBot() {
     });
     app.get('/settings', (req, res) => {
       res.sendFile(path.join(__dirname, './public/settings.html')); 
+    });
+    app.get('/login', (req, res) => {
+      res.sendFile(path.join(__dirname, './public/login.html')); 
     });
     app.get('/docs', (req, res) => {
         res.sendFile(path.join(__dirname, './public/docs.html')); 
