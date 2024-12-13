@@ -14,7 +14,7 @@
 
     <script src="https://unpkg.com/@douyinfe/semi-icons@latest/dist/umd/semi-icons.min.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/@douyinfe/semi-icons@latest/dist/css/semi-icons.css">
-    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/min/moment-with-locales.min.js"></script>
+
 
     <style>
         body {
@@ -33,7 +33,7 @@
             padding: 24px;
             background: var(--semi-color-bg-0);
             border-radius: 4px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            width: 800px;
         }
 
         .input-group {
@@ -91,7 +91,7 @@
 <body>
     <div id="root"></div>
     <script type="text/babel">
-        const { Menu,Input, Button, Switch, TimePicker, TagInput, Layout, Icon,Row,Col,Toast } = SemiUI;
+        const { Menu,Input, Button, Switch, TimePicker, TagInput, Layout, Icon,Row,Col } = SemiUI;
         const { IconHome } = SemiIcons;
         const { Header, Sider, Content } = Layout;
 
@@ -104,46 +104,24 @@
         };
 
         function App() { // 函数组件
-            let {useEffect} = React;
-            const [geminiApiKey, setGeminiKey] = React.useState('');
-            const [difyApiKey, setDifyKey] = React.useState('');
+            const [geminiKey, setGeminiKey] = React.useState('');
+            const [difyKey, setDifyKey] = React.useState('');
             const [greeting, setGreeting] = React.useState('');
+            const [groupGreeting, setGroupGreeting] = React.useState('');
             const [pushTime, setPushTime] = React.useState(null);
-            const [groups, setPushGroups] = React.useState([]);
-            const [isPushEnable, setIsPushEnabled] = React.useState(false);
-            const [isEnable, setIsAiEnabled] = React.useState(false);
+            const [pushGroups, setPushGroups] = React.useState([]);
+            const [isPushEnabled, setIsPushEnabled] = React.useState(true);
+            const [isAiEnabled, setIsAiEnabled] = React.useState(true);
             const [activeLink, setActiveLink] = React.useState(window.location.pathname); //  存储当前激活的链接
 
-            const fetchData = () => {
-                 // 获取默认配置
-                 fetch('/api/settings')
-                    .then((response) => response.json())
-                    .then((data) => {
-                        console.log(data);
-                        if(!data){
-                            Toast.error(`没有获取到配置信息`);
-                        }
-                        setGeminiKey(data.geminiApiKey);
-                        setDifyKey(data.difyApiKey);
-                        setGreeting(data.greeting);
-                        setPushTime(data.pushTime ? moment(data.pushTime, 'HH:mm') : null); // 解析时间
-                        setPushGroups(data.groups.split(','));
-                        setIsPushEnabled(data.isPushEnable);
-                        setIsAiEnabled(data.isEnable);
-                    })
-                    .catch((error) => {
-                        Toast.error(`获取配置失败: ${error.message}`);
-                    });
-            }
-            useEffect(() => {
+            React.useEffect(() => {
                 // 监听路由变化
                 const handleLocationChange = () => {
-                    setActiveLink(window.location.pathname);
-                };
+                setActiveLink(window.location.pathname);
+            };
 
                 window.addEventListener('popstate', handleLocationChange); //  处理浏览器前进/后退按钮
-                fetchData()
-               
+
                 // 组件卸载时移除监听器
                 return () => {
                     window.removeEventListener('popstate', handleLocationChange);
@@ -160,18 +138,16 @@
                 { path: "/knowledge", text: "知识库" },
             ];
             const handleSubmit = async () => {
-                const formattedPushTime = pushTime ? moment(pushTime).format('HH:mm') : null;
-
                 const data = {
-                    geminiApiKey,
-                    difyApiKey,
+                    geminiKey,
+                    difyKey,
                     greeting,
-                    pushTime: formattedPushTime,
-                    groups:`${groups}`,
-                    isPushEnable,
-                    isEnable,
+                    groupGreeting,
+                    pushTime: pushTime ? pushTime.format('HH:mm') : null, // 格式化时间
+                    pushGroups,
+                    isPushEnabled,
+                    isAiEnabled,
                 };
-                console.log(data)
 
                 try {
                     const response = await fetch('/api/settings', {
@@ -183,14 +159,13 @@
                     });
 
                     if (response.ok) {
-                        Toast.success('保存成功');
-                        fetchData()
+                        Message.success('保存成功');
                     } else {
                         const errorData = await response.json(); // 获取错误信息
-                        Toast.error(`保存失败: ${errorData.message || '未知错误'}`); // 显示错误信息
+                        Message.error(`保存失败: ${errorData.message || '未知错误'}`); // 显示错误信息
                     }
                 } catch (error) {
-                    Toast.error(`保存失败: ${error.message}`); // 处理网络错误
+                    Message.error(`保存失败: ${error.message}`); // 处理网络错误
                 }
             };
         return (
@@ -203,8 +178,7 @@
                                     href={link.path}
                                     className={activeLink === link.path ? 'active' : ''}
                                     onClick={(e) => {
-                      
-                                setActiveLink(link.path); 
+                                setActiveLink(link.path); // 更新 activeLink 状态
                             }}
                         >
                             {link.text}
@@ -216,51 +190,14 @@
                     <Header style={commonStyle}>微信机器人 Linux版本 后台管理系统</Header>
                     <Content style={{ padding: '24px', minHeight: 'calc(100vh - 64px)' }}>
                         <div className="content-container">
-                            <div className="input-group">
-                                <label className="input-label">Gemini API KEY</label>
-                                <Input placeholder="请输入Gemini API KEY,该KEY用于图片识别"  onChange={setGeminiKey} value={geminiApiKey}/>
-                            </div>
-                            <div className="input-group">
-                                <label className="input-label">Dify API KEY</label>
-                                <Input placeholder="Dify API KEY,该KEY用于大语言模型" onChange={setDifyKey} value={difyApiKey}/>
-                            </div>
-                            <div className="input-group">
-                                <label className="input-label">问候语</label>
-                                <Input placeholder="添加好友后问候语" value={greeting} onChange={setGreeting}/>
-                            </div>
-                          
-                         
-                            <div className="input-group">
-                                <label className="input-label">推送时间</label>
-                                <TimePicker insetLabel='推送定时消息时间' onChange={setPushTime} value={pushTime}/>
-                            </div>
-                            <div className="input-group">
-                                <label className="input-label">推送群</label>
-                                <TagInput
-                                    placeholder='推送消息的群名称'
-                                    value={groups}
-                                    onChange={setPushGroups}
-                                />
-                            </div>
-                            <Row>
-                                <Col lg={6}>
-                            <div className="input-group">
-                                <label className="input-label">开启推送</label>
-                                <Switch checked={isPushEnable} checkedText="开" uncheckedText="关" size="large" onChange={setIsPushEnabled}/>
-                            </div>
-                            </Col>
-                            <Col lg={6}>
-                            <div className="input-group">
-                                <label className="input-label">AI启动状态</label>
-                                <Switch checked={isEnable} checkedText="开" uncheckedText="关" size="large" onChange={setIsAiEnabled}/>
-                            </div>
-                        </Col>
-                        <Col lg={6}>
-                            <div style={{ marginTop: '16px' }}>
-                                <Button type="primary" theme="solid" onClick={handleSubmit}>保存</Button>
-                            </div>
-                        </Col>
-                            </Row>
+                        <h2>开发文档</h2>
+                        <p>本产品基于浏览器端微信客户端集成大语言模型、TTS语音识别、图片识别等人工智能技术构建而成，
+                            其目的在于减少人工客服或依赖微信工作人员的工作量，提高工作效率。
+                            用户在使用本产品时需遵循相关法律法规，不得用于违法违规行为，同时应遵循微信用户协议，
+                            否则造成的封号行为由用户自行承担。
+                        </p>
+                        <p>在服务器配置上至少需要2G以上内存、2核CPU。由于微信聊天记录数据相对较大，建议100GB以上存储空间。</p>
+                        <p>在语音TTS转码处理上，本项目依赖FFMPEG环境，在图片识别上依赖Google人工智能Gemini。</p>
                         </div>
                     </Content>
                 </Layout>

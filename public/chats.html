@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TubeX微信机器人</title>
+    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@douyinfe/semi-ui@2.27.0/dist/umd/semi-ui.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/@douyinfe/semi-ui@2.27.0/dist/css/semi.css">
+    <script src="https://unpkg.com/@douyinfe/semi-icons@latest/dist/umd/semi-icons.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/@douyinfe/semi-icons@latest/dist/css/semi-icons.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background: var(--semi-color-bg-1);
+        }
+
+        .components-layout-demo .semi-layout-sider {
+            background: var(--semi-color-fill-2);
+            overflow: auto;
+        }
+
+        .content-container {
+            padding: 24px;
+            background: var(--semi-color-bg-0);
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .input-group {
+            margin-bottom: 16px;
+        }
+
+        .input-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .semi-layout-sider {
+            background: #fff;
+            overflow-y: auto;
+            border-right: 1px solid var(--semi-color-border); 
+        }
+
+        .sider-header {
+            padding: 24px 0;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: 600; 
+            color: var(--semi-color-text-1);  
+            border-bottom: 1px solid var(--semi-color-border); 
+        }
+
+        .sider-nav a {
+            display: block;
+            padding: 12px 20px;
+            color: var(--semi-color-text-2); 
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.3s, color 0.3s; 
+        }
+
+        .sider-nav a:hover {
+            background-color: var(--semi-color-fill-0); 
+            color: var(--semi-color-text-0); 
+        }
+
+
+        .sider-nav a.active { 
+            background-color: var(--semi-color-primary-light); 
+            color: var(--semi-color-primary); 
+            font-weight: 500; 
+        }
+    </style>
+</head>
+
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+        const { Menu,Input, Button, Switch, TimePicker, TagInput, Layout, Icon,Row,Col,Table,Space,Toast } = SemiUI;
+        const { IconHome } = SemiIcons;
+        const { Header, Sider, Content } = Layout;
+
+        const commonStyle = {
+            height: 64,
+            lineHeight: '64px',
+            background: 'var(--semi-color-fill-0)',
+            padding: '0 24px',
+            fontWeight:"600"
+        };
+
+        function App() { 
+            let {useState,useEffect} = React
+            const [data, setData] = useState([]);
+            const [total,setToatal] = useState(0)
+            const [currentPage, setPage] = useState(1);
+            const [activeLink, setActiveLink] = useState(window.location.pathname); //  存储当前激活的链接
+
+            async function getChats() {
+                try {
+                    const response = await fetch('/api/chats'); 
+                    if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const chats = await response.json();
+                    setData(chats);
+                } catch (error) {
+                    // console.error("Error retrieving or displaying chats:", error);
+                }
+            }
+
+            useEffect(() => {
+                const handleLocationChange = () => {
+                    setActiveLink(window.location.pathname);
+                };
+
+                window.addEventListener('popstate', handleLocationChange);
+                getChats()
+                return () => {
+                    window.removeEventListener('popstate', handleLocationChange);
+                };
+            }, []);
+
+            const links = [
+                { path: "/", text: "首页" },
+                { path: "/chats", text: "聊天记录" },
+                { path: "/logs", text: "日志记录" },
+                { path: "/settings", text: "设置" },
+                { path: "/docs", text: "开发文档" },
+                { path: "/poster", text: "宣传海报" },
+                { path: "/knowledge", text: "知识库" },
+            ];
+
+            const columns = [
+                {
+                    title: 'ID',
+                    dataIndex: 'id',
+                },
+                {
+                    title: '时间',
+                    dataIndex: 'timestamp',
+                },
+                {
+                    title: '群/用户名',
+                    dataIndex: 'name',
+                },
+                {
+                    title: '消息内容',
+                    dataIndex: 'message',
+                },
+            ];
+
+            const handleClearAll = async () => {
+                try {
+                    const response = await fetch('/api/chats', {
+                        method: 'DELETE',
+                    });
+                    if (response.ok) {
+                        setData([]);
+                        Toast.success('清空成功');
+                    } else {
+                        const errorData = await response.json(); 
+                        Toast.error(`清空失败: ${errorData.message || '未知错误'}`); 
+                    }
+                } catch (error) {
+                    Toast.error(`清空失败: ${error.message}`);
+                }
+            };
+
+        return (
+            <Layout className="components-layout-demo">
+                <Sider style={{ width: '200px',background:"#fff" }} className="sider-nav">
+                    <div style={{ padding: '24px 0', textAlign: 'center' }}></div>
+                        {links.map((link) => (
+                            <div key={link.path}>
+                                <a href={link.path}
+                                    className={activeLink === link.path ? 'active' : ''}
+                                    onClick={(e) => {
+                                setActiveLink(link.path); 
+                            }}
+                        >
+                            {link.text}
+                        </a>
+                    </div>
+                    ))}
+                </Sider>
+                <Layout>
+                    <Header style={commonStyle}>微信机器人 Linux版本 后台管理系统</Header>
+                    <Content style={{ padding: '24px', minHeight: 'calc(100vh - 64px)' }}>
+                        <Space>
+                            <h2>聊天记录</h2>
+                            <Button onClick={()=>handleClearAll()}>清空记录</Button>
+                        </Space>
+                        <Table columns={columns} dataSource={data}  
+                                    // pagination={{
+                                    //     currentPage,
+                                    //     pageSize: 5,
+                                    //     total: total,
+                                    //     onPageChange: handlePageChange,
+                                    // }}
+                        ></Table>
+                    </Content>
+                </Layout>
+            </Layout>
+          
+        )}
+        ReactDOM.render(<App />, document.getElementById('root'));
+
+    </script>
+
+</body>
+
+</html>

@@ -27,6 +27,7 @@
     "openai": "^4.28.0",
     "pdf-parse": "^1.1.1",
     "qrcode-terminal": "^0.12.0",
+    "qrcode.react": "^4.2.0",
     "replicate": "^0.34.0",
     "sensitive-words-js": "^1.0.4",
     "sqlite3": "^5.1.7",

@@ -13,15 +13,22 @@ import { WebSocketServer } from "ws"
 import express from 'express';
 import path from 'path';
 import open from 'open';
-import {log,getLogs} from './db/logs.js'
-import {chat,getChats} from './db/chats.js'
+import {log,getLogs,deleteLogs} from './db/logs.js'
+import {chat,getChats,deleteChats} from './db/chats.js'
+import {getConfig,saveConfig} from './db/config.js'
 import { fileURLToPath } from 'url';  // Import fileURLToPath
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 
-const wss = new WebSocketServer({ port: 1982 })
+const wss = new WebSocketServer({ port: 1983 })
+//  限制 WebSocketServer 的最大连接数
+wss.setMaxListeners(20);  //  或者设置为更合适的数值
+
 const app = express();
+app.use(express.json()); // 解析 JSON 格式的请求体
+app.use(express.urlencoded({ extended: true })); // 解析 URL 编码的请求体
+
 const port = 3000;
 
 config();
@@ -281,6 +288,13 @@ export async function prepareBot() {
     })
   })
 
+  // wss.on('connection', function connection(ws) {
+  //   bot.on('scan', (qrcode) => { // 将 scan 事件处理程序放在 connection 内部
+  //       ws.send(qrcode);
+  //   });
+  // });
+
+
   bot.on("login", (user) => {
     let {payload} = user;
     let {name} = payload;
@@ -294,6 +308,7 @@ export async function prepareBot() {
   })
 
   bot.on("error", (e) => {
+    console.log(e)
     log('error', e);
   })
   // 启动的时间会比较久
@@ -337,16 +352,54 @@ async function startBot() {
         res.json(data);
       });
     });
+    // 删除全部日志
+    app.delete('/api/logs', (req, res) => {
+      deleteLogs().then((data) => {
+        res.json(data);
+      });
+    });
+     // 删除全部聊天记录
+     app.delete('/api/chats', (req, res) => {
+      deleteChats().then((data) => {
+        res.json(data);
+      });
+    });
+    // 获取全部聊天记录
     app.get('/api/chats', (req, res) => {
       getChats().then((data) => {
+          res.json(data);
+      });
+    });
+    // 获取配置信息
+    app.get('/api/settings', (req, res) => {
+      getConfig().then((data) => {
+          res.json(data);
+      });
+    });
+    // 更新配置信息
+    app.post('/api/settings', (req, res) => {
+      const config = req.body;
+      saveConfig(config).then((data) => {
           res.json(data);
       });
     });
     app.get('/settings', (req, res) => {
       res.sendFile(path.join(__dirname, './public/settings.html')); 
     });
-    app.get('/', (req, res) => {
-        res.sendFile(path.join(__dirname, './public/index.html')); 
+    app.get('/docs', (req, res) => {
+        res.sendFile(path.join(__dirname, './public/docs.html')); 
+    });
+    app.get('/poster', (req, res) => {
+      res.sendFile(path.join(__dirname, './public/poster.html')); 
+    });
+    app.get('/chats', (req, res) => {
+      res.sendFile(path.join(__dirname, './public/chats.html')); 
+    });
+    app.get('/logs', (req, res) => {
+      res.sendFile(path.join(__dirname, './public/logs.html')); 
+    });
+    app.get('/knowledge', (req, res) => {
+      res.sendFile(path.join(__dirname, './public/knowledge.html')); 
     });
     app.listen(port, async () => {
        console.log(`Web server listening at http://localhost:${port}`);
@@ -364,6 +417,7 @@ process.on('exit', async(code) => {
 
 process.on('SIGINT', async () => {
   log('warning', "程序退出");
+  wss.close(); //  关闭 WebSocket 服务器
   await bot.logout();
   process.exit();
 });
