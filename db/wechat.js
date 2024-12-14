@@ -18,7 +18,7 @@ const db = new sqlite3.Database(dbFile, (err) => {
                 wechatid TEXT NOT NULL,
                 avatar TEXT NOT NULL,
                 friends TEXT NOT NULL,
-                loginurl TEXT NOT NULL,
+                loginurl TEXT NOT NULL
             )
         `, (err) => {
                 if (err) {
@@ -78,7 +78,7 @@ const db = new sqlite3.Database(dbFile, (err) => {
 
 
 // Helper function to update config
-export function updateWechatConfig(config) {
+export function saveWechatConfig(config) {
     const { username, wechatid,avatar, friends, loginurl } = config;
     return new Promise((resolve, reject) => {
         db.run(`UPDATE wechats SET username = ?,wechatid= ?, avatar = ?, friends = ?, loginurl = ? WHERE id = 1`, 
