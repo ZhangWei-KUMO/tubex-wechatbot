@@ -20,7 +20,9 @@ import {getAgentConfig,saveAgentConfig} from './db/agent.js'
 import {getEmailConfig,saveEmailConfig} from './db/email.js'
 import {getTTSConfig,saveTTSConfig} from './db/tts.js'
 import {verifyUser,updateUser} from './db/users.js'
-import { fileURLToPath } from 'url';  // Import fileURLToPath
+import {getWechatConfig,saveWechatConfig} from './db/wechat.js'
+
+import { fileURLToPath } from 'url';  
 import session from 'express-session';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -477,6 +479,19 @@ async function startBot() {
           res.json(data);
       });
     });
+       // 获取wechat配置信息
+       app.get('/api/wechat', (req, res) => {
+        getWechatConfig().then((data) => {
+            res.json(data);
+        });
+      });
+      // 更新wechat配置信息
+      app.post('/api/wechat', (req, res) => {
+        const config = req.body;
+        saveWechatConfig(config).then((data) => {
+            res.json(data);
+        });
+      });
     // 更新图片配置信息
     app.post('/api/images', (req, res) => {
       const config = req.body;
