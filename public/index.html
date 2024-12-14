@@ -14,100 +14,123 @@
 
     <script src="https://unpkg.com/@douyinfe/semi-icons@latest/dist/umd/semi-icons.min.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/@douyinfe/semi-icons@latest/dist/css/semi-icons.css">
-    <script src="https://cdn.bootcdn.net/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-
-    <style>
+    <script src="./js/qrcode.js"></script>
+     <style>
         body {
             margin: 0;
             padding: 0;
-            font-family: 'Arial', sans-serif;
-            background: var(--semi-color-bg-1);
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+             color: #fff;
+              overflow-x: hidden; /*  防止水平滚动 */
         }
 
-        .components-layout-demo .semi-layout-sider {
-            background: var(--semi-color-fill-2);
-            overflow: auto;
+
+        .components-layout-demo {
+            display: flex;
+            height: 100vh;
+        }
+      
+        .semi-layout-sider {
+            background: rgba(255, 255, 255, 0.1); /* 半透明白色背景 */
+            backdrop-filter: blur(10px);
+             border-right: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+        }
+        .semi-layout-header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+          .semi-layout-content {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(5px);
+            border-radius: 10px;
+             overflow-y: auto; /* 允许纵向滚动 */
         }
 
-        .content-container {
-            padding: 24px;
-            background: var(--semi-color-bg-0);
-            border-radius: 4px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+       .content-container {
+             padding: 30px;
+            background: rgba(255, 255, 255, 0.05);
+             border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+             margin: 20px;
+               backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+             align-items: center;
         }
 
-        .input-group {
-            margin-bottom: 16px;
+        .content-container h2 {
+             font-size: 24px;
+             font-weight: 500;
+              margin-bottom: 20px;
+             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+             letter-spacing: 1px;
         }
 
-        .input-label {
-            display: block;
-            margin-bottom: 8px;
+        #qrcode {
+            margin: 20px auto;
+            width: 228px;
+            background: #fff;
+           padding: 10px;
+              border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+         }
+
+         .sider-header {
+            padding: 24px 0;
+            text-align: center;
+            font-size: 1.2rem;
             font-weight: 600;
+              letter-spacing: 1px;
+              text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+               color: #fff;
+           border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+       }
+
+        .sider-nav a {
+            display: block;
+             padding: 12px 20px;
+             color: #ddd;
+           text-decoration: none;
+            border-radius: 5px;
+          transition: background-color 0.3s, color 0.3s;
+             margin: 5px 0;
         }
 
-        /*  侧边栏整体样式 */
-.semi-layout-sider {
-    background: #fff; /* 白色背景 */
-    overflow-y: auto; /* 允许纵向滚动 */
-    border-right: 1px solid var(--semi-color-border); /* 添加右边框 */
-}
-
-
-/*  侧边栏头部样式  */
-.sider-header {
-    padding: 24px 0;
-    text-align: center;
-    font-size: 1.2rem;
-    font-weight: 600; /* 加粗字体 */
-    color: var(--semi-color-text-1);  /*  深色文字 */
-    border-bottom: 1px solid var(--semi-color-border); /* 底部分隔线 */
-}
-
-/*  导航链接样式 */
-.sider-nav a {
-    display: block;
-    padding: 12px 20px; /*  增加 padding */
-    color: var(--semi-color-text-2);  /*  较浅的文字颜色 */
-    text-decoration: none;
-    border-radius: 4px;
-    transition: background-color 0.3s, color 0.3s; /* 添加颜色过渡 */
-}
-
-.sider-nav a:hover {
-    background-color: var(--semi-color-fill-0);  /* 悬停背景颜色 */
-    color: var(--semi-color-text-0);  /*  悬停文字颜色 */
-}
-
-
-.sider-nav a.active { /* 当前页面的链接样式 */
-    background-color: var(--semi-color-primary-light); /*  高亮背景 */
-    color: var(--semi-color-primary);  /* 高亮文字颜色 */
-    font-weight: 500; /*  加粗字体 */
-}
+       .sider-nav a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+           color: #fff;
+        }
+        .sider-nav a.active {
+            background-color:  rgba(52, 152, 219, 0.3);
+            color: #fff;
+           font-weight: 600;
+        }
     </style>
 </head>
 
 <body>
     <div id="root"></div>
-
     <script type="text/babel">
         const { Menu,Input, Button, Switch, TimePicker, TagInput, Layout, Icon,Row,Col } = SemiUI;
         const { IconHome } = SemiIcons;
         const { Header, Sider, Content } = Layout;
 
         const commonStyle = {
-            height: 64,
-            lineHeight: '64px',
-            background: 'var(--semi-color-fill-0)',
+            height: 76,
+            lineHeight: '76px',
             padding: '0 24px',
-            fontWeight:"600"
+            fontWeight:"600",
+             color:"#fff",
         };
 
-        function App() { // 函数组件
-            let {useState,useEffect} = React
+        function App() {
+              let {useState,useEffect} = React
             const [activeLink, setActiveLink] = React.useState(window.location.pathname);
-
             useEffect(() => {
                 const handleLocationChange = () => {
                     setActiveLink(window.location.pathname);
@@ -120,17 +143,19 @@
                 };
             }, []);
 
-            const links = [
+              const links = [
                 { path: "/", text: "首页" },
                 { path: "/chats", text: "聊天记录" },
                 { path: "/logs", text: "日志记录" },
-                { path: "/settings", text: "设置" },
+                { path: "/settings", text: "系统设置" },
                 { path: "/docs", text: "开发文档" },
-                { path: "/poster", text: "宣传海报" },
+                  { path: "/poster", text: "图片库" },
                 { path: "/knowledge", text: "知识库" },
-            ];
+                  { path: "/forgetpassword", text: "重置密码" },
+                   { path: "/voice", text: "语音设置" }, 
+                     { path: "/email", text: "邮箱设置" },         
+              ];
         
-
             useEffect(() => {
                 let ws;
                 let reconnectAttempts = 0;
@@ -175,33 +200,34 @@
                     if (ws) {
                         ws.close();
                     }
-                    setQrcodeGenerated(false); //  重置二维码生成状态
                 };
             }, []);
         
         return (
-            <Layout className="components-layout-demo">
-                <Sider style={{ width: '200px',background:"#fff" }} className="sider-nav">
-                    <div style={{ padding: '24px 0', textAlign: 'center' }}></div>
+             <Layout className="components-layout-demo">
+                <Sider style={{ width: '200px' }} className="sider-nav">
+                     <div className="sider-header">TubeX</div>
                         {links.map((link) => (
                             <div key={link.path}>
                                 <a
                                     href={link.path}
                                     className={activeLink === link.path ? 'active' : ''}
                                     onClick={(e) => {
-                                setActiveLink(link.path); // 更新 activeLink 状态
+                                      setActiveLink(link.path);
                             }}
-                        >
-                            {link.text}
-                        </a>
-                    </div>
-                    ))}
-                </Sider>
+                                >
+                                    {link.text}
+                                </a>
+                            </div>
+                        ))}
+                    </Sider>
                 <Layout>
-                    <Header style={commonStyle}>微信机器人 Linux版本 后台管理系统</Header>
-                    <Content style={{ padding: '24px', minHeight: 'calc(100vh - 64px)' }}>
-                        微信授权扫码登录
-                        <div id="qrcode" style={{ margin: '20px auto', width: '228px' }}></div>
+                    <Header style={commonStyle}>微信机器人后台管理系统</Header>
+                    <Content style={{  minHeight: 'calc(100vh - 64px)' }}>
+                         <div className="content-container">
+                            <h2>微信授权扫码登录</h2>
+                             <div id="qrcode" ></div>
+                        </div>
                     </Content>
                 </Layout>
             </Layout>
@@ -211,9 +237,5 @@
 
     </script>
     
-    </body>
-    </html>
-
 </body>
-
 </html>

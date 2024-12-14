@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TubeX微信机器人</title>
-    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+      <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
     <script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
 
@@ -14,97 +14,192 @@
 
     <script src="https://unpkg.com/@douyinfe/semi-icons@latest/dist/umd/semi-icons.min.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/@douyinfe/semi-icons@latest/dist/css/semi-icons.css">
-    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/min/moment-with-locales.min.js"></script>
-
+      <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/min/moment-with-locales.min.js"></script>
     <style>
         body {
             margin: 0;
             padding: 0;
-            font-family: 'Arial', sans-serif;
-            background: var(--semi-color-bg-1);
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+             color: #fff;
+              overflow-x: hidden; /*  防止水平滚动 */
         }
 
-        .components-layout-demo .semi-layout-sider {
-            background: var(--semi-color-fill-2);
-            overflow: auto;
+
+        .components-layout-demo {
+             display: flex;
+            height: 100vh;
+         
         }
+      
+        .semi-layout-sider {
+             background: rgba(255, 255, 255, 0.1); /* 半透明白色背景 */
+             backdrop-filter: blur(10px); /* 背景模糊效果 */
+             border-right: 1px solid rgba(255, 255, 255, 0.2);
+             border-radius: 10px;
+        }
+        .semi-layout-header {
+             background: rgba(255, 255, 255, 0.1);
+             backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+          .semi-layout-content {
+            background: rgba(255, 255, 255, 0.02);
+               backdrop-filter: blur(5px);
+            border-radius: 10px;
+            overflow-y: auto; /* 允许纵向滚动 */
+        }
+
 
         .content-container {
-            padding: 24px;
-            background: var(--semi-color-bg-0);
-            border-radius: 4px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            margin: 20px;
+               backdrop-filter: blur(10px);
+              border: 1px solid rgba(255, 255, 255, 0.1);
+              display: flex;
+            flex-direction: column; /* 设置主轴为垂直方向 */
+            align-items: flex-start; /* 设置交叉轴对齐方式为左对齐 */
         }
 
         .input-group {
-            margin-bottom: 16px;
+            margin-bottom: 20px;
+             width: 100%;
+             display: flex;
+            flex-direction: column;
+            align-items: flex-start; /* 输入框左对齐 */
         }
 
         .input-label {
             display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
+            margin-bottom: 10px;
+            color: #ddd; /* 灰色标签 */
+            font-weight: 500;
+            text-align: left;
+            letter-spacing: 1px;
+             text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2); /* 添加文本阴影 */
         }
 
-        /*  侧边栏整体样式 */
-.semi-layout-sider {
-    background: #fff; /* 白色背景 */
-    overflow-y: auto; /* 允许纵向滚动 */
-    border-right: 1px solid var(--semi-color-border); /* 添加右边框 */
-}
+        .input-field {
+            width: 100%;
+            /* padding: 12px; */
+            border-radius: 5px;
+            border: 1px solid #444;
+            background: rgba(255, 255, 255, 0.1); /* 半透明白色背景 */
+            color: #fff;
+            font-size: 16px;
+            transition: border-color 0.3s ease, background-color 0.3s ease; /* 动画过渡 */
+        }
+         .input-field:focus {
+             border-color: #3498db;
+             background: rgba(255, 255, 255, 0.2);
+             outline: none;
+         }
 
+       
+         .semi-input-prefix,
+          .semi-input-suffix,
+         .semi-tag-input-prefix,
+          .semi-tag-input-suffix,
+        .semi-input-wrapper{
+             background: transparent !important;
+        }
 
-/*  侧边栏头部样式  */
-.sider-header {
-    padding: 24px 0;
-    text-align: center;
-    font-size: 1.2rem;
-    font-weight: 600; /* 加粗字体 */
-    color: var(--semi-color-text-1);  /*  深色文字 */
-    border-bottom: 1px solid var(--semi-color-border); /* 底部分隔线 */
-}
+        .semi-time-picker-insetLabel,
+         .semi-time-picker-input {
+           background: transparent;
+           color:#fff;
+        }
 
-/*  导航链接样式 */
-.sider-nav a {
-    display: block;
-    padding: 12px 20px; /*  增加 padding */
-    color: var(--semi-color-text-2);  /*  较浅的文字颜色 */
-    text-decoration: none;
-    border-radius: 4px;
-    transition: background-color 0.3s, color 0.3s; /* 添加颜色过渡 */
-}
+           .button-submit {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            background: #3498db;
+            color: #fff;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+             width: 150px; /* 按钮宽度充满容器 */
+         }
 
-.sider-nav a:hover {
-    background-color: var(--semi-color-fill-0);  /* 悬停背景颜色 */
-    color: var(--semi-color-text-0);  /*  悬停文字颜色 */
-}
+        .button-submit:hover {
+            background-color: #2980b9; /* 鼠标悬停时背景颜色加深 */
+        }
 
+        .button-submit:focus {
+             outline: none; /* 移除焦点时的默认外边框 */
+        }
+        .sider-header {
+            padding: 24px 0;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: 600;
+              letter-spacing: 1px;
+              text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+               color: #fff;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
 
-.sider-nav a.active { /* 当前页面的链接样式 */
-    background-color: var(--semi-color-primary-light); /*  高亮背景 */
-    color: var(--semi-color-primary);  /* 高亮文字颜色 */
-    font-weight: 500; /*  加粗字体 */
-}
+        .sider-nav a {
+            display: block;
+            padding: 12px 20px;
+            color: #ddd;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s, color 0.3s;
+             margin: 5px 0;
+        }
+
+        .sider-nav a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+        .sider-nav a.active {
+            background-color:  rgba(52, 152, 219, 0.3);
+            color: #fff;
+             font-weight: 600;
+        }
+      .switch-label{
+        color: #ddd;
+            font-weight: 500;
+            letter-spacing: 1px;
+             text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+      }
+      .semi-switch-wrapper{
+         background: rgba(255, 255, 255, 0.1);
+        border: 1px solid #444;
+         border-radius: 5px;
+      }
+         .semi-tag-input-wrapper{
+          border-radius: 5px;
+           border: 1px solid #444;
+            color:#fff;
+         background: rgba(255, 255, 255, 0.1);
+       }
     </style>
 </head>
 
 <body>
     <div id="root"></div>
     <script type="text/babel">
-        const { Menu,Input, Button, Switch, TimePicker, TagInput, Layout, Icon,Row,Col,Toast } = SemiUI;
+         const { Menu,Input, Button, Switch, TimePicker, TagInput, Layout, Icon,Row,Col,Toast } = SemiUI;
         const { IconHome } = SemiIcons;
         const { Header, Sider, Content } = Layout;
 
         const commonStyle = {
-            height: 64,
-            lineHeight: '64px',
-            background: 'var(--semi-color-fill-0)',
+            height: 76,
+            lineHeight: '76px',
             padding: '0 24px',
-            fontWeight:"600"
+            fontWeight:"600",
+            color:"#fff",
         };
 
-        function App() { // 函数组件
-            let {useEffect} = React;
+        function App() {
+             let {useEffect} = React;
             const [geminiApiKey, setGeminiKey] = React.useState('');
             const [difyApiKey, setDifyKey] = React.useState('');
             const [greeting, setGreeting] = React.useState('');
@@ -112,9 +207,9 @@
             const [groups, setPushGroups] = React.useState([]);
             const [isPushEnable, setIsPushEnabled] = React.useState(false);
             const [isEnable, setIsAiEnabled] = React.useState(false);
-            const [activeLink, setActiveLink] = React.useState(window.location.pathname); //  存储当前激活的链接
+              const [activeLink, setActiveLink] = React.useState(window.location.pathname); //  存储当前激活的链接
 
-            const fetchData = () => {
+             const fetchData = () => {
                  // 获取默认配置
                  fetch('/api/settings')
                     .then((response) => response.json())
@@ -135,6 +230,7 @@
                         Toast.error(`获取配置失败: ${error.message}`);
                     });
             }
+
             useEffect(() => {
                 // 监听路由变化
                 const handleLocationChange = () => {
@@ -154,12 +250,15 @@
                 { path: "/", text: "首页" },
                 { path: "/chats", text: "聊天记录" },
                 { path: "/logs", text: "日志记录" },
-                { path: "/settings", text: "设置" },
+                { path: "/settings", text: "系统设置" },
                 { path: "/docs", text: "开发文档" },
-                { path: "/poster", text: "宣传海报" },
+                { path: "/poster", text: "图片库" },
                 { path: "/knowledge", text: "知识库" },
+                { path: "/forgetpassword", text: "重置密码" },
+                { path: "/voice", text: "语音设置" },
+                { path: "/email", text: "邮箱设置" },  
             ];
-            const handleSubmit = async () => {
+              const handleSubmit = async () => {
                 const formattedPushTime = pushTime ? moment(pushTime).format('HH:mm') : null;
 
                 const data = {
@@ -195,16 +294,15 @@
             };
         return (
             <Layout className="components-layout-demo">
-                <Sider style={{ width: '200px',background:"#fff" }} className="sider-nav">
-                    <div style={{ padding: '24px 0', textAlign: 'center' }}></div>
+                <Sider style={{ width: '200px' }} className="sider-nav">
+                      <div className="sider-header">TubeX</div>
                         {links.map((link) => (
                             <div key={link.path}>
                                 <a
                                     href={link.path}
                                     className={activeLink === link.path ? 'active' : ''}
                                     onClick={(e) => {
-                      
-                                setActiveLink(link.path); 
+                                      setActiveLink(link.path);
                             }}
                         >
                             {link.text}
@@ -213,53 +311,65 @@
                     ))}
                 </Sider>
                 <Layout>
-                    <Header style={commonStyle}>微信机器人 Linux版本 后台管理系统</Header>
-                    <Content style={{ padding: '24px', minHeight: 'calc(100vh - 64px)' }}>
-                        <div className="content-container">
-                            <div className="input-group">
+                    <Header style={commonStyle}>微信机器人后台管理系统</Header>
+                    <Content style={{  minHeight: 'calc(100vh - 64px)' }}>
+                         <div className="content-container">
+                                 <div className="input-group">
                                 <label className="input-label">Gemini API KEY</label>
-                                <Input placeholder="请输入Gemini API KEY,该KEY用于图片识别"  onChange={setGeminiKey} value={geminiApiKey}/>
+                                 <Input
+                                    className="input-field"
+                                    placeholder="请输入Gemini API KEY,该KEY用于图片识别"
+                                    onChange={e=>setGeminiKey(e)}
+                                    value={geminiApiKey}
+                                />
                             </div>
                             <div className="input-group">
                                 <label className="input-label">Dify API KEY</label>
-                                <Input placeholder="Dify API KEY,该KEY用于大语言模型" onChange={setDifyKey} value={difyApiKey}/>
+                                <Input
+                                    className="input-field"
+                                    placeholder="Dify API KEY,该KEY用于大语言模型"
+                                    onChange={e=>setDifyKey(e)}
+                                    value={difyApiKey}
+                                />
                             </div>
                             <div className="input-group">
                                 <label className="input-label">问候语</label>
-                                <Input placeholder="添加好友后问候语" value={greeting} onChange={setGreeting}/>
+                                <Input
+                                    className="input-field"
+                                   placeholder="添加好友后问候语"
+                                   value={greeting}
+                                   onChange={e=>setGreeting(e)}
+                                />
                             </div>
                           
                          
                             <div className="input-group">
                                 <label className="input-label">推送时间</label>
-                                <TimePicker insetLabel='推送定时消息时间' onChange={setPushTime} value={pushTime}/>
+                                 <TimePicker insetLabel='推送定时消息时间'  onChange={setPushTime} value={pushTime}/>
                             </div>
                             <div className="input-group">
                                 <label className="input-label">推送群</label>
-                                <TagInput
+                                 <TagInput
+                                    className="input-field"
                                     placeholder='推送消息的群名称'
                                     value={groups}
                                     onChange={setPushGroups}
                                 />
                             </div>
-                            <Row>
-                                <Col lg={6}>
-                            <div className="input-group">
-                                <label className="input-label">开启推送</label>
-                                <Switch checked={isPushEnable} checkedText="开" uncheckedText="关" size="large" onChange={setIsPushEnabled}/>
-                            </div>
+                              <Row style={{display: 'flex', alignItems: 'center'}}>
+                                <Col lg={8}  style={{display: 'flex', alignItems: 'center',marginBottom:'20px'}}>
+                                     <label className="input-label switch-label">开启推送</label>
+                                       <Switch  checked={isPushEnable} checkedText="开" uncheckedText="关" size="large" onChange={setIsPushEnabled}/>
                             </Col>
-                            <Col lg={6}>
-                            <div className="input-group">
-                                <label className="input-label">AI启动状态</label>
-                                <Switch checked={isEnable} checkedText="开" uncheckedText="关" size="large" onChange={setIsAiEnabled}/>
-                            </div>
-                        </Col>
-                        <Col lg={6}>
-                            <div style={{ marginTop: '16px' }}>
-                                <Button type="primary" theme="solid" onClick={handleSubmit}>保存</Button>
-                            </div>
-                        </Col>
+                            <Col lg={8}  style={{display: 'flex', alignItems: 'center',marginBottom:'20px'}}>
+                                   <label className="input-label switch-label">AI状态</label>
+                                   <Switch checked={isEnable} checkedText="开" uncheckedText="关" size="large" onChange={setIsAiEnabled}/>
+                            </Col>
+                            <Col lg={8} style={{display: 'flex', alignItems: 'center',marginBottom:'20px'}}>
+                            
+                                <Button className="button-submit"  type="primary" theme="solid" onClick={handleSubmit}>保存</Button>
+                               
+                            </Col>
                             </Row>
                         </div>
                     </Content>

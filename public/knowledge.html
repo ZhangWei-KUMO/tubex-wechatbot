@@ -14,185 +14,323 @@
 
     <script src="https://unpkg.com/@douyinfe/semi-icons@latest/dist/umd/semi-icons.min.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/@douyinfe/semi-icons@latest/dist/css/semi-icons.css">
-
-
     <style>
-        body {
+         body {
             margin: 0;
             padding: 0;
-            font-family: 'Arial', sans-serif;
-            background: var(--semi-color-bg-1);
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: #fff;
+             overflow-x: hidden; /*  防止水平滚动 */
         }
 
-        .components-layout-demo .semi-layout-sider {
-            background: var(--semi-color-fill-2);
-            overflow: auto;
-        }
 
-        .content-container {
-            padding: 24px;
-            background: var(--semi-color-bg-0);
-            border-radius: 4px;
+        .components-layout-demo {
+            display: flex;
+            height: 100vh;
+        }
+      
+        .semi-layout-sider {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+             border-right: 1px solid rgba(255, 255, 255, 0.2);
+             border-radius: 10px;
+        }
+        .semi-layout-header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
-
-        .input-group {
-            margin-bottom: 16px;
+          .semi-layout-content {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(5px);
+            border-radius: 10px;
+            overflow-y: auto; /* 允许纵向滚动 */
         }
+
+
+        .content-container {
+            padding: 30px;
+           background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            margin: 20px;
+             backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+              /* display: flex;
+                flex-direction: column; */
+            align-items: flex-start;
+            width: 80%;
+          }
+
+        .content-container h3 {
+             font-size: 20px;
+             font-weight: 500;
+            margin-bottom: 15px;
+             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+              letter-spacing: 1px;
+        }
+
+      .input-group {
+           margin-bottom: 20px;
+         width: 100%;
+         display: flex;
+           flex-direction: column;
+             align-items: flex-start;
+        }
+
 
         .input-label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
+            color: #ddd;
+            font-weight: 500;
+             text-align: left;
+            letter-spacing: 1px;
+             text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+          .input-textarea{
+            width: 100%;
+            padding: 12px;
+            border-radius: 5px;
+            border: 1px solid #444;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font-size: 16px;
+            transition: border-color 0.3s ease, background-color 0.3s ease;
+            min-height: 800;
+            resize: vertical; /* 允许垂直方向的拉伸 */
+         }
+        .input-textarea:focus {
+            border-color: #3498db;
+             background: rgba(255, 255, 255, 0.2);
+              outline: none;
+         }
+
+      
+          .semi-select-wrapper{
+              width: 100%;
+            border-radius: 5px;
+            border: 1px solid #444;
+           background: rgba(255, 255, 255, 0.1);
+        }
+         .semi-tag-input-wrapper{
+          border-radius: 5px;
+           border: 1px solid #444;
+            color:#fff;
+         background: rgba(255, 255, 255, 0.1);
+       }
+        .semi-select-selection-value,
+         .semi-select-option-content{
+            color:#fff;
+         }
+
+       .sider-header {
+            padding: 24px 0;
+            text-align: center;
+            font-size: 1.2rem;
             font-weight: 600;
+              letter-spacing: 1px;
+              text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+               color: #fff;
+           border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+       }
+
+         .sider-nav a {
+            display: block;
+            padding: 12px 20px;
+             color: #ddd;
+            text-decoration: none;
+            border-radius: 5px;
+           transition: background-color 0.3s, color 0.3s;
+            margin: 5px 0;
         }
 
-        /*  侧边栏整体样式 */
-.semi-layout-sider {
-    background: #fff; /* 白色背景 */
-    overflow-y: auto; /* 允许纵向滚动 */
-    border-right: 1px solid var(--semi-color-border); /* 添加右边框 */
-}
-
-
-/*  侧边栏头部样式  */
-.sider-header {
-    padding: 24px 0;
-    text-align: center;
-    font-size: 1.2rem;
-    font-weight: 600; /* 加粗字体 */
-    color: var(--semi-color-text-1);  /*  深色文字 */
-    border-bottom: 1px solid var(--semi-color-border); /* 底部分隔线 */
-}
-
-/*  导航链接样式 */
-.sider-nav a {
-    display: block;
-    padding: 12px 20px; /*  增加 padding */
-    color: var(--semi-color-text-2);  /*  较浅的文字颜色 */
-    text-decoration: none;
-    border-radius: 4px;
-    transition: background-color 0.3s, color 0.3s; /* 添加颜色过渡 */
-}
-
-.sider-nav a:hover {
-    background-color: var(--semi-color-fill-0);  /* 悬停背景颜色 */
-    color: var(--semi-color-text-0);  /*  悬停文字颜色 */
-}
-
-
-.sider-nav a.active { /* 当前页面的链接样式 */
-    background-color: var(--semi-color-primary-light); /*  高亮背景 */
-    color: var(--semi-color-primary);  /* 高亮文字颜色 */
-    font-weight: 500; /*  加粗字体 */
-}
+       .sider-nav a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+       .sider-nav a.active {
+            background-color:  rgba(52, 152, 219, 0.3);
+            color: #fff;
+           font-weight: 600;
+        }
+         .switch-label{
+        color: #ddd;
+            font-weight: 500;
+            letter-spacing: 1px;
+             text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+      }
+      .semi-switch-wrapper{
+         background: rgba(255, 255, 255, 0.1);
+        border: 1px solid #444;
+         border-radius: 5px;
+      }
     </style>
 </head>
 
 <body>
     <div id="root"></div>
     <script type="text/babel">
-        const { Menu,Input, Button, Switch, TimePicker, TagInput, Layout, Icon,Row,Col } = SemiUI;
+         const { Menu,Input, Button, Switch, TagInput, Layout, Icon,Row,Col,TextArea,Select,Toast } = SemiUI;
         const { IconHome } = SemiIcons;
         const { Header, Sider, Content } = Layout;
 
         const commonStyle = {
-            height: 64,
-            lineHeight: '64px',
-            background: 'var(--semi-color-fill-0)',
-            padding: '0 24px',
-            fontWeight:"600"
+            height: 76,
+            lineHeight: '76px',
+           padding: '0 24px',
+            fontWeight:"600",
+            color:"#fff",
         };
 
-        function App() { // 函数组件
-            const [isPushEnabled, setIsPushEnabled] = React.useState(true);
-            const [isAiEnabled, setIsAiEnabled] = React.useState(true);
-            const [activeLink, setActiveLink] = React.useState(window.location.pathname); //  存储当前激活的链接
+        function App() {
+            let {useEffect,useState} = React;
+            const [model, setModel] = useState('');
+            const [prompt, setPrompt] = useState('');
+            const [tasks, setTasks] = useState([]);
+            const [news, setNews] = useState(0);
+            const [cryptoCurrency, setCryptoCurrency] = useState(0);
+            const [activeLink, setActiveLink] = useState(window.location.pathname); 
 
-            React.useEffect(() => {
-                // 监听路由变化
+            const fetchData = () => {
+                 fetch('/api/agent')
+                    .then((response) => response.json())
+                    .then((data) => {
+                        if(!data){
+                            Toast.error(`没有获取到大模型配置信息`);
+                        }
+                        setModel(data.model);
+                        setPrompt(data.prompt);
+                        setTasks(data.tasks.split(','));
+                        setNews(data.news);
+                        setCryptoCurrency(data.cryptoCurrency);
+
+                    })
+                    .catch((error) => {
+                        Toast.error(`获取大模型配置失败: ${error.message}`);
+                    });
+            }
+               useEffect(() => {
                 const handleLocationChange = () => {
-                setActiveLink(window.location.pathname);
-            };
+                    setActiveLink(window.location.pathname);
+                };
 
-                window.addEventListener('popstate', handleLocationChange); //  处理浏览器前进/后退按钮
-
-                // 组件卸载时移除监听器
+                window.addEventListener('popstate', handleLocationChange);
+                fetchData();
                 return () => {
                     window.removeEventListener('popstate', handleLocationChange);
                 };
             }, []);
 
-            const links = [
+              const links = [
                 { path: "/", text: "首页" },
                 { path: "/chats", text: "聊天记录" },
                 { path: "/logs", text: "日志记录" },
-                { path: "/settings", text: "设置" },
+                { path: "/settings", text: "系统设置" },
                 { path: "/docs", text: "开发文档" },
-                { path: "/poster", text: "宣传海报" },
+                { path: "/poster", text: "图片库" },
                 { path: "/knowledge", text: "知识库" },
-            ];
-            const handleSubmit = async () => {
-                const data = {
-                
-                    isPushEnabled,
-                    isAiEnabled,
-                };
-
-                try {
-                    const response = await fetch('/api/settings', {
+                { path: "/forgetpassword", text: "重置密码" },
+                { path: "/voice", text: "语音设置" },  
+                { path: "/email", text: "邮箱设置" },        
+              ];
+             const handleSubmit = async () => {
+                  const data = {
+                        prompt,
+                        tasks:`${tasks}`,
+                        model,
+                        news,
+                        cryptoCurrency,
+                  };
+                    try {
+                    const response = await fetch('/api/agent', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                         },
                         body: JSON.stringify(data),
                     });
-
                     if (response.ok) {
-                        Message.success('保存成功');
+                        Toast.success('保存成功');
+                       
                     } else {
-                        const errorData = await response.json(); // 获取错误信息
-                        Message.error(`保存失败: ${errorData.message || '未知错误'}`); // 显示错误信息
+                        const errorData = await response.json();
+                         Toast.error(`保存失败: ${errorData.message || '未知错误'}`);
                     }
                 } catch (error) {
-                    Message.error(`保存失败: ${error.message}`); // 处理网络错误
+                     Toast.error(`保存失败: ${error.message}`); 
                 }
-            };
-        return (
-            <Layout className="components-layout-demo">
-                <Sider style={{ width: '200px',background:"#fff" }} className="sider-nav">
-                    <div style={{ padding: '24px 0', textAlign: 'center' }}></div>
+                
+                
+             };
+            return (
+                 <Layout className="components-layout-demo">
+                <Sider style={{ width: '200px' }} className="sider-nav">
+                      <div className="sider-header">TubeX</div>
                         {links.map((link) => (
                             <div key={link.path}>
                                 <a
                                     href={link.path}
-                                    className={activeLink === link.path ? 'active' : ''}
+                                     className={activeLink === link.path ? 'active' : ''}
                                     onClick={(e) => {
-                      
-                                setActiveLink(link.path); // 更新 activeLink 状态
+                                      setActiveLink(link.path);
                             }}
-                        >
-                            {link.text}
-                        </a>
-                    </div>
-                    ))}
-                </Sider>
+                                >
+                                    {link.text}
+                                </a>
+                            </div>
+                        ))}
+                    </Sider>
                 <Layout>
-                    <Header style={commonStyle}>微信机器人 Linux版本 后台管理系统</Header>
-                    <Content style={{ padding: '24px', minHeight: 'calc(100vh - 64px)' }}>
-                        <div className="content-container">
-                       
-                            <Row>
-                                <Col lg={6}>
-                            <div className="input-group">
-                                <label className="input-label">中国经济实时新闻</label>
-                                <Switch defaultChecked checkedText="开" uncheckedText="关" size="large" onChange={setIsPushEnabled}/>
-                            </div>
+                    <Header style={commonStyle}>微信机器人后台管理系统</Header>
+                    <Content style={{  minHeight: 'calc(100vh - 64px)' }}>
+                         <div className="content-container">
+                            <Row gutter={22}>
+                                <Col lg={12}>
+                                    <h3>提示词</h3>
+                                    <TextArea 
+                                        style={{minHeight:500,color:"#fff"}}
+                                     placeholder="输入您的提示词" 
+                                     onChange={setPrompt}
+                                     value={prompt}/>
                             </Col>
-                            <Col lg={6}>
+                            <Col lg={12}>
                             <div className="input-group">
-                                <label className="input-label">数字货币实时信息</label>
-                                <Switch defaultChecked checkedText="开" uncheckedText="关" size="large" onChange={setIsAiEnabled}/>
+                                <h3>大语言模型</h3>
+                                <Select className="input-field" value={model} onChange={setModel} style={{color:"#fff"}}>
+                                    <Select.Option value="gemini-1.5-pro">gemini-1.5-pro</Select.Option>
+                                    <Select.Option value="gemini-1.5-flash">gemini-1.5-flash</Select.Option>
+                                    <Select.Option value="gemini-1.5-flash-8b">gemini-1.5-flash-8b</Select.Option>
+                                    <Select.Option value="gemini-2.0-flash-exp">gemini-2.0-flash-exp</Select.Option>
+                                </Select>
+                                <h3>任务类型</h3>
+                                    <TagInput
+                                        className="input-field"
+                                        placeholder='任务类型'
+                                        value={tasks}
+                                        onChange={setTasks}
+                                />
+                                  <h3>数字货币实时信息</h3>
+                                 <Switch  
+                                    checked={news}  
+                                    checkedText="开" 
+                                    uncheckedText="关" 
+                                    size="large" 
+                                    onChange={setNews}/>
+                                
                             </div>
+                            <div className="input-group">
+                                 <h3>中国经济实时新闻</h3>
+                                 <Switch  
+                                    checked={cryptoCurrency} 
+                                    checkedText="开"
+                                    uncheckedText="关" 
+                                    size="large" onChange={setCryptoCurrency}/>
+                            </div>
+                            <Button size='large' theme="solid" className="button-submit" onClick={handleSubmit}>保存</Button>
+
                         </Col>
                       
                             </Row>

@@ -8,7 +8,7 @@ const dbFile = 'users.db'; //  使用 users.db 存储用户信息
 // 创建数据库连接
 const db = new sqlite3.Database(dbFile, (err) => {
     if (err) {
-        // console.error(err.message);
+        console.error(err.message);
     } else {
         console.log('连接用户数据库');
         // 创建用户表（如果不存在）
@@ -21,21 +21,21 @@ const db = new sqlite3.Database(dbFile, (err) => {
             )
         `, (err) => {
             if (err) {
-              // console.error("创建用户表失败:", err.message);
+              console.error("创建用户表失败:", err.message);
             } else {
               // 检查初始用户是否存在，如果不存在则创建
               db.get(`SELECT * FROM users WHERE username = 'admin'`, [], (err, row) => {
                   if (err) {
-                      // console.error("查询初始用户失败:", err.message);
+                      console.error("查询初始用户失败:", err.message);
                   } else if (!row) {
                       //  创建初始用户 admin，密码加密
                       bcrypt.hash('123456', 10, (err, hash) => {  //  使用 bcrypt 加密密码
                           if (err) {
-                            // console.error("密码加密失败:", err.message);
+                            console.error("密码加密失败:", err.message);
                           } else {
                               db.run(`INSERT INTO users (username, password, level) VALUES (?, ?, ?)`, ['admin', hash, 'admin'], (err) => {
                                 if (err) {
-                                  // console.error("创建初始用户失败:", err.message);
+                                  console.error("创建初始用户失败:", err.message);
                                 } else {
                                   console.log("初始用户 admin 创建成功");
                                 }
@@ -90,27 +90,20 @@ export function getUsers() {
 
 
 //  更新用户信息
-export async function updateUser(id, username, password, level) {
+export async function updateUser(username, password, level) {
     return new Promise((resolve, reject) => {
       (async () => {
         try {
-          // Only hash the password if it's provided
-          const data = [username, level, id];
-          let sql = 'UPDATE users SET username = ?, level = ? WHERE id = ?';
-    
-          if (password) {
-            const hashedPassword = await bcrypt.hash(password, 10);
-            data.splice(1, 0, hashedPassword); // Insert hashed password at the correct position
-            sql = 'UPDATE users SET username = ?, password = ?, level = ? WHERE id = ?';
-          }
-    
-          db.run(sql, data, function(err) {
+          // 更新用户名和密码
+          const hashedPassword = await bcrypt.hash(password, 10);
+          db.run('UPDATE users SET password = ?, level = ? WHERE username = ?', [hashedPassword, level, username], function(err) {
             if (err) {
               reject(err);
             } else {
-              resolve(this.changes); // Return the number of changed rows
+              resolve(this.changes); // 返回受影响的行数
             }
           });
+        
         } catch (error) {
           reject(error);
         }

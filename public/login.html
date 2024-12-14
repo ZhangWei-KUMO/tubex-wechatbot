@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TubeX微信机器人 | 登录界面</title>
-    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+     <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
     <script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
 
@@ -14,36 +14,105 @@
 
     <script src="https://unpkg.com/@douyinfe/semi-icons@latest/dist/umd/semi-icons.min.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/@douyinfe/semi-icons@latest/dist/css/semi-icons.css">
-    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/min/moment-with-locales.min.js"></script>
-
+      <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/min/moment-with-locales.min.js"></script>
     <style>
         body {
             margin: 0;
             padding: 0;
-            font-family: 'Arial', sans-serif;
-            background: var(--semi-color-bg-1);
+            font-family: 'Roboto', sans-serif; /* 使用Roboto字体 */
+            background: linear-gradient(135deg, #2c3e50, #3498db); /* 深蓝色渐变背景 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden; /* 隐藏滚动条 */
         }
 
-        .content-container {
-            padding: 24px;
-            background: var(--semi-color-bg-0);
-            border-radius: 4px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            width: 400;
+        .login-container {
+            background: rgba(255, 255, 255, 0.1); /* 半透明白色背景 */
+            border-radius: 10px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3); /* 更强烈的阴影 */
+            padding: 40px;
+            width: 400px;
+            text-align: center; /* 文本居中 */
+            backdrop-filter: blur(10px); /* 背景模糊效果 */
+            border: 1px solid rgba(255, 255, 255, 0.2); /* 边框 */
+        }
+
+        .login-title {
+            font-size: 28px;
+            font-weight: 300;
+            color: white; /* 白色标题 */
+            margin-bottom: 30px;
+             letter-spacing: 2px; /* 增加字间距 */
+             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); /* 添加文本阴影 */
         }
 
         .input-group {
-            margin-bottom: 16px;
+            margin-bottom: 20px;
+             display: flex;
+            flex-direction: column;
+             align-items: flex-start; /* 输入框左对齐 */
         }
 
         .input-label {
             display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
+            margin-bottom: 10px;
+            color: #ddd; /* 灰色标签 */
+            font-weight: 500;
+             text-align: left;
+            letter-spacing: 1px; /* 增加字间距 */
+             text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2); /* 添加文本阴影 */
         }
 
+        .input-field {
+            width: 100%;
+            margin-bottom: 0px;
+            border-radius: 5px;
+            border: 1px solid #444;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff; /* 白色输入文本 */
+            font-size: 16px; /* 调整输入框字体大小 */
+            transition: border-color 0.3s ease, background-color 0.3s ease; /* 动画过渡 */
+        }
 
+         .input-field:focus {
+             border-color: #3498db;
+             background: rgba(255, 255, 255, 0.2); /* 选中时背景颜色变化 */
+             outline: none;
+         }
 
+         .button-submit {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            background: #3498db;
+            color: #fff;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+            width: 100%; /* 按钮宽度充满容器 */
+         }
+
+        .button-submit:hover {
+            background-color: #2980b9; /* 鼠标悬停时背景颜色加深 */
+        }
+
+        .button-submit:focus {
+             outline: none; /* 移除焦点时的默认外边框 */
+        }
+        .layout-container{
+           display: flex;
+            justify-content: center;
+            align-items: center;
+             height: 100vh;
+        }
+        .logo-area {
+             font-size: 24px;
+             margin-bottom: 15px;
+            color: #fff;
+             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); /* 添加文本阴影 */
+         }
 
     </style>
 </head>
@@ -56,8 +125,8 @@
         const { Header, Sider, Content } = Layout;
 
         const commonStyle = {
-            height: 64,
-            lineHeight: '64px',
+            height: 76,
+            lineHeight: '76px',
             background: 'var(--semi-color-fill-0)',
             padding: '0 24px',
             fontWeight:"600"
@@ -68,41 +137,54 @@
             const [username, setUsername] = useState('');
             const [password, setPassword] = useState('');
 
-            const handleSubmit = async () => {
-                 try { 
-                    const response = await fetch('/api/login', { 
-                        method: 'POST', 
+             const handleSubmit = async () => {
+                try {
+                    const response = await fetch('/api/login', {
+                        method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ username, password }) }); 
-                        if (response.ok) { window.location.href = '/settings'; //  登录成功重定向到设置页面 
-                        } else { 
-                            const data = await response.text(); // 获取错误信息 
-                            Toast.error(data || '登录失败');  // 显示错误信息 
-                        } 
-                    } catch (error) { 
-                        console.error("Error during login:", error); 
-                        Toast.error('登录过程中出现错误'); 
-                    } 
-                };
+                        body: JSON.stringify({ username, password })
+                    });
+                    if (response.ok) {
+                        let data = await response.json();
+                        if (data.status === 200) {
+                            window.location.href = '/';
+                        } else {
+                            Toast.error(data.message || '登录失败');
+                        }
+                    } else {
+                        const data = await response.text();
+                        Toast.error(data || '登录失败');
+                    }
+                } catch (error) {
+                    console.error("Error during login:", error);
+                    Toast.error('登录过程中出现错误');
+                }
+            };
             return (
-            <Layout className="components-layout-demo">
-                <Layout>
-                    <Header style={commonStyle}>微信机器人 后台管理系统登录界面</Header>
-                    <Content style={{ padding: '24px', minHeight: 'calc(100vh - 64px)' }}>
-                        <div className="content-container">
-                            <div className="input-group">
-                                <label className="input-label">用户名</label>
-                                <Input placeholder="请输入您的用户名"  onChange={setUsername} />
-                            </div>
-                            <div className="input-group">
-                                <label className="input-label">密码</label>
-                                <Input placeholder="请输入您的密码" onChange={setPassword} type="password"/>
-                            </div>
-                            <Button type="solid" onClick={handleSubmit}>提交</Button>
-                        </div>
-                    </Content>
-                </Layout>
-            </Layout>
+            <div className="layout-container">
+                    <div className="login-container">
+                        <div className="logo-area">TubeX 微信机器人后台管理系统</div>
+                         <h2 className="login-title">登录</h2>
+                         <div className="input-group">
+                             <label className="input-label">用户名</label>
+                             <Input
+                                    className="input-field"
+                                   placeholder="请输入您的用户名"
+                                   onChange={e=>setUsername(e)}
+                               />
+                         </div>
+                         <div className="input-group">
+                             <label className="input-label">密码</label>
+                             <Input
+                                className="input-field"
+                                 placeholder="请输入您的密码"
+                                 type="password"
+                                 onChange={e=>setPassword(e)}
+                                />
+                         </div>
+                         <Button className="button-submit"  type="solid" onClick={handleSubmit}>登录</Button>
+                    </div>
+             </div>
           
         )}
         ReactDOM.render(<App />, document.getElementById('root'));

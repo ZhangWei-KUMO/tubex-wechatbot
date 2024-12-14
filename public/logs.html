@@ -12,70 +12,129 @@
     <link rel="stylesheet" href="https://unpkg.com/@douyinfe/semi-ui@2.27.0/dist/css/semi.css">
     <script src="https://unpkg.com/@douyinfe/semi-icons@latest/dist/umd/semi-icons.min.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/@douyinfe/semi-icons@latest/dist/css/semi-icons.css">
+      <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/min/moment-with-locales.min.js"></script>
     <style>
         body {
             margin: 0;
             padding: 0;
-            font-family: 'Arial', sans-serif;
-            background: var(--semi-color-bg-1);
+            font-family: 'Roboto', sans-serif;
+             background: linear-gradient(135deg, #2c3e50, #3498db);
+             color: #fff;
+              overflow-x: hidden; /*  防止水平滚动 */
         }
 
-        .components-layout-demo .semi-layout-sider {
-            background: var(--semi-color-fill-2);
-            overflow: auto;
-        }
 
-        .content-container {
-            padding: 24px;
-            background: var(--semi-color-bg-0);
-            border-radius: 4px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        .components-layout-demo {
+             display: flex;
+            height: 100vh;
+         
         }
-
-        .input-group {
-            margin-bottom: 16px;
-        }
-
-        .input-label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-        }
-
+      
         .semi-layout-sider {
-            background: #fff;
-            overflow-y: auto;
-            border-right: 1px solid var(--semi-color-border); 
+             background: rgba(255, 255, 255, 0.1); /* 半透明白色背景 */
+             backdrop-filter: blur(10px); /* 背景模糊效果 */
+             border-right: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+        }
+        .semi-layout-header {
+             background: rgba(255, 255, 255, 0.1);
+             backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+              box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+          .semi-layout-content {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(5px);
+            border-radius: 10px;
+             overflow-y: auto; /* 允许纵向滚动 */
         }
 
-        .sider-header {
+         .content-container {
+            padding: 30px;
+              background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+             margin: 20px;
+            backdrop-filter: blur(10px);
+             border: 1px solid rgba(255, 255, 255, 0.1);
+              display: flex;
+                flex-direction: column;
+             align-items: flex-start;
+        }
+          .semi-table-container{
+             width: 100%;
+            color: #fff;
+             border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+         .semi-table-header-th{
+            background: rgba(255, 255, 255, 0.1) !important;
+            color:#fff;
+         }
+        .semi-table-row-td{
+             border-bottom:  1px solid rgba(255, 255, 255, 0.1) !important;
+         }
+        .semi-table-container .semi-table-header-th ,
+        .semi-table-container .semi-table-row-td{
+             padding:12px
+        }
+
+        .button-submit {
+            padding: 12px 24px;
+            border: none;
+             border-radius: 5px;
+             background: #3498db;
+             color: #fff;
+            cursor: pointer;
+            font-size: 16px;
+             transition: background-color 0.3s ease;
+              margin-left: 10px;
+        }
+
+       .button-submit:hover {
+            background-color: #2980b9;
+        }
+
+        .button-submit:focus {
+             outline: none;
+        }
+
+       .sider-header {
             padding: 24px 0;
             text-align: center;
             font-size: 1.2rem;
-            font-weight: 600; 
-            color: var(--semi-color-text-1);  
-            border-bottom: 1px solid var(--semi-color-border); 
-        }
+            font-weight: 600;
+              letter-spacing: 1px;
+              text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+               color: #fff;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+       }
 
         .sider-nav a {
-            display: block;
+             display: block;
             padding: 12px 20px;
-            color: var(--semi-color-text-2); 
-            text-decoration: none;
-            border-radius: 4px;
-            transition: background-color 0.3s, color 0.3s; 
+             color: #ddd;
+           text-decoration: none;
+            border-radius: 5px;
+             transition: background-color 0.3s, color 0.3s;
+            margin: 5px 0;
         }
 
-        .sider-nav a:hover {
-            background-color: var(--semi-color-fill-0); 
-            color: var(--semi-color-text-0); 
+       .sider-nav a:hover {
+             background-color: rgba(255, 255, 255, 0.1);
+            color: #fff;
         }
-
-
-        .sider-nav a.active { 
-            background-color: var(--semi-color-primary-light); 
-            color: var(--semi-color-primary); 
-            font-weight: 500; 
+       .sider-nav a.active {
+            background-color:  rgba(52, 152, 219, 0.3);
+             color: #fff;
+            font-weight: 600;
+        }
+        .semi-space-wrap{
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .semi-space-wrap h2{
+            margin-right: 10px;
         }
     </style>
 </head>
@@ -83,41 +142,38 @@
 <body>
     <div id="root"></div>
     <script type="text/babel">
-        const { Menu,Input, Button, Switch, TimePicker, TagInput, Layout, Icon,Row,Col,Table,Space,Toast } = SemiUI;
+         const { Menu,Input, Button, Switch, TimePicker, TagInput, Layout, Icon,Row,Col,Table,Space,Toast } = SemiUI;
         const { IconHome } = SemiIcons;
         const { Header, Sider, Content } = Layout;
 
         const commonStyle = {
-            height: 64,
-            lineHeight: '64px',
-            background: 'var(--semi-color-fill-0)',
-            padding: '0 24px',
-            fontWeight:"600"
+            height: 76,
+            lineHeight: '76px',
+             padding: '0 24px',
+            fontWeight:"600",
+            color:"#fff",
         };
 
-      
-
         function App() { 
-            let {useState,useEffect} = React
+             let {useState,useEffect} = React
             const [data, setData] = useState([]);
             const [total,setToatal] = useState(0)
             const [currentPage, setPage] = useState(1);
-            const [activeLink, setActiveLink] = useState(window.location.pathname); //  存储当前激活的链接
+             const [activeLink, setActiveLink] = useState(window.location.pathname); //  存储当前激活的链接
 
-            async function getChats() {
+           async function getChats() {
                 try {
                     const response = await fetch('/api/logs'); 
                     if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                     }
                     const chats = await response.json();
-                    setData(chats);
+                     setData(chats.map(item => ({ ...item, key: item.id })));
                 } catch (error) {
-                    console.error("Error retrieving or displaying chats:", error);
+                     Toast.error(`获取日志记录失败: ${error.message}`);
                 }
             }
-
-            useEffect(() => {
+             useEffect(() => {
                 const handleLocationChange = () => {
                     setActiveLink(window.location.pathname);
                 };
@@ -129,24 +185,28 @@
                 };
             }, []);
 
-            const links = [
+              const links = [
                 { path: "/", text: "首页" },
                 { path: "/chats", text: "聊天记录" },
                 { path: "/logs", text: "日志记录" },
-                { path: "/settings", text: "设置" },
+                { path: "/settings", text: "系统设置" },
                 { path: "/docs", text: "开发文档" },
-                { path: "/poster", text: "宣传海报" },
-                { path: "/knowledge", text: "知识库" },
-            ];
+                  { path: "/poster", text: "图片库" },
+                 { path: "/knowledge", text: "知识库" },
+                 { path: "/forgetpassword", text: "重置密码" },
+                  { path: "/voice", text: "语音设置" },
+                    { path: "/email", text: "邮箱设置" },        
+              ];
 
             const columns = [
                 {
                     title: 'ID',
                     dataIndex: 'id',
                 },
-                {
+                 {
                     title: '时间',
                     dataIndex: 'timestamp',
+                     render: (timestamp) => moment(timestamp).format('YYYY-MM-DD HH:mm:ss'),
                 },
                 {
                     title: '等级',
@@ -155,14 +215,11 @@
                 {
                     title: '消息内容',
                     dataIndex: 'message',
-                },
-                {
-                    title: '操作',
-                    dataIndex: 'handle',
+                     width: '40%',
                 },
             ];
 
-            const handleClearAll = async () => {
+              const handleClearAll = async () => {
                 try {
                     const response = await fetch('/api/logs', {
                         method: 'DELETE',
@@ -171,8 +228,8 @@
                         setData([]);
                         Toast.success('清空成功');
                     } else {
-                        const errorData = await response.json(); 
-                        Toast.error(`清空失败: ${errorData.message || '未知错误'}`); 
+                         const errorData = await response.json();
+                        Toast.error(`清空失败: ${errorData.message || '未知错误'}`);
                     }
                 } catch (error) {
                     Toast.error(`清空失败: ${error.message}`);
@@ -180,8 +237,8 @@
             };
         return (
             <Layout className="components-layout-demo">
-                <Sider style={{ width: '200px',background:"#fff" }} className="sider-nav">
-                    <div style={{ padding: '24px 0', textAlign: 'center' }}></div>
+                <Sider style={{ width: '200px' }} className="sider-nav">
+                    <div className="sider-header">TubeX</div>
                         {links.map((link) => (
                             <div key={link.path}>
                                 <a href={link.path}
@@ -196,13 +253,16 @@
                     ))}
                 </Sider>
                 <Layout>
-                    <Header style={commonStyle}>微信机器人 Linux版本 后台管理系统</Header>
-                    <Content style={{ padding: '24px', minHeight: 'calc(100vh - 64px)' }}>
-                        <Space>
+                    <Header style={commonStyle}>微信机器人后台管理系统</Header>
+                    <Content style={{ minHeight: 'calc(100vh - 64px)' }}>
+                         <div className="content-container">
+                            <Space  className="semi-space-wrap">
                             <h2>日志记录</h2>
-                            <Button onClick={()=>handleClearAll()}>清空日志</Button>
+                            <Button  className="button-submit"  type="primary" theme="solid" onClick={()=>handleClearAll()}>清空日志</Button>
                         </Space>
-                        <Table columns={columns} dataSource={data}></Table>
+                           <Table className="semi-table-container" columns={columns} dataSource={data}
+                        ></Table>
+                        </div>
                     </Content>
                 </Layout>
             </Layout>

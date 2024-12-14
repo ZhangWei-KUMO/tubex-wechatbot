@@ -33,11 +33,11 @@ const db = new sqlite3.Database(dbFile, (err) => {
                         const defaultConfig = {
                             difyApiKey: '',
                             geminiApiKey: '',
-                            greeting: 'Hello!',
-                            pushTime: '09:00', // Example default time
-                            groups: '[]', // Example default groups
-                            isEnable: 1, // 1 for true, 0 for false
-                            isPushEnable: 1, // 1 for true, 0 for false
+                            greeting: '我是一个AI机器人很开心认识您',
+                            pushTime: '09:00', 
+                            groups: '相亲相爱的一家人', 
+                            isEnable: 0, 
+                            isPushEnable: 0,
 
                         };
                         insertConfig(defaultConfig) // Use the insertConfig function
@@ -51,19 +51,14 @@ const db = new sqlite3.Database(dbFile, (err) => {
     }
 });
 
-
-
-// Function to insert or update config (upsert)
 export function saveConfig(config) {
     return new Promise((resolve, reject) => {
         db.get("SELECT COUNT(*) AS count FROM config", [], (err, row) => {
             if (err) {
                 reject(err);
             } else if (row.count === 0) {
-                // Insert if no config exists
                 insertConfig(config).then(resolve).catch(reject);
             } else {
-                // Update if config already exists (assuming only one config row)
                 updateConfig(config).then(resolve).catch(reject);
             }
         });
@@ -71,8 +66,6 @@ export function saveConfig(config) {
 }
 
 
-
-// Helper function to insert config
 function insertConfig(config) {
     const { difyApiKey, geminiApiKey,greeting, groups, pushTime, isEnable,isPushEnable } = config;
     return new Promise((resolve, reject) => {

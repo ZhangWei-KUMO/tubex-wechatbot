@@ -12,16 +12,19 @@ import {getNews} from './util/group.js'
 import { WebSocketServer } from "ws"
 import express from 'express';
 import path from 'path';
-import open from 'open';
+// import open from 'open';
 import {log,getLogs,deleteLogs} from './db/logs.js'
 import {chat,getChats,deleteChats} from './db/chats.js'
 import {getConfig,saveConfig} from './db/config.js'
+import {getAgentConfig,saveAgentConfig} from './db/agent.js'
+import {getEmailConfig,saveEmailConfig} from './db/email.js'
+import {getTTSConfig,saveTTSConfig} from './db/tts.js'
+import {verifyUser,updateUser} from './db/users.js'
 import { fileURLToPath } from 'url';  // Import fileURLToPath
 import session from 'express-session';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const noAuthRequiredRoutes = ['/login', '/register', '/forgot-password']; //  不需要授权的路径列表
-
+const noAuthRequiredRoutes = ['/api/login','/login', '/register', '/forgot-password']; //  不需要授权的路径列表
 
 const wss = new WebSocketServer({ port: 1983 })
 //  限制 WebSocketServer 的最大连接数
@@ -31,12 +34,15 @@ const app = express();
 app.use(express.static(path.join(process.cwd(), 'public'))); 
 app.use(express.json()); // 解析 JSON 格式的请求体
 app.use(express.urlencoded({ extended: true })); // 解析 URL 编码的请求体
-app.use(isAuthenticated); // 所有路由都需要登录
 app.use(session({
-  secret: 'tubex', 
+  secret: 'tubexchatbot', 
   resave: false,
-  saveUninitialized: false,
+  saveUninitialized: true,
+  cookie: { 
+    maxAge: 24 * 60 * 60 * 1000 // 24 hours (adjust as needed)
+  }
 }));
+app.use(isAuthenticated); // 所有路由都需要登录
 
 const port = 3000;
 
@@ -44,12 +50,11 @@ config();
 console.log("微信机器人启动，版本号：",bot.version());
 
 function isAuthenticated(req, res, next) {
-  // 检查用户是否已登录，例如检查 session 或 cookie
   if (noAuthRequiredRoutes.includes(req.path) || (req.session && req.session.user)) {
-    return next(); //  如果已登录，继续执行下一个中间件或路由处理程序
+     next();
   } else {
-    console.log("路由没有授权")
-    res.redirect('http://localhost:3000/settings'); // 使用绝对 URL
+    res.redirect('/login');
+    // res.status(401).send({message:'未授权',status:401}); //  返回 401 状态码和 JSON 数据
   }
 }
 
@@ -366,14 +371,25 @@ export async function prepareBot() {
 
 async function startBot() {
 
-    app.post('/api/login', (req, res) => {
+    app.post('/api/login', async (req, res) => {
       const { username, password } = req.body;
-      //  验证用户名和密码 (替换为你实际的验证逻辑)
-      if (username === 'admin' && password === 'password') {
+      //  验证用户名和密码 初始密码为 admin 123456
+      let verified = await verifyUser(username, password)
+      if (verified) {
         req.session.user = username; // 设置登录标识
-        res.redirect('/settings'); // 登录成功后重定向到设置页面
+        res.send({message:'登录成功',status:200});
       } else {
-        res.send('Login failed');
+        res.send({message:'用户名或密码错误',status:401});
+      }
+    });
+    // 修改用户名密码
+    app.post('/api/forgetpwd', async (req, res) => {
+      const { username, password } = req.body;
+      let updated = await updateUser(username, password,'admin')
+      if (updated) {
+        res.send({message:'修改成功',status:200});
+      } else {
+        res.send({message:'修改失败',status:401});
       }
     });
     // 退出
@@ -381,7 +397,6 @@ async function startBot() {
       req.session.destroy((err) => { // 清除 session 数据
         if (err) {
           console.error("Error destroying session:", err);
-          // 可以选择返回错误信息或重定向到错误页面
           return res.status(500).send("Logout failed"); 
         }
         res.redirect('/login'); // 重定向到登录页面
@@ -423,6 +438,52 @@ async function startBot() {
           res.json(data);
       });
     });
+     // 获取邮件配置信息
+     app.get('/api/email', (req, res) => {
+      getEmailConfig().then((data) => {
+          res.json(data);
+      });
+    });
+    // 更新邮件配置信息
+    app.post('/api/email', (req, res) => {
+      const config = req.body;
+      saveEmailConfig(config).then((data) => {
+          res.json(data);
+      });
+    });
+      // 获取Agent配置信息
+      app.get('/api/agent', (req, res) => {
+        getAgentConfig().then((data) => {
+            res.json(data);
+        });
+      });
+      // 更新Agent配置信息
+      app.post('/api/agent', (req, res) => {
+        const config = req.body;
+        saveAgentConfig(config).then((data) => {
+            res.json(data);
+        });
+      });
+     // 获取tts配置信息
+     app.get('/api/tts', (req, res) => {
+      getTTSConfig().then((data) => {
+          res.json(data);
+      });
+    });
+    // 更新TTS配置信息
+    app.post('/api/tts', (req, res) => {
+      const config = req.body;
+      saveTTSConfig(config).then((data) => {
+          res.json(data);
+      });
+    });
+    // 更新图片配置信息
+    app.post('/api/images', (req, res) => {
+      const config = req.body;
+      saveConfig(config).then((data) => {
+          res.json(data);
+      });
+    });
     app.get('/settings', (req, res) => {
       res.sendFile(path.join(__dirname, './public/settings.html')); 
     });
@@ -444,9 +505,21 @@ async function startBot() {
     app.get('/knowledge', (req, res) => {
       res.sendFile(path.join(__dirname, './public/knowledge.html')); 
     });
+    app.get('/email', (req, res) => {
+      res.sendFile(path.join(__dirname, './public/email.html')); 
+    });
+    app.get('/forgetpassword', (req, res) => {
+      res.sendFile(path.join(__dirname, './public/forgetpassword.html')); 
+    });
+    app.get('/voice', (req, res) => {
+      res.sendFile(path.join(__dirname, './public/voice.html')); 
+    });
+    app.get('/', (req, res) => {
+      res.sendFile(path.join(__dirname, './public/index.html')); 
+    });
     app.listen(port, async () => {
        console.log(`Web server listening at http://localhost:${port}`);
-       await open(`http://localhost:${port}`);
+      //  await open(`http://localhost:${port}`);
     });
   await prepareBot();
 
