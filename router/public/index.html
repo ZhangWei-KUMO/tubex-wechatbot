@@ -8,23 +8,20 @@
     <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
     <script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
-
     <script src="https://unpkg.com/@douyinfe/semi-ui@2.27.0/dist/umd/semi-ui.min.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/@douyinfe/semi-ui@2.27.0/dist/css/semi.css">
-
     <script src="https://unpkg.com/@douyinfe/semi-icons@latest/dist/umd/semi-icons.min.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/@douyinfe/semi-icons@latest/dist/css/semi-icons.css">
     <script src="./js/qrcode.js"></script>
-     <style>
+    <style>
         body {
             margin: 0;
             padding: 0;
             font-family: 'Roboto', sans-serif;
             background: linear-gradient(135deg, #2c3e50, #3498db);
-             color: #fff;
-              overflow-x: hidden; /*  防止水平滚动 */
+            color: #fff;
+            overflow-x: hidden;
         }
-
 
         .components-layout-demo {
             display: flex;
@@ -32,11 +29,12 @@
         }
       
         .semi-layout-sider {
-            background: rgba(255, 255, 255, 0.1); /* 半透明白色背景 */
+            background: rgba(255, 255, 255, 0.1); 
             backdrop-filter: blur(10px);
              border-right: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 10px;
         }
+
         .semi-layout-header {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
@@ -51,16 +49,16 @@
         }
 
        .content-container {
-             padding: 30px;
+            padding: 30px;
             background: rgba(255, 255, 255, 0.05);
-             border-radius: 10px;
+            border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-             margin: 20px;
-               backdrop-filter: blur(10px);
+            margin: 20px;
+            backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
             display: flex;
             flex-direction: column;
-             align-items: center;
+            align-items: center;
         }
 
         .content-container h2 {
@@ -75,8 +73,8 @@
             margin: 20px auto;
             width: 228px;
             background: #fff;
-           padding: 10px;
-              border-radius: 5px;
+            /* padding: 10px; */
+            border-radius: 5px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
          }
 
@@ -85,25 +83,25 @@
             text-align: center;
             font-size: 1.2rem;
             font-weight: 600;
-              letter-spacing: 1px;
-              text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-               color: #fff;
-           border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            letter-spacing: 1px;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+            color: #fff;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
        }
 
         .sider-nav a {
             display: block;
-             padding: 12px 20px;
-             color: #ddd;
-           text-decoration: none;
+            padding: 12px 20px;
+            color: #ddd;
+            text-decoration: none;
             border-radius: 5px;
-          transition: background-color 0.3s, color 0.3s;
-             margin: 5px 0;
+            transition: background-color 0.3s, color 0.3s;
+            margin: 5px 0;
         }
 
        .sider-nav a:hover {
             background-color: rgba(255, 255, 255, 0.1);
-           color: #fff;
+            color: #fff;
         }
         .sider-nav a.active {
             background-color:  rgba(52, 152, 219, 0.3);
@@ -125,22 +123,57 @@
             lineHeight: '76px',
             padding: '0 24px',
             fontWeight:"600",
-             color:"#fff",
+            color:"#fff",
         };
 
         function App() {
-              let {useState,useEffect} = React
+            let {useState,useEffect} = React
             const [activeLink, setActiveLink] = React.useState(window.location.pathname);
+            const [title,setTitle] = useState('微信授权扫码登录');
+            const [wechat,setWechat] = useState({});
+
+             function connectWechat() {
+                try {
+                    fetch('/api/wechat')
+                    .then((res) => res.json())
+                    .then((data) => {
+                        if (data.loginurl) {
+                            document.getElementById('qrcode').innerHTML = '';
+                            new QRCode(document.getElementById('qrcode'),{
+                                text: data.loginurl,
+                                    width: 228,
+                                    height: 228,
+                            } );
+                             setTitle("微信授权扫码登录")
+                             setWechat({})
+                        }else{
+                            document.getElementById('qrcode').innerHTML = ''
+                            console.log(data)
+                            setTitle("微信已由AI接管")
+                            setWechat(data)
+                        }
+                    });
+                } catch (error) {
+                    console.log(error)
+                }
+               
+            }
             useEffect(() => {
                 const handleLocationChange = () => {
                     setActiveLink(window.location.pathname);
                 };
 
                 window.addEventListener('popstate', handleLocationChange); 
+                connectWechat();
+
+                 // Set up the interval
+                const intervalId = setInterval(connectWechat, 7000);
 
                 return () => {
                     window.removeEventListener('popstate', handleLocationChange);
+                     clearInterval(intervalId); // Clear the interval when the component unmounts
                 };
+
             }, []);
 
               const links = [
@@ -149,59 +182,12 @@
                 { path: "/logs", text: "日志记录" },
                 { path: "/settings", text: "系统设置" },
                 { path: "/docs", text: "开发文档" },
-                  { path: "/poster", text: "图片库" },
+                { path: "/poster", text: "图片库" },
                 { path: "/knowledge", text: "知识库" },
-                  { path: "/forgetpassword", text: "重置密码" },
-                   { path: "/voice", text: "语音设置" }, 
-                     { path: "/email", text: "邮箱设置" },         
+                { path: "/forgetpassword", text: "重置密码" },
+                { path: "/voice", text: "语音设置" }, 
+                { path: "/email", text: "邮箱设置" },         
               ];
-        
-            useEffect(() => {
-                let ws;
-                let reconnectAttempts = 0;
-
-                function connectWS() {
-                    if (ws) {  // 如果 ws 已经存在，先关闭连接
-                        ws.close();
-                    }
-                    ws = new WebSocket('ws://localhost:1983');
-                    ws.onopen = () => {
-                        console.log("WebSocket connection established.");
-                        reconnectAttempts = 0; // 重置重连次数
-                    };
-
-                    ws.onmessage = (event) => {
-                        const qrcodeData = event.data;
-                        console.log('收到WS二维码：', qrcodeData);
-                        if(qrcodeData){
-                            const qrcodeContainer = document.getElementById('qrcode');
-                            if (qrcodeContainer) {
-                                qrcodeContainer.innerHTML = '';
-                                new QRCode(qrcodeContainer, {
-                                    text: qrcodeData,
-                                    width: 228,
-                                    height: 228,
-                                    correctLevel: QRCode.CorrectLevel.H
-                                });
-                            } else {
-                                console.error("QRCode container not found.");
-                            }
-                        }
-                    };
-
-                    ws.onerror = (error) => {
-                        console.error("WebSocket error:", error);
-                    };
-                }
-
-                connectWS();
-
-                return () => {
-                    if (ws) {
-                        ws.close();
-                    }
-                };
-            }, []);
         
         return (
              <Layout className="components-layout-demo">
@@ -225,8 +211,19 @@
                     <Header style={commonStyle}>微信机器人后台管理系统</Header>
                     <Content style={{  minHeight: 'calc(100vh - 64px)' }}>
                          <div className="content-container">
-                            <h2>微信授权扫码登录</h2>
-                             <div id="qrcode" ></div>
+                            <h2>{title}</h2>
+                             <div>
+                                 {wechat.username && (
+                                     <center>
+                                       <img src={wechat.avatar} alt="avatar" style={{width: 150,height: 150,borderRadius: 12}} />
+                                       <h3>微信账户：{wechat.username}</h3>
+                                       <h5>(用户可在手机中解除授权)</h5>
+                                     </center>
+                                 )}
+                                 <div id="qrcode"></div>
+                            </div>
+                           
+                           
                         </div>
                     </Content>
                 </Layout>

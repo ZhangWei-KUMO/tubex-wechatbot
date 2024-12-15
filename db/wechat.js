@@ -53,27 +53,19 @@ const db = new sqlite3.Database(dbFile, (err) => {
         });
     }
     
-
-
-
     export function getWechatConfig() {
         return new Promise((resolve, reject) => {
-            db.get(`SELECT * FROM wechats WHERE id = 1`, [], (err, row) => {  // Select the first row
+            db.get(`SELECT * FROM wechats WHERE id = 1`, [], (err, row) => {
                 if (err) {
                     reject(err);
                 } else if (!row) {
                     resolve(null); // No config found.
                 } else {
-    
-                    // Convert isEnable back to boolean
-                    row.isEnable = !!row.isEnable; 
-                    row.isPushEnable = !!row.isPushEnable; 
                     resolve(row);
                 }
             });
         });
     }
-
 
 export function saveWechatConfig(config) {
     const { username, wechatid,avatar, friends, loginurl } = config;

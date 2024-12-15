@@ -20,6 +20,7 @@
     "express-session": "^1.18.1",
     "fluent-ffmpeg": "^2.1.2",
     "ioredis": "^5.3.2",
+    "jimp": "^1.6.0",
     "mammoth": "^1.6.0",
     "microsoft-cognitiveservices-speech-sdk": "^1.35.0",
     "moment": "^2.30.1",
