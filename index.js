@@ -1,294 +1,64 @@
+// index.js
 /* eslint-disable no-undef */
-import {bot,difyChat} from './util/init.js';
-import fs from 'fs';
-import xml2js from 'xml2js';
-import {sendMessage,convertSilkToWav,readSheet,readTxt,
-  readWord, readPDF,saveInLongMemory} from './util/util.js'
-import {recognizeSpeech} from './util/azure.js'
+import {bot} from './util/init.js';
+import {sendMessage} from './util/util.js'
 import { config } from 'dotenv';
-import {splitTextIntoArray} from './util/reply-filter.js'
-import schedule from 'node-schedule';
-import {getNews} from './util/group.js'
-import { WebSocketServer } from "ws"
 import express from 'express';
-import path from 'path';
-// import open from 'open';
-import {log,getLogs,deleteLogs} from './db/logs.js'
-import {chat,getChats,deleteChats} from './db/chats.js'
-import {getConfig,saveConfig} from './db/config.js'
-import {getAgentConfig,saveAgentConfig} from './db/agent.js'
-import {getEmailConfig,saveEmailConfig} from './db/email.js'
-import {getTTSConfig,saveTTSConfig} from './db/tts.js'
-import {verifyUser,updateUser} from './db/users.js'
-import {getWechatConfig,saveWechatConfig} from './db/wechat.js'
-
-import { fileURLToPath } from 'url';  
-import session from 'express-session';
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const noAuthRequiredRoutes = ['/api/login','/login', '/register', '/forgot-password']; //  不需要授权的路径列表
-
-const wss = new WebSocketServer({ port: 1983 })
-//  限制 WebSocketServer 的最大连接数
-wss.setMaxListeners(20);  //  或者设置为更合适的数值
-
-const app = express();
-app.use(express.static(path.join(process.cwd(), 'public'))); 
-app.use(express.json()); // 解析 JSON 格式的请求体
-app.use(express.urlencoded({ extended: true })); // 解析 URL 编码的请求体
-app.use(session({
-  secret: 'tubexchatbot', 
-  resave: false,
-  saveUninitialized: true,
-  cookie: { 
-    maxAge: 24 * 60 * 60 * 1000 // 24 hours (adjust as needed)
-  }
-}));
-app.use(isAuthenticated); // 所有路由都需要登录
-
+import {log} from './db/logs.js'
+import { singleChat,groupChat,handleFile, handleImage,handleAudio,handleVideo,handleGIF,handleTransfer } from './util/handle.js';
+import router from './router/router.js';
+import staticRouter from './router/static.js';
+import {saveWechatConfig} from './db/wechat.js';
 const port = 3000;
-
 config();
-console.log("微信机器人启动，版本号：",bot.version());
-
-function isAuthenticated(req, res, next) {
-  if (noAuthRequiredRoutes.includes(req.path) || (req.session && req.session.user)) {
-     next();
-  } else {
-    res.redirect('/login');
-    // res.status(401).send({message:'未授权',status:401}); //  返回 401 状态码和 JSON 数据
-  }
-}
-
-
+const app = express();
+app.use(router);
+app.use(staticRouter);
 export async function prepareBot() {
   bot.on("message", async (message) => {  
     const contact = message.talker();
-    // 自己的信息的直接无视
     if (contact.self()) {
       return;
     } 
-    // 属于群聊的聊天信息
     if (message.room()) {
-      let roomMsg = message.room()
-      let {payload} = roomMsg;
-      // 群名称
-      let {topic} = payload;
-      // 获取当前群聊名称
-      let mentionText = await message.mentionText();
-      if (await message.mentionSelf()) {
-        if (roomMsg) {
-          let answer = await difyChat(roomMsg.id,mentionText)
-          answer = answer.replace(/\*/g, '');         
-          if(answer.includes("\n")){
-            let array =  await splitTextIntoArray(answer)
-            const interval = setInterval(async () => {
-              if (array.length) {
-                await sendMessage(roomMsg.id, array.shift())
-              } else {
-                clearInterval(interval);
-              }
-            }, 3000);
-          }else{
-            await sendMessage(roomMsg.id, answer);
-          }   
-          return;
-        }
-      }else{
-        let {payload} = message;
-        let {text} = payload;
-        if(text.includes("加入群聊")){
-          if (roomMsg) {
-            await sendMessage(roomMsg.id, process.env.GROUP_GREET);
-            return;
-          }
-        }else{
-          // 正常聊天
-          switch (message.type()) {
-            // 被人拍了拍
-            case 0:
-              await sendMessage(roomMsg.id, "找我搞么事？");
-              break;
-          case 2:
-            try{
-              const audioFileBox = await message.toFileBox();
-              const silkBuffer = await audioFileBox.toBuffer();
-              let wav = await convertSilkToWav(silkBuffer)
-              fs.access(wav, fs.constants.F_OK, async (err) => {
-                if(err){
-                  await sendMessage(talkerId, '👌🏻')
-                  return
-                }
-                try{
-                  let q = await recognizeSpeech(wav)
-                  fs.unlinkSync(wav)
-                  // 获取群名称
-                  let answer = await difyChat(roomMsg.id,q)
-                  answer = answer.replace(/\*/g, '');         
-                  if(answer.includes("\n")){
-                    let array =  await splitTextIntoArray(answer)
-                    const interval = setInterval(async () => {
-                      if (array.length) {
-                        await sendMessage(roomMsg.id, array.shift())
-                      } else {
-                        clearInterval(interval);
-                      }
-                    }, 3000);
-                  }else{
-                    await sendMessage(roomMsg.id, answer);
-                  }   
-                }catch(e){
-                  await sendMessage(roomMsg.id, e)
-                  return
-                }
-              })
-            }catch(e){  
-              console.error(e)
-            }
-            break;
-          case 7:
-            chat(topic, message.payload.text);
-            break;
-          default:
-            return
-          }
-        }
-      }
-      return;
+      groupChat(message,talkerId)
     }
     let {payload} = message;
     let {talkerId,listenerId,text} = payload;
-
     switch (message.type()) {
       case 0:
         await sendMessage(talkerId, "感谢老板抬爱，祝老板在缅A发财")
         break;
-    case 7:
-      if(talkerId!==listenerId && talkerId!=='weixin' && text!==''){
-        if (text.includes('pictype=location')) {
-          const lines = text.split(':');
-          const locationText = `我的地址是：${lines[0]}`;
-          saveInLongMemory(locationText,talkerId)          
-        }else{
-         
-          chat(talkerId, text);
-          let answer = await difyChat(talkerId,text) 
-          if(answer){ 
-            answer = answer.replace(/\*/g, '');                
-            answer = answer.trim()
-            if(answer.includes("\n")){
-              let array =  await splitTextIntoArray(answer)
-              const interval = setInterval(async () => {
-                if (array.length) {
-                  await sendMessage(talkerId, array.shift())
-                } else {
-                  clearInterval(interval);
-                }
-              }, 3000);
-            }else{
-              await sendMessage(talkerId, answer);
-            }   
-          }
+      case 1:
+          await handleFile(message,talkerId)
+          break;
+      case 2:
+          await handleAudio(message,talkerId)
+          break;
+      case 5:
+          await handleGIF(message,talkerId)
+          break;
+      case 7:
+        await singleChat(talkerId,listenerId,text)
+        break;
+      case 6:
+        await handleImage(message,talkerId)
+        break;
+      case 11:
+        { const xmlstr = payload.text;
+          handleTransfer(xmlstr,talkerId)
+          break; 
         }
-        return
-      }
-      break;
-      // 图片消息
-    case 6:
-      chat(talkerId, '图片消息');
-      break;
-    case 11:
-      { const xmlstr = payload.text;
-      xml2js.parseString(xmlstr, async (err, result) => {
-    if (err) {
-      await sendMessage(talkerId, '收到');
-    } else {
-      const title = result.msg.appmsg[0].des[0];
-      const regex = /\d+(\.\d+)?/;
-      const num = title.match(regex);
-      await sendMessage(talkerId, '收到');
-      saveInLongMemory(`好友转账给你${num[0]}元`,talkerId)
-    }
-  });
-      break; }
     case 14:
-      { let xmlstr2 = payload.text;
-      xml2js.parseString(xmlstr2, async (err, result) => {
-    if (err) {
-      console.error(err);
-    } else {
-      const title = result.msg.appmsg[0].title[0];
-      saveInLongMemory( `分享给你一篇微信文章：《${title}》`,talkerId)
-    }
-  });
-      break; }
-      // 小程序卡片消息
+      { 
+        handleArticle(payload.text,talkerId)
+        break; 
+      }
     case 9:
-      try{
-        const miniProgram = await message.toMiniProgram();
-        console.log(miniProgram)
-        await sendMessage(talkerId, "真不错，待会不忙的时候会看下");
-      }catch(e){
-        await sendMessage(talkerId, e)
-        return
-      }
+      await handleMiniProgram(message,talkerId)
       break;
-      // 语音消息
-    case 2:
-      try{
-        const audioFileBox = await message.toFileBox();
-        const silkBuffer = await audioFileBox.toBuffer();
-        let wav = await convertSilkToWav(silkBuffer)
-        fs.access(wav, fs.constants.F_OK, async (err) => {
-          if(err){
-            await sendMessage(talkerId, '👌🏻')
-            return
-          }
-          try{
-            let q = await recognizeSpeech(wav)
-            fs.unlinkSync(wav)
-            let answer = await difyChat(talkerId,q)
-            await sendMessage(talkerId,answer)
-          }catch(e){
-            await sendMessage(talkerId, e)
-            return
-          }
-        })
-      }catch(e){  
-        console.error(e)
-      }
-      break;
-      // 视频消息
     case 15:
-      break;
-      // 动图表情消
-    case 5:
-      break;
-      // 文件消息
-    case 1:
-      try{
-        const attachFileBox = await message.toFileBox();
-        let mediaType = attachFileBox._mediaType
-        let filename = attachFileBox._name;
-        const attachData = await attachFileBox.toBuffer();
-        if(mediaType.includes('pdf')){
-          let text = await readPDF(filename,attachData);
-          saveInLongMemory(`对方发来一份PDF文件，内容如下：${text}`,talkerId)
-        }else if(mediaType.includes('sheet')){
-          let text = await readSheet(filename,attachData)
-          saveInLongMemory(`对方发来一份EXCEL文件，内容如下：${text}`,talkerId)
-        }else if(mediaType.includes('document')){
-          let text = await readWord(filename,attachData)
-          saveInLongMemory(`对方发来一份WORD文件，内容如下：${text}`,talkerId)
-        }else if(mediaType.includes('txt')){
-          let text = await readTxt(filename,attachData)
-          saveInLongMemory(`对方发来一份TXT文件，内容如下：${text}`,talkerId)
-        }else{
-          await sendMessage(talkerId, "好的，我先看下");
-        }
-      }catch(e){
-        console.error(e)
-      }
+      await handleVideo(message,talkerId)
       break;
     default:
       break;
@@ -310,60 +80,26 @@ export async function prepareBot() {
   });
 
   bot.on('scan', (qrcode) => {
-    wss.on('connection', function connection(ws) {
-      ws.send(qrcode);
-    })
+    saveWechatConfig({loginurl:qrcode})
   })
 
-  // wss.on('connection', function connection(ws) {
-  //   bot.on('scan', (qrcode) => { // 将 scan 事件处理程序放在 connection 内部
-  //       ws.send(qrcode);
-  //   });
-  // });
-
-
   bot.on("login", (user) => {
-    let {payload} = user;
-    let {name} = payload;
-    log('info', "机器人登录成功，账号名："+name);
+    console.log(user)
+    saveWechatConfig({username:user.payload.name,wechatid:user.payload.id,avatar:user.payload.avatar,loginurl:'',friends:JSON.stringify(user.payload.friendList)})
+    log('info', "机器人登录成功，账号名："+user.payload.name);
   })
 
   bot.on("logout", async (user) => {
-    let {payload} = user;
-    let {name} = payload;
-    log('info', name+"退出登录");
+    log('info', user.payload.name+"退出登录");
   })
 
   bot.on("error", (e) => {
-    console.log(e)
-    log('error', e);
+    log('error', "微信端传出错误"+e);
   })
-  // 启动的时间会比较久
+
   bot.on("ready",async ()=>{
     let rooms = await bot.Room.findAll()
-    let id = ""
-    rooms.filter(room=>{
-      if(process.env.MANAGE_ROOMS.includes(room.payload.topic)){
-        id = room.id
-      }
-    });
-
-    if(process.env.IS_PUSH_MESSAGE){
-      const rule = new schedule.RecurrenceRule();
-      rule.hour = process.env.SCHEDULE_HOUR
-      rule.minute =  process.env.SCHEDULE_MINUES
-      // 中国上海时间
-      rule.tz = 'Asia/Shanghai';
-      schedule.scheduleJob(rule, async()=>{
-        let {data} = await getNews();
-        if(data){
-          let answer = await difyChat(id,`请根据当前的经济数据，对当前市场进行分析`)
-          // 过滤文字中的*
-          answer = answer.replace(/\*/g, '');                
-          await sendMessage(id, answer);
-        }
-      });
-    }
+    await handlePush(rooms)
   })
 
   await bot.start();
@@ -372,167 +108,7 @@ export async function prepareBot() {
 }
 
 async function startBot() {
-
-    app.post('/api/login', async (req, res) => {
-      const { username, password } = req.body;
-      //  验证用户名和密码 初始密码为 admin 123456
-      let verified = await verifyUser(username, password)
-      if (verified) {
-        req.session.user = username; // 设置登录标识
-        res.send({message:'登录成功',status:200});
-      } else {
-        res.send({message:'用户名或密码错误',status:401});
-      }
-    });
-    // 修改用户名密码
-    app.post('/api/forgetpwd', async (req, res) => {
-      const { username, password } = req.body;
-      let updated = await updateUser(username, password,'admin')
-      if (updated) {
-        res.send({message:'修改成功',status:200});
-      } else {
-        res.send({message:'修改失败',status:401});
-      }
-    });
-    // 退出
-    app.get('/api/logout', (req, res) => {
-      req.session.destroy((err) => { // 清除 session 数据
-        if (err) {
-          console.error("Error destroying session:", err);
-          return res.status(500).send("Logout failed"); 
-        }
-        res.redirect('/login'); // 重定向到登录页面
-      });
-    });
-    app.get('/api/logs', (req, res) => {
-      getLogs().then((data) => {
-        res.json(data);
-      });
-    });
-    // 删除全部日志
-    app.delete('/api/logs', (req, res) => {
-      deleteLogs().then((data) => {
-        res.json(data);
-      });
-    });
-     // 删除全部聊天记录
-     app.delete('/api/chats', (req, res) => {
-      deleteChats().then((data) => {
-        res.json(data);
-      });
-    });
-    // 获取全部聊天记录
-    app.get('/api/chats', (req, res) => {
-      getChats().then((data) => {
-          res.json(data);
-      });
-    });
-    // 获取配置信息
-    app.get('/api/settings', (req, res) => {
-      getConfig().then((data) => {
-          res.json(data);
-      });
-    });
-    // 更新配置信息
-    app.post('/api/settings', (req, res) => {
-      const config = req.body;
-      saveConfig(config).then((data) => {
-          res.json(data);
-      });
-    });
-     // 获取邮件配置信息
-     app.get('/api/email', (req, res) => {
-      getEmailConfig().then((data) => {
-          res.json(data);
-      });
-    });
-    // 更新邮件配置信息
-    app.post('/api/email', (req, res) => {
-      const config = req.body;
-      saveEmailConfig(config).then((data) => {
-          res.json(data);
-      });
-    });
-      // 获取Agent配置信息
-      app.get('/api/agent', (req, res) => {
-        getAgentConfig().then((data) => {
-            res.json(data);
-        });
-      });
-      // 更新Agent配置信息
-      app.post('/api/agent', (req, res) => {
-        const config = req.body;
-        saveAgentConfig(config).then((data) => {
-            res.json(data);
-        });
-      });
-     // 获取tts配置信息
-     app.get('/api/tts', (req, res) => {
-      getTTSConfig().then((data) => {
-          res.json(data);
-      });
-    });
-    // 更新TTS配置信息
-    app.post('/api/tts', (req, res) => {
-      const config = req.body;
-      saveTTSConfig(config).then((data) => {
-          res.json(data);
-      });
-    });
-       // 获取wechat配置信息
-       app.get('/api/wechat', (req, res) => {
-        getWechatConfig().then((data) => {
-            res.json(data);
-        });
-      });
-      // 更新wechat配置信息
-      app.post('/api/wechat', (req, res) => {
-        const config = req.body;
-        saveWechatConfig(config).then((data) => {
-            res.json(data);
-        });
-      });
-    // 更新图片配置信息
-    app.post('/api/images', (req, res) => {
-      const config = req.body;
-      saveConfig(config).then((data) => {
-          res.json(data);
-      });
-    });
-    app.get('/settings', (req, res) => {
-      res.sendFile(path.join(__dirname, './public/settings.html')); 
-    });
-    app.get('/login', (req, res) => {
-      res.sendFile(path.join(__dirname, './public/login.html')); 
-    });
-    app.get('/docs', (req, res) => {
-        res.sendFile(path.join(__dirname, './public/docs.html')); 
-    });
-    app.get('/poster', (req, res) => {
-      res.sendFile(path.join(__dirname, './public/poster.html')); 
-    });
-    app.get('/chats', (req, res) => {
-      res.sendFile(path.join(__dirname, './public/chats.html')); 
-    });
-    app.get('/logs', (req, res) => {
-      res.sendFile(path.join(__dirname, './public/logs.html')); 
-    });
-    app.get('/knowledge', (req, res) => {
-      res.sendFile(path.join(__dirname, './public/knowledge.html')); 
-    });
-    app.get('/email', (req, res) => {
-      res.sendFile(path.join(__dirname, './public/email.html')); 
-    });
-    app.get('/forgetpassword', (req, res) => {
-      res.sendFile(path.join(__dirname, './public/forgetpassword.html')); 
-    });
-    app.get('/voice', (req, res) => {
-      res.sendFile(path.join(__dirname, './public/voice.html')); 
-    });
-    app.get('/', (req, res) => {
-      res.sendFile(path.join(__dirname, './public/index.html')); 
-    });
-    app.listen(port, async () => {
+   app.listen(port, async () => {
        console.log(`Web server listening at http://localhost:${port}`);
       //  await open(`http://localhost:${port}`);
     });
@@ -548,7 +124,6 @@ process.on('exit', async(code) => {
 
 process.on('SIGINT', async () => {
   log('warning', "程序退出");
-  wss.close(); //  关闭 WebSocket 服务器
   await bot.logout();
   process.exit();
 });
@@ -556,4 +131,3 @@ process.on('SIGINT', async () => {
 process.on('uncaughtException', async (err) => {
   console.error('抛出异常退出:', err);
 });
-

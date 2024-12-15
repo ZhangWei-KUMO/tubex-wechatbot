@@ -1,24 +1,23 @@
 import sqlite3 from 'sqlite3';
 
 // 数据库文件名
-const dbFile = 'users.db'; //  使用 users.db 存储用户信息
-
+const dbFile = 'wechats.db'; //  使用 users.db 存储用户信息
 
 // 创建数据库连接
 const db = new sqlite3.Database(dbFile, (err) => {
     if (err) {
         console.error(err.message);
     } else {
-        console.log('连接用户数据库');
+        console.log('连接微信数据库');
         // 创建用户表（如果不存在）
         db.run(`
             CREATE TABLE IF NOT EXISTS wechats (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                username TEXT UNIQUE NOT NULL,
-                wechatid TEXT NOT NULL,
-                avatar TEXT NOT NULL,
-                friends TEXT NOT NULL,
-                loginurl TEXT NOT NULL
+                username TEXT,
+                wechatid TEXT,
+                avatar TEXT,
+                friends TEXT,
+                loginurl TEXT
             )
         `, (err) => {
                 if (err) {
@@ -76,8 +75,6 @@ const db = new sqlite3.Database(dbFile, (err) => {
     }
 
 
-
-// Helper function to update config
 export function saveWechatConfig(config) {
     const { username, wechatid,avatar, friends, loginurl } = config;
     return new Promise((resolve, reject) => {
