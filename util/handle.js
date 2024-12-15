@@ -8,6 +8,7 @@ import fs from 'fs';
 import process from 'process';
 import schedule from 'node-schedule';
 import {getNews} from './group.js'
+import {recgonizeImage} from './gemini.js'
 
 export const singleChat = async (talkerId,listenerId,text) => {
     if(talkerId!==listenerId && talkerId!=='weixin' && text!==''){
@@ -260,14 +261,22 @@ export const handlePush = async (rooms) => {
       });
     }
 }
-
-export const handleImage = async (message,talkerId) => {
-    try{
-        // const imageFileBox = await message.toFileBox();
-        // let image = await imageFileBox.toFile();
-        await sendMessage(talkerId, "好的，我先看下");
-    }catch(e){
-        await sendMessage(talkerId, e)
-        return
+// 处理图片，该函数的触发条件是指用户在当前文本信息之前发送了一张图片
+export const handleImage = async (message, talkerId,question) => {
+  try{
+    const imageFileBox = await message.toFileBox();
+    let image = await imageFileBox.toBuffer();
+    let mimeType = imageFileBox.mimeType
+    if (!mimeType) {
+       await sendMessage(talkerId, '无法获取图片 mimeType，请检查图片格式');
+       return
     }
+    let res = await recgonizeImage(image, question)
+    await sendMessage(talkerId, res);
+}catch(e){
+    // 修改这里，提取错误信息
+    let errorMessage = `图片处理出错: ${e.message || String(e)}`;
+    await sendMessage(talkerId, errorMessage);
+    return
 }
+} 

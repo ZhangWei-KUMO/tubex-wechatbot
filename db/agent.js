@@ -28,7 +28,7 @@ const db = new sqlite3.Database(dbFile, (err) => {
                         console.error("Error checking agentConfig table:", err.message);
                     } else if (row.count === 0) {
                         const defaultEmailConfig = {
-                            model: 'gemini-1.5-pro',
+                            model: 'gemini-1.5-flash',
                             prompt: '你是一个机器人',
                             tasks: '其他',
                             news: 0,

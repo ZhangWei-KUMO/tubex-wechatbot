@@ -1,18 +1,22 @@
 /* eslint-disable no-undef */
 import {GoogleGenerativeAI} from '@google/generative-ai';
 import 'dotenv/config'
+import {getAgentConfig} from '../db/agent.js'
+import { getConfig } from '../db/config.js';
+let agent = await getAgentConfig();
+let config = await getConfig();
+const genAI = new GoogleGenerativeAI(config.geminiApiKey || configprocess.env.GEMINI_API_KEY);
+const model = genAI.getGenerativeModel({ model:agent.model || "gemini-1.5-flash" });
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-
-export const recgonizeImage = async (prompt) => {
+export const recgonizeImage = async (buffer,question) => {
     const image = {
         inlineData: {
-            data: Buffer.from(fs.readFileSync("cookie.jpg")).toString("base64"),
+            // data: Buffer.from(fs.readFileSync("cookie.jpg")).toString("base64"),
+            data: buffer.toString("base64"),
             mimeType: "image/png",
         }};
 
-    const result = await model.generateContent([prompt, image]);
+    const result = await model.generateContent([question, image]);
     return result.response.text()
 }
 
