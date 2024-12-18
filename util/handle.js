@@ -8,7 +8,8 @@ import fs from 'fs';
 import process from 'process';
 import schedule from 'node-schedule';
 import {getNews} from './group.js'
-import {recgonizeImage} from './gemini.js'
+// import {recgonizeImage} from './gemini.js'
+import {saveFlashMemory} from '../db/flashmemories.js'
 
 export const singleChat = async (talkerId,listenerId,text) => {
     if(talkerId!==listenerId && talkerId!=='weixin' && text!==''){
@@ -262,17 +263,21 @@ export const handlePush = async (rooms) => {
     }
 }
 // 处理图片，该函数的触发条件是指用户在当前文本信息之前发送了一张图片
-export const handleImage = async (message, talkerId,question) => {
+export const handleImage = async (message, talkerId) => {
   try{
     const imageFileBox = await message.toFileBox();
-    let image = await imageFileBox.toBuffer();
+    let buffer = await imageFileBox.toBuffer();
     let mimeType = imageFileBox.mimeType
     if (!mimeType) {
        await sendMessage(talkerId, '无法获取图片 mimeType，请检查图片格式');
        return
     }
-    let res = await recgonizeImage(image, question)
-    await sendMessage(talkerId, res);
+    let base64String = buffer.toString("base64")
+    // 存入记忆中
+    saveFlashMemory(talkerId, base64String, 'image')
+    // 识别图片
+    // let res = await recgonizeImage(image, question)
+    // await sendMessage(talkerId, res);
 }catch(e){
     // 修改这里，提取错误信息
     let errorMessage = `图片处理出错: ${e.message || String(e)}`;

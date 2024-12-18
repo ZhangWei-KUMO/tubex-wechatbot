@@ -25,6 +25,9 @@ staticRouter.get('/settings', (req, res) => {
   staticRouter.get('/chats', (req, res) => {
     res.sendFile(path.join(__dirname, './public/chats.html')); 
   });
+  staticRouter.get('/flashmemo', (req, res) => {
+    res.sendFile(path.join(__dirname, './public/flashmemo.html')); 
+});
   staticRouter.get('/logs', (req, res) => {
     res.sendFile(path.join(__dirname, './public/logs.html')); 
   });

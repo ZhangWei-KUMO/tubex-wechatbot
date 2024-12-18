@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="zh-cn">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,10 +7,8 @@
     <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
     <script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
-
     <script src="https://unpkg.com/@douyinfe/semi-ui@2.27.0/dist/umd/semi-ui.min.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/@douyinfe/semi-ui@2.27.0/dist/css/semi.css">
-
     <script src="https://unpkg.com/@douyinfe/semi-icons@latest/dist/umd/semi-icons.min.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/@douyinfe/semi-icons@latest/dist/css/semi-icons.css">
     <style>
@@ -20,63 +17,63 @@
             padding: 0;
             font-family: 'Roboto', sans-serif;
             background: linear-gradient(135deg, #2c3e50, #3498db);
-             color: #fff;
-              overflow-x: hidden; /*  防止水平滚动 */
+            color: #fff;
+            overflow-x: hidden;
         }
 
         .components-layout-demo {
-             display: flex;
+            display: flex;
             height: 100vh;
         }
-      
+
         .semi-layout-sider {
-             background: rgba(255, 255, 255, 0.1); /* 半透明白色背景 */
-             backdrop-filter: blur(10px); /* 背景模糊效果 */
-             border-right: 1px solid rgba(255, 255, 255, 0.2);
-             border-radius: 10px;
-        }
-        .semi-layout-header {
-             background: rgba(255, 255, 255, 0.1);
-             backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-          .semi-layout-content {
-            background: rgba(255, 255, 255, 0.02);
-               backdrop-filter: blur(5px);
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 10px;
-            overflow-y: auto; /* 允许纵向滚动 */
+            width: 200px;
         }
 
-       .content-container {
+        .semi-layout-header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .semi-layout-content {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(5px);
+            border-radius: 10px;
+            overflow-y: auto;
+        }
+
+        .content-container {
             padding: 30px;
             background: rgba(255, 255, 255, 0.05);
-             border-radius: 10px;
+            border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             margin: 20px;
-               backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
-           display: flex;
-            flex-direction: column;
-             align-items: flex-start;
+            max-width: 90%;
             width: 800px;
-         }
-
+        }
 
         .content-container h2 {
-             font-size: 24px;
-             font-weight: 500;
+            font-size: 24px;
+            font-weight: 500;
             margin-bottom: 20px;
-             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-             letter-spacing: 1px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            letter-spacing: 1px;
         }
 
         .content-container p {
             font-size: 16px;
             line-height: 1.6;
             margin-bottom: 15px;
-             color:#ddd;
-             text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+            color: #ddd;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
         }
 
         .sider-header {
@@ -84,115 +81,371 @@
             text-align: center;
             font-size: 1.2rem;
             font-weight: 600;
-              letter-spacing: 1px;
-              text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-               color: #fff;
+            letter-spacing: 1px;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+            color: #fff;
             border-bottom: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-         .sider-nav a {
+        .sider-nav a {
             display: block;
             padding: 12px 20px;
             color: #ddd;
             text-decoration: none;
             border-radius: 5px;
             transition: background-color 0.3s, color 0.3s;
-             margin: 5px 0;
+            margin: 5px 0;
         }
 
         .sider-nav a:hover {
             background-color: rgba(255, 255, 255, 0.1);
             color: #fff;
         }
+
         .sider-nav a.active {
-            background-color:  rgba(52, 152, 219, 0.3);
+            background-color: rgba(52, 152, 219, 0.3);
             color: #fff;
-             font-weight: 600;
+            font-weight: 600;
+        }
+
+        .input-label {
+            display: block;
+            margin-bottom: 10px;
+            color: #ddd;
+            font-weight: 500;
+            text-align: left;
+            letter-spacing: 1px;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .input-field {
+            width: 100%;
+            border-radius: 5px;
+            border: 1px solid #444;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font-size: 16px;
+            transition: border-color 0.3s ease, background-color 0.3s ease;
+        }
+          .semi-select-selection-text {
+            color: #fff;
+        }
+
+        .preview-image {
+            max-width: 180px;
+            max-height: 180px;
+            margin: 5px;
+            border: 1px solid #ddd;
+            object-fit: cover;
+           
+        }
+        
+        .image-upload-container {
+            gap: 20px;
+            margin-bottom: 20px;
+            align-items: center;
+        }
+        
+        .upload-area {
+            width: 200px;
+            height: 100px;
+            border: 2px dashed #d9d9d9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: border-color 0.3s;
+            text-align: center;
+            border-radius: 5px;
+        }
+
+        .upload-area.dragging {
+          border-color: #1890ff;
+        }
+
+        .image-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .image-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.08);
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .image-card p {
+            text-align: center;
+            margin-bottom: 0px;
+            font-size: 14px;
+            color: #ddd;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 20px;
+        }
+
+         .input-group label {
+            margin-bottom: 5px;
+             color: #ddd;
+            font-weight: 500;
+           
+        }
+           .input-group  .semi-select-selection {
+            width: 150px;
+           }
+        .form-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 20px;
+              align-items: flex-end;
         }
     </style>
 </head>
-
 <body>
-    <div id="root"></div>
-    <script type="text/babel">
-         const { Menu,Input, Button, Switch, TimePicker, TagInput, Layout, Icon,Row,Col,Toast } = SemiUI;
-        const { IconHome } = SemiIcons;
-        const { Header, Sider, Content } = Layout;
+<div id="root"></div>
+<script type="text/babel">
+    const { Space, Menu, Input, Button, Switch, TimePicker, TagInput, Layout, Icon, Row, Col, Toast, Upload,Select } = SemiUI;
+    const { IconHome } = SemiIcons;
+    const { Header, Sider, Content } = Layout;
+    const commonStyle = {
+        height: 76,
+        lineHeight: '76px',
+        padding: '0 24px',
+        fontWeight: "600",
+        color: "#fff",
+    };
+    function App() {
+        const { useState, useEffect, useRef } = React;
+        const [activeLink, setActiveLink] = useState(window.location.pathname);
+        const [title, setTitle] = useState('');
+        const [type, setCategory] = useState('宣传海报');
+        const [content, setBase64] = useState('');
+        const [dragging, setDragging] = useState(false);
+        const [loading, setLoading] = useState(false);
+        const [images,setImages] = useState([]);
+        const uploadRef = useRef(null);
 
-        const commonStyle = {
-            height: 76,
-            lineHeight: '76px',
-            padding: '0 24px',
-            fontWeight:"600",
-            color:"#fff",
+
+        const links = [
+            { path: "/", text: "首页" },
+            { path: "/flashmemo", text: "短期记忆" },
+            { path: "/chats", text: "聊天记录" },
+            { path: "/logs", text: "日志记录" },
+            { path: "/settings", text: "系统设置" },
+            { path: "/docs", text: "开发文档" },
+            { path: "/poster", text: "图片库" },
+            { path: "/knowledge", text: "长期记忆" },
+            { path: "/forgetpassword", text: "重置密码" },
+            { path: "/voice", text: "语音设置" },
+            { path: "/email", text: "邮箱设置" },
+        ];
+
+
+        const fetchData = async () =>{
+            try {
+                const response = await fetch('/api/images');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const images = await response.json();
+                console.log(images)
+                setImages(images)
+            } catch (error) {
+                Toast.error(`获取图片库失败: ${error.message}`);
+            }
+        }
+
+        useEffect(() => {
+            const handleLocationChange = () => {
+                setActiveLink(window.location.pathname);
+            };
+
+            window.addEventListener('popstate', handleLocationChange); //  处理浏览器前进/后退按钮
+            fetchData()
+            return () => {
+                window.removeEventListener('popstate', handleLocationChange);
+            };
+        }, []);
+
+
+        const handleDrop = (e) => {
+            e.preventDefault();
+            setDragging(false); // 拖拽结束，移除高亮边框
+            const file = e.dataTransfer.files[0];
+            const maxSize = 300 * 1024; // 300KB
+
+            if (file && file.type.startsWith('image/')) {
+                if (file.size > maxSize) {
+                    Toast.error('图片大小不能超过 300KB');
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    // 获取到图片的 base64
+                    setBase64(event.target.result);
+                };
+                reader.readAsDataURL(file);
+            }
         };
 
-        function App() { // 函数组件
-           let {useState,useEffect} = React;
-             const [activeLink, setActiveLink] = useState(window.location.pathname); //  存储当前激活的链接
-             useEffect(() => {
-                // 监听路由变化
-                const handleLocationChange = () => {
-                    setActiveLink(window.location.pathname);
-                };
+        const handleDragLeave = (e) => {
+            e.preventDefault();
+            setDragging(false); // 离开拖拽区域，移除高亮边框
+        };
 
-                window.addEventListener('popstate', handleLocationChange); //  处理浏览器前进/后退按钮
+        const handleDragOver = (e) => {
+            e.preventDefault();
+            setDragging(true); // 拖拽开始，添加高亮边框
+        };
 
-                // 组件卸载时移除监听器
-                return () => {
-                    window.removeEventListener('popstate', handleLocationChange);
-                };
-            }, []);
 
-              const links = [
-                { path: "/", text: "首页" },
-                { path: "/chats", text: "聊天记录" },
-                { path: "/logs", text: "日志记录" },
-                { path: "/settings", text: "系统设置" },
-                { path: "/docs", text: "开发文档" },
-                  { path: "/poster", text: "图片库" },
-                 { path: "/knowledge", text: "知识库" },
-                { path: "/forgetpassword", text: "重置密码" },
-                   { path: "/voice", text: "语音设置" },  
-                     { path: "/email", text: "邮箱设置" },          
-              ];
+        const handleDelete = async (id) => {
+            try {
+                const res = await fetch(`/api/image/${id}`, {
+                    method: 'DELETE',
+                });
+                if (res.ok) {
+                    Toast.success('删除成功');
+                    fetchData();
+                } else {
+                    const errorData = await res.json();
+                    Toast.error(`删除失败: ${errorData.message || '服务器错误'}`);
+                }
+            } catch (error) {
+                console.error('Failed to delete data:', error);
+                Toast.error('删除失败，请检查网络或稍后重试');
+            }
+        }
+        const handleSubmit = async () => {
+            setLoading(true);
+            try {
+                const res = await fetch('/api/images', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        title,
+                        type,
+                        content,
+                    }),
+                });
+                if (res.ok) {
+                    Toast.success('上传成功');
+                    setTitle('');
+                    setCategory('宣传海报');
+                    setBase64('');
+                    fetchData();
+                } else {
+                    const errorData = await res.json();
+                    Toast.error(`上传失败: ${errorData.message || '服务器错误'}`);
+                }
+            } catch (error) {
+                console.error('Failed to submit data:', error);
+                Toast.error('上传失败，请检查网络或稍后重试');
+            } finally {
+                setLoading(false);
+            }
+        }
 
-            return (
-                <Layout className="components-layout-demo">
-                    <Sider style={{ width: '200px' }} className="sider-nav">
-                           <div className="sider-header">TubeX</div>
-                        {links.map((link) => (
-                            <div key={link.path}>
-                                <a
-                                    href={link.path}
-                                     className={activeLink === link.path ? 'active' : ''}
-                                    onClick={(e) => {
-                                      setActiveLink(link.path);
-                            }}
-                                >
-                                    {link.text}
-                                </a>
-                            </div>
-                        ))}
-                    </Sider>
-                    <Layout>
-                        <Header style={commonStyle}>微信机器人后台管理系统</Header>
-                        <Content style={{  minHeight: 'calc(100vh - 64px)' }}>
-                            <div className="content-container">
+        return (
+            <Layout className="components-layout-demo">
+                <Sider style={{ width: '200px' }} className="sider-nav">
+                    <div className="sider-header">TubeX</div>
+                    {links.map((link) => (
+                        <div key={link.path}>
+                            <a href={link.path}
+                                className={activeLink === link.path ? 'active' : ''}
+                                onClick={(e) => {
+                                setActiveLink(link.path); 
+                            }}>
+                                {link.text}
+                            </a>
+                        </div>
+                    ))}
+                </Sider>
+                <Layout>
+                    <Header style={commonStyle}>微信机器人后台管理系统</Header>
+                    <Content style={{ minHeight: 'calc(100vh - 64px)' }}>
+                        <Row gutter={20}>
+                            <Col span={16}>
+                                <div className="content-container">
                                 <h2>图片库</h2>
-                                <div>
-                                 
+                                <div className="image-list">
+                                {images.map(image => (
+                                    <div key={image.id} className="image-card">
+                                        <img src={image.content} alt={image.title} className="preview-image"/>
+                                        <p>标题：{image.title}</p>
+                                        <p>类型：{image.type}</p>
+                                        <p>上传时间：{image.timestamp}</p>
+                                        <Button type="danger" onClick={() => handleDelete(image.id)}>删除</Button>
+                                    </div>
+                                ))}
+                                    </div>
+                                </div>
+                            </Col>
+                            <Col span={6}>
+                                <div className="content-container">
+                                <div className="image-upload-container">
+                                {content ? <img
+                                        src={content}
+                                        alt={`preview`}
+                                        className="preview-image"
+                                        /> :
+                                        <div
+                                        className={`upload-area ${dragging ? 'dragging' : ''}`}
+                                        onDrop={handleDrop}
+                                        onDragOver={handleDragOver}
+                                        onDragLeave={handleDragLeave}>
+                                        请将图片拖拽至此
+                                    </div>
+                                }
+                                <div className="form-group">
+                                    <div className="input-group">
+                                        <label>标题</label>
+                                        <Input placeholder="标题" className="input-field" onChange={e=>setTitle(e)} />
+                                    </div>
+                                    <div className="input-group">
+                                        <label>类型</label>
+                                          <Select defaultValue="宣传海报" style={{ width: 120,color:"#fff" }}
+                                               onChange={(value) => setCategory(value)}
+                                               className="input-field">
+                                              <Select.Option value="宣传海报">宣传海报</Select.Option>
+                                              <Select.Option value="内部资料">内部资料</Select.Option>
+                                          </Select>
+                                      </div>
+                                      <div className="input-group">
+                                        <Button
+                                            theme="primary"
+                                            onClick={handleSubmit}
+                                            loading={loading}>
+                                            开始上传
+                                        </Button>
+                                    </div> 
+                                    </div> 
                                 </div>
                             </div>
-                        </Content>
-                    </Layout>
+                            </Col>
+                        </Row>
+                        
+                    </Content>
                 </Layout>
-          
-        )}
-        ReactDOM.render(<App />, document.getElementById('root'));
-
-    </script>
-
+            </Layout>
+        );
+    }
+    ReactDOM.render(<App />, document.getElementById('root'));
+</script>
 </body>
-
 </html>

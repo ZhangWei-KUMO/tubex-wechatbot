@@ -72,6 +72,10 @@
              letter-spacing: 1px;
         }
 
+        .semi-input-textarea {
+            color:#fff;
+        }
+
         .input-group {
             margin-bottom: 20px;
             width: 100%;
@@ -177,7 +181,7 @@
 <body>
     <div id="root"></div>
     <script type="text/babel">
-       const { Menu,Input, Button, Switch, TimePicker, TagInput, Layout, Icon,Row,Col,TextArea,Toast } = SemiUI;
+       const { Menu,Input, Button, Switch, TimePicker, TagInput, Layout, Icon,Row,Col,TextArea,Toast,Space } = SemiUI;
         const { IconHome } = SemiIcons;
         const { Header, Sider, Content } = Layout;
 
@@ -268,14 +272,27 @@
                 }
             }
 
+            const handleTest = async () => {
+                try {
+                    const response = await fetch('/api/testemail');
+                    if (response.ok) {
+                        Toast.success('成功发送测试邮件');
+                    } else {
+                        Toast.error(`保存失败: ${errorData.message || '未知错误'}`); // 显示错误信息
+                    }
+                } catch (error) {
+                    Toast.error(`保存失败: ${error.message}`); // 处理网络错误
+                }
+            }
+
               const links = [
-                { path: "/", text: "首页" },
+                { path: "/", text: "首页" },{ path: "/flashmemo", text: "短期记忆" },
                 { path: "/chats", text: "聊天记录" },
                 { path: "/logs", text: "日志记录" },
                 { path: "/settings", text: "系统设置" },
                 { path: "/docs", text: "开发文档" },
                 { path: "/poster", text: "图片库" },
-                { path: "/knowledge", text: "知识库" },
+                { path: "/knowledge", text: "长期记忆" },
                 { path: "/forgetpassword", text: "重置密码" },
                 { path: "/voice", text: "语音设置" },   
                 { path: "/email", text: "邮箱设置" },           
@@ -373,8 +390,14 @@
                             </div>
                         </Col>
                         </Row>
-                         <Button size='large' theme="solid" className="button-submit" 
-                         onClick={handleSubmit}>保存</Button>
+                        <Space>
+                            <Button size='large' theme="solid" className="button-submit" 
+                                onClick={handleSubmit}>保存
+                            </Button>
+                            <Button size='large' type="default" className="button-test" 
+                                onClick={handleTest}>发送测试邮件
+                            </Button>
+                        </Space>
                         </div>
                     </Content>
                 </Layout>

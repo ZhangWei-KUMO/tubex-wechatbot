@@ -10,7 +10,6 @@ import moment from 'moment';
 import 'dotenv/config'
 // import Redis from 'ioredis';
 // const redis = new Redis();
-
 const fetchStockInfo = async (stockName) => {
   try{
     let res = await fetch(`https://api-one-wscn.awtmt.com/apiv1/search/live?&cursor=&limit=5&query=${stockName}`);
@@ -133,7 +132,6 @@ const getBinanceRanker = async () => {
           if(parseFloat(item.quoteVolume) > 1000000000) item.市场热点 = true
           const obj = {
               "数字货币":item.symbol.replace("USDT",""),
-              // 保留小数点后两位
               "交易额": (parseFloat(item.quoteVolume)/100000000).toFixed(2)+"亿",
               "涨幅":(parseFloat(item.priceChangePercent).toFixed(1))+"%",
               "当前价格":parseFloat(item.lastPrice).toFixed(3)+"$",

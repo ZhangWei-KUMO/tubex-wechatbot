@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 
-import {transporter,mailOptionsBigquant} from './mailer.js';
+// import {transporter,mailOptionsBigquant} from './mailer.js';
 
 export const getNews = async () => {
   try {
@@ -45,12 +45,6 @@ export const getStockPlan = async () => {
     if(jsonp.data.planned_order_lists){
       let first = jsonp.data.planned_order_lists[0]
       if(first && first.name && first.name.includes("*")){
-         // 发送邮件
-         transporter.sendMail(mailOptionsBigquant, (error) => {
-          if (error) {
-            return console.error(error);
-          }
-        });
         return null
       }else{
         // 发送消息

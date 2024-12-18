@@ -10,12 +10,17 @@ import router from './router/router.js';
 import staticRouter from './router/static.js';
 import {saveWechatConfig} from './db/wechat.js';
 // import {Jimp} from 'jimp';
+import bodyParser from 'body-parser';
 
 const port = 3000;
 config();
 const app = express();
+app.use(bodyParser.json({'limit':'800kb'}));
+app.use(express.urlencoded({'extended':false,'limit':'800kb'}));
 app.use(router);
 app.use(staticRouter);
+
+
 export async function prepareBot() {
   bot.on("message", async (message) => {  
     const contact = message.talker();
@@ -136,7 +141,9 @@ async function startBot() {
 
 }
 
-startBot().catch(console.error);
+startBot().catch((e)=>{
+  console.log("Bot Catch",e);
+});
 
 process.on('exit', async(code) => {
   log('warning', "程序退出"+code);

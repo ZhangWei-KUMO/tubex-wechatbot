@@ -10,11 +10,14 @@ import {verifyUser,updateUser} from '../db/users.js';
 import {getWechatConfig,saveWechatConfig} from '../db/wechat.js';
 import {AUTH_CONFIG,isAuthenticated} from './index.js';
 import session from 'express-session';
-
+import {transporter,mailOptions} from '../util/mailer.js';
+import {saveImage,getImage,getImages,deleteImage,deleteImages} from '../db/images.js';
+import {getFlashMemories,deleteFlashMemories} from '../db/flashmemories.js';
 
 const router = express.Router();
 
 router.use(express.json());
+
 router.use(express.urlencoded({ extended: true }));
 router.use(session(AUTH_CONFIG));
 router.use(isAuthenticated);
@@ -94,6 +97,11 @@ router.post('/api/login', async (req, res) => {
     });
   });
 
+  router.get('/api/testemail', (req, res) => {
+    transporter.sendMail(mailOptions);
+    res.json({msg:"邮件发送成功"})
+  });
+
   router.post('/api/email', (req, res) => {
     const config = req.body;
     saveEmailConfig(config).then((data) => {
@@ -135,17 +143,54 @@ router.post('/api/login', async (req, res) => {
   router.post('/api/wechat', (req, res) => {
     const config = req.body;
     saveWechatConfig(config).then((data) => {
+      console.log(data);
         res.json(data);
     });
   });
-  
+  // 上传图片
   router.post('/api/images', (req, res) => {
     const config = req.body;
-    saveConfig(config).then((data) => {
+    saveImage(config).then((data) => {
+        res.json(data);
+    });
+
+  });
+  // 获取图片
+  router.get('/api/images', (req, res) => {
+    getImages().then((data) => {
         res.json(data);
     });
   });
-
-
-
+  // 删除图片
+  router.delete('/api/images', (req, res) => {
+    deleteImages().then((data) => {
+      res.json(data);
+    });
+  });
+  // 删除单张图片
+  router.delete('/api/image/:id', (req, res) => {
+    const id = req.params.id;
+    deleteImage(id).then((data) => {
+      res.json(data);
+    });
+  });
+  // 获取单张图片
+  router.get('/api/image/:id', (req, res) => {
+    const id = req.params.id;
+    getImage(id).then((data) => {
+      res.json(data);
+    });
+  });
+  // 获取flashmemory
+  router.get('/api/flashmemory', (req, res) => {
+    getFlashMemories().then((data) => {
+      res.json(data);
+  });
+  });
+  // 删除flashmemory
+  router.delete('/api/flashmemory', (req, res) => {
+    deleteFlashMemories().then((data) => {
+      res.json(data);
+    });
+  });
 export default router;

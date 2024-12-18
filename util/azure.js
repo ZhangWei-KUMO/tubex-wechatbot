@@ -3,9 +3,10 @@ import {
   SpeechConfig, ResultReason, AudioConfig, SpeechSynthesizer, SpeechRecognizer,
 } from 'microsoft-cognitiveservices-speech-sdk';
 import fs from 'fs';
-
-const AZURE_SUBSCRIPTION_KEY = "2398a3d4e3214edcbc45ed1a82dc74ba"
-const AZURE_SERVICE_REGION = "japanwest"
+import {getTTSConfig} from '../db/tts.js';
+const config = await getTTSConfig();
+const AZURE_SUBSCRIPTION_KEY = config.azurekey;
+const AZURE_SERVICE_REGION = config.azureregion;
 const speechConfig = SpeechConfig.fromSubscription(AZURE_SUBSCRIPTION_KEY, AZURE_SERVICE_REGION);
   
 export function synthesizeSpeech(text,voiceName) {

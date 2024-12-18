@@ -163,14 +163,14 @@
 
            async function getChats() {
                 try {
-                    const response = await fetch('/api/logs'); 
+                    const response = await fetch('/api/flashmemories'); 
                     if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                     }
                     const chats = await response.json();
                      setData(chats.map(item => ({ ...item, key: item.id })));
                 } catch (error) {
-                     Toast.error(`获取日志记录失败: ${error.message}`);
+                     Toast.error(`获取短期记忆失败: ${error.message}`);
                 }
             }
              useEffect(() => {
@@ -186,16 +186,17 @@
             }, []);
 
               const links = [
-                { path: "/", text: "首页" },{ path: "/flashmemo", text: "短期记忆" },
+                { path: "/", text: "首页" },
+                { path: "/flashmemo", text: "短期记忆" },
                 { path: "/chats", text: "聊天记录" },
                 { path: "/logs", text: "日志记录" },
                 { path: "/settings", text: "系统设置" },
                 { path: "/docs", text: "开发文档" },
-                  { path: "/poster", text: "图片库" },
-                 { path: "/knowledge", text: "长期记忆" },
-                 { path: "/forgetpassword", text: "重置密码" },
-                  { path: "/voice", text: "语音设置" },
-                    { path: "/email", text: "邮箱设置" },        
+                { path: "/poster", text: "图片库" },
+                { path: "/knowledge", text: "长期记忆" },
+                { path: "/forgetpassword", text: "重置密码" },
+                { path: "/voice", text: "语音设置" },
+                { path: "/email", text: "邮箱设置" },        
               ];
 
             const columns = [
@@ -203,25 +204,29 @@
                     title: 'ID',
                     dataIndex: 'id',
                 },
-                 {
+                {
+                    title: 'talkid',
+                    dataIndex: 'talkid',
+                },
+                {
                     title: '时间',
                     dataIndex: 'timestamp',
                      render: (timestamp) => moment(timestamp).format('YYYY-MM-DD HH:mm:ss'),
                 },
                 {
-                    title: '等级',
-                    dataIndex: 'level',
+                    title: '类型',
+                    dataIndex: 'type',
                 },
                 {
                     title: '消息内容',
-                    dataIndex: 'message',
+                    dataIndex: 'content',
                      width: '40%',
                 },
             ];
 
               const handleClearAll = async () => {
                 try {
-                    const response = await fetch('/api/logs', {
+                    const response = await fetch('/api/flashmemories', {
                         method: 'DELETE',
                     });
                     if (response.ok) {
@@ -257,8 +262,8 @@
                     <Content style={{ minHeight: 'calc(100vh - 64px)' }}>
                          <div className="content-container">
                             <Space  className="semi-space-wrap">
-                            <h2>日志记录</h2>
-                            <Button  className="button-submit"  type="primary" theme="solid" onClick={()=>handleClearAll()}>清空日志</Button>
+                            <h2>短期记忆</h2>
+                            <Button  className="button-submit"  type="primary" theme="solid" onClick={()=>handleClearAll()}>清空记忆</Button>
                         </Space>
                            <Table className="semi-table-container" columns={columns} dataSource={data}
                         ></Table>

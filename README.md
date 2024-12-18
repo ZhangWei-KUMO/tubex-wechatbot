@@ -22,7 +22,7 @@ This is an open-source WeChat robot project based on WechatY, Dify API services,
 |AI understands non-text data such as transfers, red envelopes, and geographical locations. |AI理解转账、红包、地理位置等非文本数据|✅|
 |WeChat room chat management |微信群聊天管理|✅|
 |Regular message push in WeChat group |微信群定时消息推送|✅|
-|Third-party knowledge base access |第三方知识库接入|✅|
+|Third-party knowledge base access |第三方长期记忆接入|✅|
 |Email notification to Administrator |管理员邮件通知|✅|
 | Long Memeory for chat | 聊天长记忆 |✅|
 | Self-running business | 自我运维 |✅|
@@ -106,5 +106,11 @@ lewis.q.zhang@gmail.com
 
 https://tubex.chat
 
+### 记忆分类
 
+1. ShortMemory （文本文件）
+2. VisionMemory（图片）
+3. LongMemory （Dify机制）
+4. Prompt
+5. SpecificMemory （专业知识）
 
