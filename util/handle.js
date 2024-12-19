@@ -1,6 +1,6 @@
 import {chat} from '../db/chats.js'
 import {sendMessage,saveInLongMemory,convertSilkToWav,readPDF,readWord,readSheet,readTxt} from './util.js'
-import {difyChat} from './init.js';
+import {think} from './init.js';
 import {splitTextIntoArray} from './reply-filter.js'
 import {recognizeSpeech} from './azure.js'
 import xml2js from 'xml2js';
@@ -18,8 +18,7 @@ export const singleChat = async (talkerId,listenerId,text) => {
           const locationText = `我的地址是：${lines[0]}`;
           saveInLongMemory(locationText,talkerId)          
         }else{
-          chat(talkerId, text);
-          let answer = await difyChat(talkerId,text) 
+          let answer = await think(talkerId,text) 
           if(answer){ 
             answer = answer.replace(/\*/g, '');                
             answer = answer.trim()
@@ -50,7 +49,7 @@ export const groupChat = async (message,talkerId) => {
     let mentionText = await message.mentionText();
     if (await message.mentionSelf()) {
       if (roomMsg) {
-        let answer = await difyChat(roomMsg.id,mentionText)
+        let answer = await think(roomMsg.id,mentionText)
         answer = answer.replace(/\*/g, '');         
         if(answer.includes("\n")){
           let array =  await splitTextIntoArray(answer)
@@ -95,7 +94,7 @@ export const groupChat = async (message,talkerId) => {
                 let q = await recognizeSpeech(wav)
                 fs.unlinkSync(wav)
                 // 获取群名称
-                let answer = await difyChat(roomMsg.id,q)
+                let answer = await think(roomMsg.id,q)
                 answer = answer.replace(/\*/g, '');         
                 if(answer.includes("\n")){
                   let array =  await splitTextIntoArray(answer)
@@ -168,7 +167,7 @@ export const handleAudio = async (message,talkerId) => {
           try{
             let q = await recognizeSpeech(wav)
             fs.unlinkSync(wav)
-            let answer = await difyChat(talkerId,q)
+            let answer = await think(talkerId,q)
             await sendMessage(talkerId,answer)
           }catch(e){
             await sendMessage(talkerId, e)
@@ -183,8 +182,10 @@ export const handleAudio = async (message,talkerId) => {
 export const handleMiniProgram = async (message,talkerId) => {
     try{
         const miniProgram = await message.toMiniProgram();
-        console.log(miniProgram)
-        await sendMessage(talkerId, "真不错，待会不忙的时候会看下");
+        console.log("小程序：",miniProgram)
+        let {payload} = miniProgram;
+        let{description,title} = payload;
+        saveInLongMemory(`对方发来${description}小程序，内容如下：${title}`,talkerId)
     }catch(e){
         await sendMessage(talkerId, e)
         return
@@ -255,7 +256,7 @@ export const handlePush = async (rooms) => {
       schedule.scheduleJob(rule, async()=>{
         let {data} = await getNews();
         if(data){
-          let answer = await difyChat(id,`请根据当前的经济数据，对当前市场进行分析`)
+          let answer = await think(id,`请根据当前的经济数据，对当前市场进行分析`)
           answer = answer.replace(/\*/g, '');                
           await sendMessage(id, answer);
         }

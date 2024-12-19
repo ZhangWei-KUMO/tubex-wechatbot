@@ -138,7 +138,6 @@
         function App() {
             let {useState,useEffect} = React
             const [activeLink, setActiveLink] = useState(window.location.pathname);
-            const [title,setTitle] = useState('微信授权扫码登录');
             const [wechat,setWechat] = useState({});
 
              function connectWechat() {
@@ -147,18 +146,8 @@
                     .then((res) => res.json())
                     .then((data) => {
                         if (data.loginurl) {
-                            document.getElementById('qrcode').innerHTML = '';
-                            new QRCode(document.getElementById('qrcode'),{
-                                text: data.loginurl,
-                                    width: 228,
-                                    height: 228,
-                            } );
-                             setTitle("微信授权扫码登录")
                              setWechat({})
                         }else{
-                            document.getElementById('qrcode').innerHTML = ''
-                            console.log(data)
-                            setTitle("微信已由AI接管")
                             setWechat(data)
                         }
                     });
@@ -174,10 +163,6 @@
 
                 window.addEventListener('popstate', handleLocationChange); 
                 connectWechat();
-
-                 // Set up the interval
-                const intervalId = setInterval(connectWechat, 7000);
-
                 return () => {
                     window.removeEventListener('popstate', handleLocationChange);
                      clearInterval(intervalId); // Clear the interval when the component unmounts
@@ -186,7 +171,8 @@
             }, []);
 
               const links = [
-                { path: "/", text: "首页" },{ path: "/list", text: "好友列表" },
+                { path: "/", text: "首页" },
+                { path: "/list", text: "好友列表" },
                 { path: "/flashmemo", text: "短期记忆" },
                 { path: "/chats", text: "聊天记录" },
                 { path: "/logs", text: "日志记录" },
@@ -198,6 +184,32 @@
                 { path: "/voice", text: "语音设置" }, 
                 { path: "/email", text: "邮箱设置" },         
               ];
+
+              const roomscolumns = [
+              
+                {
+                    title: '群名称',
+                    dataIndex: 'topic',
+                },
+                {
+                    title: 'avatar',
+                    dataIndex: 'avatar',
+                    render: (avatar) => <img src={avatar} alt="avatar" style={{width: 50,height: 50,borderRadius: 12}} />,
+                }
+            ]
+            const friendscolumns = [
+           
+                {
+                    title: '用户名',
+                    dataIndex: 'name',
+                },
+                {
+                    title: 'avatar',
+                    dataIndex: 'avatar',
+                    render: (avatar) => <img src={avatar} alt="avatar" style={{width: 50,height: 50,borderRadius: 12}} />,
+                }
+            ]
+        
         return (
              <Layout className="components-layout-demo">
                 <Sider style={{ width: '200px' }} className="sider-nav">
@@ -220,18 +232,16 @@
                     <Header style={commonStyle}>微信机器人后台管理系统</Header>
                     <Content style={{  minHeight: 'calc(100vh - 64px)' }}>
                          <div className="content-container">
-                            <h2>{title}</h2>
-                             <div>
-                                 {wechat.username && (
-                                     <center>
-                                       <img src={wechat.avatar} alt="avatar" style={{width: 150,height: 150,borderRadius: 12}} />
-                                       <h3>微信账户：{wechat.username}</h3>
-                                       <h5>(用户可在手机中解除授权)</h5>
-                                     </center>
-                                 )}
-                                 <div id="qrcode"></div>
-                            </div>
-                          
+                            {wechat.friends && (
+                                <Table className="semi-table-container" columns={friendscolumns} dataSource={JSON.parse(wechat.friends)}
+                        ></Table>
+                            )}
+                           {
+                                 wechat.rooms && (
+                                    <Table className="semi-table-container" columns={roomscolumns} dataSource={JSON.parse(wechat.rooms)}
+                                    ></Table>
+                                 )
+                           }
                            
                         </div>
                     </Content>

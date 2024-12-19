@@ -55,9 +55,9 @@ router.post('/api/login', async (req, res) => {
   });
 
   router.get('/api/logs', (req, res) => {
-    getLogs().then((data) => {
-      res.json(data);
-    });
+    // getLogs().then((data) => {
+    //   res.json(data);
+    // });
   });
   
   router.delete('/api/logs', (req, res) => {

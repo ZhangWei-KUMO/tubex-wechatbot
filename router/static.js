@@ -43,6 +43,9 @@ staticRouter.get('/settings', (req, res) => {
   staticRouter.get('/voice', (req, res) => {
     res.sendFile(path.join(__dirname, './public/voice.html')); 
   });
+  staticRouter.get('/list', (req, res) => {
+    res.sendFile(path.join(__dirname, './public/list.html')); 
+  });
   staticRouter.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, './public/index.html')); 
   });

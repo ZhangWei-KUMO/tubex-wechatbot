@@ -45,8 +45,6 @@ export function getLogs() {
     return new Promise((resolve, reject) => {
         db.all(`SELECT * FROM logs ORDER BY timestamp DESC`, [], (err, rows) => {  // Order by timestamp descending
             if (err) {
-                console.error("触发错误");
-                console.error(err.message);
                 reject(err);
             } else {
                 resolve(rows);

@@ -38,7 +38,9 @@ export const stockCheck = async (query) => {
     return result.response.text()
 }
 
-export const chat = async () => {
-    const result = await model.generateContent(config.prompt);
+export const chat = async (query) => {
+    console.log("提示词",config)
+    console.log("文本",query)
+    const result = await model.generateContent(query);
     return result.response.text()
 }

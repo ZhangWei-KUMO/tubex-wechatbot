@@ -185,4 +185,20 @@ if (!fs.existsSync(dataPath)) {
 }
 
 
-
+export const sendMiniProgram = async (toUserId)=>{
+  const TEST = {
+    appid: 'wx21c7506e98a2fe75',
+    description: 'luckincoffee瑞幸咖啡',
+    iconUrl: 'http://wx.qlogo.cn/mmhead/Q3auHgzwzM5nUH3PfAXv0R9iacCjVC02CicFxj5hz3dPQksLGuibdXT7A/96',
+    pagePath: 'pages/index/home.html',
+    shareId: '1_wx21c7506e98a2fe75_f29ce9f2fe8bda2885b6e3d7c420ee35_1734597469_1',
+    thumbKey: 'd0cad8f889d39e5d9044d89e8a42a143',
+    thumbUrl: '3057020100044b304902010002043fcdb11602032f55950204b641f7df020467638f78042432386235663061362d373465322d346361332d613266312d6566343234613232626234370204011408030201000405004c53d900',
+    title: '来杯大师咖啡，开启一天好运',
+    username: ''
+  }
+  const miniProgram = new bot.MiniProgram(TEST);
+  const toContact = await bot.Contact.load(toUserId);
+  const message = (await toContact.say(miniProgram));
+  return message;
+}

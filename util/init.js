@@ -150,77 +150,78 @@ const getBinanceRanker = async () => {
   }
 };
 
-export const difyChat = async (talkid,query) => {
-  const filePath = `./logger/${talkid}.json`;
-  let longMemory = "";
-  if (fs.existsSync(filePath)) {
-      longMemory = fs.readFileSync(filePath, 'utf-8');
-      // 清空该文件
-      fs.writeFileSync(filePath, '[]', 'utf-8');
-  }
-  console.log("文件记忆::",longMemory)
-  try{
-    let type =  await classfication(query);
-    type = type.trim()
-    console.log(type)
-    switch(type){
+export const think = async (talkid,query) => {
+  // const filePath = `./logger/${talkid}.json`;
+  // let longMemory = "";
+  // if (fs.existsSync(filePath)) {
+  //     longMemory = fs.readFileSync(filePath, 'utf-8');
+  //     // 清空该文件
+  //     fs.writeFileSync(filePath, '[]', 'utf-8');
+  // }
+  // console.log("文件记忆::",longMemory)
+  // try{
+    
+    // let type =  await classfication(query);
+    // type = type.trim()
+    // console.log(type)
+    // switch(type){
      
-      case "数字货币":
-        { let basicCryptoMarketInfo = await getBinanceRanker();
-          console.log("。当前币安涨幅榜："+basicCryptoMarketInfo)
-          query = query +"。当前币安涨幅榜："+basicCryptoMarketInfo+"。判断标准：数字货币交易额超过10亿或者涨幅超过40%表示当前数字货币处于狂热状态，否则为正常状态，如果所有的交易对的涨幅都为负数则表示当前市场处于恐慌状态。"
-          break; 
-        }
-      case "股票":
-          { 
-            let stock = await stockCheck(query);
-            if(stock=="0"){
-              let news = await getNews(query);
-              query = `扮演一名与客户对话的金融专家，已经获取的知识储备如下:${news.data},你可以参考这些信息回答问题。问题：${query}`
-            }else{
-              let stockInfo = await fetchStockInfo(stock);
-              console.log(stockInfo)
-              if(stockInfo=='[]'){
-                let news = await getNews(query);
-                query = `扮演一名与客户对话的金融专家，已经获取的知识储备如下:${news.data},你可以参考这些信息回答问题。问题：${query}`
-              }else{
-                query = `扮演一名与客户对话的金融专家，已经获取的知识储备如下:${stockInfo},你可以参考这些信息回答问题。问题：${query}`
-              }
-            }
+    //   case "数字货币":
+    //     { let basicCryptoMarketInfo = await getBinanceRanker();
+    //       console.log("。当前币安涨幅榜："+basicCryptoMarketInfo)
+    //       query = query +"。当前币安涨幅榜："+basicCryptoMarketInfo+"。判断标准：数字货币交易额超过10亿或者涨幅超过40%表示当前数字货币处于狂热状态，否则为正常状态，如果所有的交易对的涨幅都为负数则表示当前市场处于恐慌状态。"
+    //       break; 
+    //     }
+    //   case "股票":
+    //       { 
+    //         let stock = await stockCheck(query);
+    //         if(stock=="0"){
+    //           let news = await getNews(query);
+    //           query = `扮演一名与客户对话的金融专家，已经获取的知识储备如下:${news.data},你可以参考这些信息回答问题。问题：${query}`
+    //         }else{
+    //           let stockInfo = await fetchStockInfo(stock);
+    //           console.log(stockInfo)
+    //           if(stockInfo=='[]'){
+    //             let news = await getNews(query);
+    //             query = `扮演一名与客户对话的金融专家，已经获取的知识储备如下:${news.data},你可以参考这些信息回答问题。问题：${query}`
+    //           }else{
+    //             query = `扮演一名与客户对话的金融专家，已经获取的知识储备如下:${stockInfo},你可以参考这些信息回答问题。问题：${query}`
+    //           }
+    //         }
            
-            break; 
-          }
-      case "原油":
-        query = query +"。已知信息：原油信息"
-        break;
-      case "外汇":
-        query = query +"。已知信息：外汇信息"
-        break;
-      case "其他":
-        { 
-          let stock = await stockCheck(query);
-          if(stock=="0"){
-            let news = await getNews(query);
-            query = query +"before you'r:"+news.data
-          }else{
-            let stockInfo = await fetchStockInfo(stock);
-            console.log(stockInfo)
-            if(stockInfo=='[]'){
-              let news = await getNews(query);
-              query = `扮演一名与客户对话的金融专家，已经获取的知识储备如下:${news.data},你可以参考这些信息回答问题。问题：${query}`
-            }else{
-              query = `扮演一名与客户对话的金融专家，已经获取的知识储备如下:${news.data},你可以参考这些信息回答问题。问题：${stockInfo}`
-            }
-          }
+    //         break; 
+    //       }
+    //   case "原油":
+    //     query = query +"。已知信息：原油信息"
+    //     break;
+    //   case "外汇":
+    //     query = query +"。已知信息：外汇信息"
+    //     break;
+    //   case "其他":
+    //     { 
+    //       let stock = await stockCheck(query);
+    //       if(stock=="0"){
+    //         let news = await getNews(query);
+    //         query = query +"before you'r:"+news.data
+    //       }else{
+    //         let stockInfo = await fetchStockInfo(stock);
+    //         console.log(stockInfo)
+    //         if(stockInfo=='[]'){
+    //           let news = await getNews(query);
+    //           query = `扮演一名与客户对话的金融专家，已经获取的知识储备如下:${news.data},你可以参考这些信息回答问题。问题：${query}`
+    //         }else{
+    //           query = `扮演一名与客户对话的金融专家，已经获取的知识储备如下:${news.data},你可以参考这些信息回答问题。问题：${stockInfo}`
+    //         }
+    //       }
          
-          break; 
-        }
-      default:
-        break;
-    }
-  }catch(e){
-    query = query +"。已知信息：其他信息"+e
-  }
+    //       break; 
+    //     }
+    //   default:
+    //     break;
+    // }
+  // }catch(e){
+  //   query = query +"。已知信息：其他信息"+e
+  // }
   return await chat(query)
 }
 

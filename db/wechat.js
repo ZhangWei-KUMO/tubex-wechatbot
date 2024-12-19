@@ -17,6 +17,7 @@ const db = new sqlite3.Database(dbFile, (err) => {
                 wechatid TEXT,
                 avatar TEXT,
                 friends TEXT,
+                rooms TEXT,
                 loginurl TEXT
             )
         `, (err) => {
@@ -39,10 +40,10 @@ const db = new sqlite3.Database(dbFile, (err) => {
     });
 
     function insertWechat(config) {
-        const { username, wechatid,avatar, friends, loginurl } = config;
+        const { username, wechatid,avatar, friends,  rooms,loginurl } = config;
         return new Promise((resolve, reject) => {
-            db.run(`INSERT INTO wechats (username, wechatid,avatar, friends, loginurl) VALUES (?, ?, ?, ?, ?)`,
-                [username, wechatid,avatar, friends, loginurl],
+            db.run(`INSERT INTO wechats (username, wechatid,avatar, friends, rooms,loginurl) VALUES (?, ?, ?, ?, ?, ?)`,
+                [username, wechatid,avatar, friends,  rooms,loginurl],
                 function (err) {
                     if (err) {
                         reject(err);
@@ -68,10 +69,40 @@ const db = new sqlite3.Database(dbFile, (err) => {
     }
 
 export function saveWechatConfig(config) {
-    const { username, wechatid,avatar, friends, loginurl } = config;
+    const { username, wechatid,avatar, friends,rooms, loginurl } = config;
     return new Promise((resolve, reject) => {
-        db.run(`UPDATE wechats SET username = ?,wechatid= ?, avatar = ?, friends = ?, loginurl = ? WHERE id = 1`, 
-            [username, wechatid,avatar, friends, loginurl],
+        db.run(`UPDATE wechats SET username = ?,wechatid= ?, avatar = ?, friends = ?,rooms = ?, loginurl = ? WHERE id = 1`, 
+            [username, wechatid,avatar, friends, rooms,loginurl],
+            function (err) {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(this.changes);
+                }
+            });
+    });
+}
+
+// 更新好友列表
+export function updateWechatFriends(friends) {
+    return new Promise((resolve, reject) => {
+        db.run(`UPDATE wechats SET friends = ? WHERE id = 1`, 
+            [friends],
+            function (err) {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(this.changes);
+                }
+            });
+    });
+}
+
+// 更新房间列表
+export function updateWechatRooms(rooms) {
+    return new Promise((resolve, reject) => {
+        db.run(`UPDATE wechats SET rooms = ? WHERE id = 1`, 
+            [rooms],
             function (err) {
                 if (err) {
                     reject(err);
