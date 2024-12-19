@@ -5,8 +5,10 @@ config();
 import { PuppetWechat4u } from 'wechaty-puppet-wechat4u';
 import fs from 'fs';
 import {getNews} from './group.js'
-import {classfication, stockCheck,chat} from './gemini.js'
+import {classfication, stockCheck,chat,recgonizeImage} from './gemini.js'
 import moment from 'moment';
+import {deleteFlashMemory, getFlashMemory} from '../db/flashmemories.js'
+
 import 'dotenv/config'
 // import Redis from 'ioredis';
 // const redis = new Redis();
@@ -151,6 +153,14 @@ const getBinanceRanker = async () => {
 };
 
 export const think = async (talkid,query) => {
+  /**
+   * 首先，检查当前是否存在短期记忆，如图片、小程序、地址等
+   */
+  const flashMemory = await getFlashMemory(talkid);
+  if(flashMemory && flashMemory.type=='image'){
+    deleteFlashMemory(talkid)
+    return await recgonizeImage(flashMemory.content,query)
+  }
   // const filePath = `./logger/${talkid}.json`;
   // let longMemory = "";
   // if (fs.existsSync(filePath)) {

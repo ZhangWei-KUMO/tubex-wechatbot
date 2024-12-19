@@ -8,7 +8,6 @@ const db = new sqlite3.Database(dbFile, (err) => {
     if (err) {
         console.error(err.message);
     } else {
-        console.log('Agent配置数据库连接成功');
         db.run(`
             CREATE TABLE IF NOT EXISTS agentConfig (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -35,8 +34,7 @@ const db = new sqlite3.Database(dbFile, (err) => {
                             cryptoCurrency: 0,
                         };
                         insertConfig(defaultEmailConfig)
-                            .then(() => console.log("Agent写入默认配置"))
-                            .catch(err => console.error("Agent写入数据错误:", err));
+                           
                     }
                 });
             }

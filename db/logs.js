@@ -9,8 +9,6 @@ const db = new sqlite3.Database(dbFile, sqlite3.OPEN_READWRITE | sqlite3.OPEN_CR
     if (err) {
         console.error('Error opening database:', err.message); 
     } else {
-        console.log('连接日志数据库成功');
-        // Create the logs table
         db.run(`
             CREATE TABLE IF NOT EXISTS logs (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,

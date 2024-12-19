@@ -55,9 +55,9 @@ router.post('/api/login', async (req, res) => {
   });
 
   router.get('/api/logs', (req, res) => {
-    // getLogs().then((data) => {
-    //   res.json(data);
-    // });
+    getLogs().then((data) => {
+      res.json(data);
+    });
   });
   
   router.delete('/api/logs', (req, res) => {
@@ -181,14 +181,14 @@ router.post('/api/login', async (req, res) => {
       res.json(data);
     });
   });
-  // 获取flashmemory
-  router.get('/api/flashmemory', (req, res) => {
+  // 获取全部flashmemory
+  router.get('/api/flashmemories', (req, res) => {
     getFlashMemories().then((data) => {
       res.json(data);
   });
   });
-  // 删除flashmemory
-  router.delete('/api/flashmemory', (req, res) => {
+  // 删除全部flashmemory
+  router.delete('/api/flashmemories', (req, res) => {
     deleteFlashMemories().then((data) => {
       res.json(data);
     });

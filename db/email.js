@@ -8,8 +8,7 @@ const db = new sqlite3.Database(dbFile, (err) => {
     if (err) {
         console.error(err.message);
     } else {
-        console.log('邮箱配置数据库连接成功');
-        // Create the email config table if it doesn't exist
+     
         db.run(`
             CREATE TABLE IF NOT EXISTS emailConfig (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -40,8 +39,7 @@ const db = new sqlite3.Database(dbFile, (err) => {
                             content: '请及时检查您的机器人掉线状况'
                         };
                         insertEmailConfig(defaultEmailConfig)
-                            .then(() => console.log("邮箱写入默认配置"))
-                            .catch(err => console.error("邮箱写入数据错误:", err));
+                       
                     }
                 });
             }

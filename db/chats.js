@@ -10,7 +10,6 @@ let db = new sqlite3.Database(dbFile, (err) => {
     if (err) {
         // console.error(err.message);
     } else {
-        console.log('连接聊天记录数据库');
         db.run(`
           CREATE TABLE IF NOT EXISTS chats (
             id INTEGER PRIMARY KEY AUTOINCREMENT,

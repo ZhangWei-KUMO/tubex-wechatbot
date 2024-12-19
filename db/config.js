@@ -8,8 +8,7 @@ const db = new sqlite3.Database(dbFile, (err) => {
     if (err) {
         console.error(err.message);
     } else {
-        console.log('配置文件数据库连接成功');
-        // Create the config table if it doesn't exist
+  
         db.run(`
             CREATE TABLE IF NOT EXISTS config (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -40,9 +39,7 @@ const db = new sqlite3.Database(dbFile, (err) => {
                             isPushEnable: 0,
 
                         };
-                        insertConfig(defaultConfig) // Use the insertConfig function
-                            .then(() => console.log("写入默认配置"))
-                            .catch(err => console.error("写入数据错误:", err));
+                        insertConfig(defaultConfig) 
                     }
                 });
             }

@@ -205,13 +205,9 @@
                     dataIndex: 'id',
                 },
                 {
-                    title: 'talkid',
-                    dataIndex: 'talkid',
-                },
-                {
                     title: '时间',
                     dataIndex: 'timestamp',
-                     render: (timestamp) => moment(timestamp).format('YYYY-MM-DD HH:mm:ss'),
+                    render: (timestamp) => moment(timestamp).format('YYYY-MM-DD HH:mm:ss'),
                 },
                 {
                     title: '类型',
@@ -220,7 +216,13 @@
                 {
                     title: '消息内容',
                     dataIndex: 'content',
-                     width: '40%',
+                    width: '40%',
+                    render:(content)=>(
+                        <div style={{wordWrap:'break-word',wordBreak:'break-all'}}>
+                            <img src={`data:image/jpeg;base64,${content}`} width={100}/>
+                        </div>
+                    )
+
                 },
             ];
 

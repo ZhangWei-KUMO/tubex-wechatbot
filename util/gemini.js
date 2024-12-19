@@ -16,7 +16,7 @@ export const recgonizeImage = async (buffer,question) => {
             mimeType: "image/png",
         }};
 
-    const result = await model.generateContent([question, image]);
+    const result = await model.generateContent([question+"。请用中文回答", image]);
     return result.response.text()
 }
 

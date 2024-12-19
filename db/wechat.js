@@ -8,7 +8,6 @@ const db = new sqlite3.Database(dbFile, (err) => {
     if (err) {
         console.error(err.message);
     } else {
-        console.log('连接微信数据库');
         // 创建用户表（如果不存在）
         db.run(`
             CREATE TABLE IF NOT EXISTS wechats (
@@ -31,9 +30,7 @@ const db = new sqlite3.Database(dbFile, (err) => {
                         friends: '', 
                         loginurl: '', 
                     };
-                    insertWechat(defaultConfig) // Use the insertConfig function
-                        .then(() => console.log("写入默认配置"))
-                        .catch(err => console.error("写入数据错误:", err));
+                    insertWechat(defaultConfig) 
                 }
             });
         }

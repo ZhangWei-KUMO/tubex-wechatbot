@@ -9,7 +9,6 @@ const db = new sqlite3.Database(dbFile, sqlite3.OPEN_READWRITE | sqlite3.OPEN_CR
     if (err) {
         console.error('Error opening database:', err.message); 
     } else {
-        console.log('连接图片数据库成功');
         db.run(`
             CREATE TABLE IF NOT EXISTS images (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,

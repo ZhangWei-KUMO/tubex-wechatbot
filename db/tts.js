@@ -8,8 +8,7 @@ const db = new sqlite3.Database(dbFile, (err) => {
     if (err) {
         console.error(err.message);
     } else {
-        console.log('TTS配置数据库连接成功');
-        // Create the email config table if it doesn't exist
+ 
         db.run(`
             CREATE TABLE IF NOT EXISTS ttsConfig (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -30,8 +29,7 @@ const db = new sqlite3.Database(dbFile, (err) => {
                             azureregion: '',
                         };
                         insertTtsConfig(defaultEmailConfig)
-                            .then(() => console.log("TTS写入默认配置"))
-                            .catch(err => console.error("TTS写入数据错误:", err));
+                        
                     }
                 });
             }

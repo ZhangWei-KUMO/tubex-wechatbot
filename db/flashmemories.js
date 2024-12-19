@@ -9,7 +9,6 @@ const db = new sqlite3.Database(dbFile, sqlite3.OPEN_READWRITE | sqlite3.OPEN_CR
     if (err) {
         console.error('Error opening database:', err.message); 
     } else {
-        console.log('连接记忆数据库成功');
         db.run(`
             CREATE TABLE IF NOT EXISTS flashmemories (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,

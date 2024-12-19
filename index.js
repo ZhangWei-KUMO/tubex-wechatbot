@@ -24,13 +24,16 @@ app.use(staticRouter);
 
 export async function prepareBot() {
   bot.on("message", async (message) => {  
+
     const contact = message.talker();
+
     if (contact.self()) {
       return;
     } 
     if (message.room()) {
       groupChat(message,talkerId)
     }
+
     let {payload} = message;
     let {talkerId,listenerId,text} = payload;
     switch (message.type()) {

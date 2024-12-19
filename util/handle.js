@@ -8,7 +8,7 @@ import fs from 'fs';
 import process from 'process';
 import schedule from 'node-schedule';
 import {getNews} from './group.js'
-// import {recgonizeImage} from './gemini.js'
+import {recgonizeImage} from './gemini.js'
 import {saveFlashMemory} from '../db/flashmemories.js'
 
 export const singleChat = async (talkerId,listenerId,text) => {
@@ -276,8 +276,8 @@ export const handleImage = async (message, talkerId) => {
     let base64String = buffer.toString("base64")
     // 存入记忆中
     saveFlashMemory(talkerId, base64String, 'image')
-    // 识别图片
-    // let res = await recgonizeImage(image, question)
+    // // 识别图片
+    // let res = await recgonizeImage(base64String, "请告诉我这是什么")
     // await sendMessage(talkerId, res);
 }catch(e){
     // 修改这里，提取错误信息

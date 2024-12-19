@@ -10,7 +10,6 @@ const db = new sqlite3.Database(dbFile, (err) => {
     if (err) {
         console.error(err.message);
     } else {
-        console.log('连接用户数据库');
         // 创建用户表（如果不存在）
         db.run(`
             CREATE TABLE IF NOT EXISTS users (
