@@ -12,6 +12,8 @@
     <img src="public/bot.jpg" alt="logo" width="300"/>
 </div>
 
+这是一个基于Gemini大语言模型开源的微信机器人AI智能体，可以识别微信小程序、转账、文本聊天、语音聊天、图片，并做出及时反应。同时，它集成了中国实时经济新闻、数字货币信息。用户只需配置自己的api key即可使用。
+
 This is an open-source WeChat robot project based on WechatY, Gemini, and Microsoft Azure ASR voice services. After users fill in the Dify API information and Microsoft ASR KEY in the configuration file, they can quickly deploy their own AI robot.
 
 |function|功能|progress|
