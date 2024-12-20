@@ -5,8 +5,8 @@ import {
 import fs from 'fs';
 import {getTTSConfig} from '../db/tts.js';
 const config = await getTTSConfig();
-const AZURE_SUBSCRIPTION_KEY = config.azurekey;
-const AZURE_SERVICE_REGION = config.azureregion;
+const AZURE_SUBSCRIPTION_KEY = config.azurekey || "yourkey";
+const AZURE_SERVICE_REGION = config.azureregion || "japanwest";
 const speechConfig = SpeechConfig.fromSubscription(AZURE_SUBSCRIPTION_KEY, AZURE_SERVICE_REGION);
   
 export function synthesizeSpeech(text,voiceName) {
