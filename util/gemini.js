@@ -1,11 +1,11 @@
-/* eslint-disable no-undef */
+ 
 import {GoogleGenerativeAI} from '@google/generative-ai';
 import 'dotenv/config'
 import {getAgentConfig} from '../db/agent.js'
 import { getConfig } from '../db/config.js';
 let agent = await getAgentConfig();
 let config = await getConfig();
-const genAI = new GoogleGenerativeAI(config.geminiApiKey || configprocess.env.GEMINI_API_KEY);
+const genAI = new GoogleGenerativeAI(config.geminiApiKey);
 const model = genAI.getGenerativeModel({ model:agent.model || "gemini-1.5-flash" });
 let global_prompt = agent.prompt;
 export const recgonizeImage = async (buffer,question) => {
