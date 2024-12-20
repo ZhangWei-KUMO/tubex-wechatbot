@@ -1,4 +1,4 @@
-# WechatBot (TubeX)
+# WechatBot (TubeX+Gemini Version)
 
 ![Static Badge](https://img.shields.io/badge/21.0%2B-x?style=flat&logo=Node.js&logoColor=green&label=Node.js&color=green)
 ![Static Badge](https://img.shields.io/badge/1.20.0%2B-x?style=flat&logo=Wechat&logoColor=green&label=WechatY&color=green)
@@ -12,7 +12,7 @@
     <img src="public/bot.jpg" alt="logo" width="300"/>
 </div>
 
-This is an open-source WeChat robot project based on WechatY, Dify API services, and Microsoft Azure ASR voice services. After users fill in the Dify API information and Microsoft ASR KEY in the configuration file, they can quickly deploy their own AI robot.
+This is an open-source WeChat robot project based on WechatY, Gemini, and Microsoft Azure ASR voice services. After users fill in the Dify API information and Microsoft ASR KEY in the configuration file, they can quickly deploy their own AI robot.
 
 |function|功能|progress|
 |--|--|--|
@@ -58,8 +58,8 @@ npm install -g pm2
 
 ## 部署前环境变量配置
 
-用户需要在微软Azure上申请 [Azure Speech Services](https://azure.microsoft.com/zh-cn/free/ai-services/) API KEY.
-在 [Dify](https://dify.ai) 上申请一个AI API KEY。并填写在`.env`文件中。
+初始账号：admin
+初始密码：123456
 
 
 ## Quick Started
@@ -106,11 +106,5 @@ lewis.q.zhang@gmail.com
 
 https://tubex.chat
 
-### 记忆分类
 
-1. ShortMemory （文本文件）
-2. VisionMemory（图片）
-3. LongMemory （Dify机制）
-4. Prompt
-5. SpecificMemory （专业知识）
 
