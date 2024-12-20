@@ -8,7 +8,6 @@ const db = new sqlite3.Database(dbFile, (err) => {
     if (err) {
         console.error(err.message);
     } else {
- 
         db.run(`
             CREATE TABLE IF NOT EXISTS ttsConfig (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,

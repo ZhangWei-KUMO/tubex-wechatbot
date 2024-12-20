@@ -8,7 +8,6 @@ import fs from 'fs';
 import process from 'process';
 import schedule from 'node-schedule';
 import {getNews} from './group.js'
-import {recgonizeImage} from './gemini.js'
 import {saveFlashMemory} from '../db/flashmemories.js'
 
 export const singleChat = async (talkerId,listenerId,text) => {
@@ -136,16 +135,16 @@ export const handleFile = async (message,talkerId) => {
         const attachData = await attachFileBox.toBuffer();
         if(mediaType.includes('pdf')){
           let text = await readPDF(filename,attachData);
-          saveInLongMemory(`对方发来一份PDF文件，内容如下：${text}`,talkerId)
+          saveFlashMemory(talkerId, "文件内容如下："+text, 'file')
         }else if(mediaType.includes('sheet')){
           let text = await readSheet(filename,attachData)
-          saveInLongMemory(`对方发来一份EXCEL文件，内容如下：${text}`,talkerId)
+          saveFlashMemory(talkerId, "文件内容如下："+text, 'file')
         }else if(mediaType.includes('document')){
           let text = await readWord(filename,attachData)
-          saveInLongMemory(`对方发来一份WORD文件，内容如下：${text}`,talkerId)
+          saveFlashMemory(talkerId, "文件内容如下："+text, 'file')
         }else if(mediaType.includes('txt')){
           let text = await readTxt(filename,attachData)
-          saveInLongMemory(`对方发来一份TXT文件，内容如下：${text}`,talkerId)
+          saveFlashMemory(talkerId, "文件内容如下："+text, 'file')
         }else{
           await sendMessage(talkerId, "好的，我先看下");
         }
@@ -182,10 +181,9 @@ export const handleAudio = async (message,talkerId) => {
 export const handleMiniProgram = async (message,talkerId) => {
     try{
         const miniProgram = await message.toMiniProgram();
-        console.log("小程序：",miniProgram)
         let {payload} = miniProgram;
         let{description,title} = payload;
-        saveInLongMemory(`对方发来${description}小程序，内容如下：${title}`,talkerId)
+        saveFlashMemory(talkerId, description+title, 'miniProgram')
     }catch(e){
         await sendMessage(talkerId, e)
         return
@@ -221,8 +219,7 @@ export const handleTransfer = async (xmlstr,talkerId) => {
           const title = result.msg.appmsg[0].des[0];
           const regex = /\d+(\.\d+)?/;
           const num = title.match(regex);
-          await sendMessage(talkerId, '收到');
-          saveInLongMemory(`好友转账给你${num[0]}元`,talkerId)
+          await sendMessage(talkerId, `收到${num[0]}元`);
         }
     });
 }
@@ -276,9 +273,6 @@ export const handleImage = async (message, talkerId) => {
     let base64String = buffer.toString("base64")
     // 存入记忆中
     saveFlashMemory(talkerId, base64String, 'image')
-    // // 识别图片
-    // let res = await recgonizeImage(base64String, "请告诉我这是什么")
-    // await sendMessage(talkerId, res);
 }catch(e){
     // 修改这里，提取错误信息
     let errorMessage = `图片处理出错: ${e.message || String(e)}`;

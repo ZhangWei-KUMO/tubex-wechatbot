@@ -5,7 +5,9 @@ import {sendMessage} from './util/util.js'
 import { config } from 'dotenv';
 import express from 'express';
 import {log} from './db/logs.js'
-import { singleChat,groupChat,handleFile, handleImage,handleAudio,handleVideo,handleGIF,handleTransfer,handlePush } from './util/handle.js';
+import { singleChat,groupChat,handleFile, handleImage,handleAudio,handleVideo,
+  handleMiniProgram,
+  handleGIF,handleTransfer,handlePush } from './util/handle.js';
 import router from './router/router.js';
 import staticRouter from './router/static.js';
 import {saveWechatConfig} from './db/wechat.js';

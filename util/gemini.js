@@ -7,7 +7,7 @@ let agent = await getAgentConfig();
 let config = await getConfig();
 const genAI = new GoogleGenerativeAI(config.geminiApiKey || configprocess.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model:agent.model || "gemini-1.5-flash" });
-
+let global_prompt = agent.prompt;
 export const recgonizeImage = async (buffer,question) => {
     const image = {
         inlineData: {
@@ -39,8 +39,12 @@ export const stockCheck = async (query) => {
 }
 
 export const chat = async (query) => {
-    console.log("提示词",config)
-    console.log("文本",query)
-    const result = await model.generateContent(query);
+    console.log(global_prompt)
+    const result = await model.generateContent(global_prompt+"。"+query);
+    return result.response.text()
+}
+
+export const chatWithFile = async (query,text) => {
+    const result = await model.generateContent([query,text]);
     return result.response.text()
 }
