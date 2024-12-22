@@ -39,7 +39,7 @@ export const singleChat = async (talkerId,listenerId,text) => {
       }
 }
 // 处理群聊信息
-export const groupChat = async (message,talkerId) => {
+export const groupChat = async (message) => {
     let roomMsg = message.room()
     let {payload} = roomMsg;
     // 群名称
@@ -48,7 +48,6 @@ export const groupChat = async (message,talkerId) => {
     let mentionText = await message.mentionText();
     if (await message.mentionSelf()) {
       if (roomMsg) {
-        console.log('mentionText',mentionText)
         let answer = await think(roomMsg.id,mentionText)
         answer = answer.replace(/\*/g, '');         
         if(answer.includes("\n")){
@@ -87,7 +86,7 @@ export const groupChat = async (message,talkerId) => {
             let wav = await convertSilkToWav(silkBuffer)
             fs.access(wav, fs.constants.F_OK, async (err) => {
               if(err){
-                await sendMessage(talkerId, '👌🏻')
+                await sendMessage(roomMsg.id, '👌🏻')
                 return
               }
               try{

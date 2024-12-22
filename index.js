@@ -35,7 +35,8 @@ export async function prepareBot() {
     let {payload} = message;
     let {talkerId,listenerId,text} = payload;
     if (message.room()) {
-      groupChat(message,talkerId)
+      groupChat(message)
+      return;
     }
     switch (message.type()) {
       case 0:
