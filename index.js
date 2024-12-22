@@ -15,7 +15,7 @@ import {saveWechatFriends,saveWechatRooms} from './util/wechat.js';
 // import {Jimp} from 'jimp';
 import bodyParser from 'body-parser';
 
-const port = 3000;
+const port = 4000;
 config();
 const app = express();
 app.use(bodyParser.json({'limit':'800kb'}));
