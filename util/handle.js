@@ -38,7 +38,7 @@ export const singleChat = async (talkerId,listenerId,text) => {
         return
       }
 }
-
+// 处理群聊信息
 export const groupChat = async (message,talkerId) => {
     let roomMsg = message.room()
     let {payload} = roomMsg;
@@ -48,6 +48,7 @@ export const groupChat = async (message,talkerId) => {
     let mentionText = await message.mentionText();
     if (await message.mentionSelf()) {
       if (roomMsg) {
+        console.log('mentionText',mentionText)
         let answer = await think(roomMsg.id,mentionText)
         answer = answer.replace(/\*/g, '');         
         if(answer.includes("\n")){

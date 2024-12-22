@@ -32,12 +32,11 @@ export async function prepareBot() {
     if (contact.self()) {
       return;
     } 
+    let {payload} = message;
+    let {talkerId,listenerId,text} = payload;
     if (message.room()) {
       groupChat(message,talkerId)
     }
-
-    let {payload} = message;
-    let {talkerId,listenerId,text} = payload;
     switch (message.type()) {
       case 0:
         await sendMessage(talkerId, "感谢老板抬爱，祝老板在缅A发财")
