@@ -14,7 +14,7 @@ import {saveWechatConfig} from './db/wechat.js';
 import {saveWechatFriends,saveWechatRooms} from './util/wechat.js';
 // import {Jimp} from 'jimp';
 import bodyParser from 'body-parser';
-
+import {transporter,mailOptions} from './util/mail.js';
 const port = 4000;
 config();
 const app = express();
@@ -26,9 +26,7 @@ app.use(staticRouter);
 
 export async function prepareBot() {
   bot.on("message", async (message) => {  
-
     const contact = message.talker();
-
     if (contact.self()) {
       return;
     } 
@@ -115,8 +113,15 @@ export async function prepareBot() {
     log('info', "机器人登录成功，账号名："+user.payload.name);
   })
 
-  bot.on("logout", async (user) => {
+  bot.on('logout', async ()=>{
     log('info', user.payload.name+"退出登录");
+    await logout()
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        return console.log(error);
+      }
+      console.log('Message sent: %s', info.messageId);
+    });
   })
 
   bot.on("error", () => {

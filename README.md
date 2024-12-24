@@ -72,6 +72,8 @@ npm install
 node index.js
 # Production
 pm2 start index.js -n tubex-wechatbot
+# Restart Process
+pm2 restart index.js -n tubex-wechatbot
 # open logs and scan login QRcode
 pm2 logs tubex-wechatbot
 ```
