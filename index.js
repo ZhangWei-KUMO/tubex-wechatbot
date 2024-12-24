@@ -14,7 +14,7 @@ import {saveWechatConfig} from './db/wechat.js';
 import {saveWechatFriends,saveWechatRooms} from './util/wechat.js';
 // import {Jimp} from 'jimp';
 import bodyParser from 'body-parser';
-import {transporter,mailOptions} from './util/mail.js';
+import {transporter,mailOptions} from './util/mailer.js';
 const port = 4000;
 config();
 const app = express();
