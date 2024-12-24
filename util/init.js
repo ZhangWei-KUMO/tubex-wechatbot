@@ -3,7 +3,7 @@ import { WechatyBuilder } from 'wechaty';
 import { config } from 'dotenv';
 config();
 import { PuppetWechat4u } from 'wechaty-puppet-wechat4u';
-import fs from 'fs';
+// import fs from 'fs';
 import {getNews} from './group.js'
 import {classfication, stockCheck,chat,recgonizeImage,chatWithFile} from './gemini.js'
 import moment from 'moment';
@@ -168,14 +168,27 @@ export const think = async (talkid,query) => {
     return await chatWithFile(query,flashMemory.content)
   }
 
-  // const filePath = `./logger/${talkid}.json`;
-  // let longMemory = "";
-  // if (fs.existsSync(filePath)) {
-  //     longMemory = fs.readFileSync(filePath, 'utf-8');
-  //     // 清空该文件
-  //     fs.writeFileSync(filePath, '[]', 'utf-8');
-  // }
-  // console.log("文件记忆::",longMemory)
+
+  let type =  await classfication(query);
+  if(type.includes("股票")){
+    let stock = await stockCheck(query);
+    if(stock=="0"){
+      let news = await getNews(query);
+      query = `扮演一名与客户对话的金融专家，已经获取的知识储备如下:${news.data},你可以参考这些信息回答问题。问题：${query}`
+    }else{
+      let stockInfo = await fetchStockInfo(stock);
+      console.log(stockInfo)
+      if(stockInfo=='[]'){
+        let news = await getNews(query);
+        query = `扮演一名与客户对话的金融专家，已经获取的知识储备如下:${news.data},你可以参考这些信息回答问题。问题：${query}`
+      }else{
+        query = `扮演一名与客户对话的金融专家，已经获取的知识储备如下:${stockInfo},你可以参考这些信息回答问题。问题：${query}`
+      }
+    }
+    return await chat(query)
+  }else{
+    return await chat(query)
+  }
   // try{
     
     // let type =  await classfication(query);
@@ -239,7 +252,7 @@ export const think = async (talkid,query) => {
   // }catch(e){
   //   query = query +"。已知信息：其他信息"+e
   // }
-  return await chat(query)
+  // return await chat(query)
 }
 
 const puppet = new PuppetWechat4u()
