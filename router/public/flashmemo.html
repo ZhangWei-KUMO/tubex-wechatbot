@@ -186,7 +186,8 @@
             }, []);
 
               const links = [
-                { path: "/", text: "首页" },{ path: "/list", text: "好友列表" },
+                { path: "/", text: "首页" },
+                { path: "/list", text: "好友列表" },
                 { path: "/flashmemo", text: "短期记忆" },
                 { path: "/chats", text: "聊天记录" },
                 { path: "/logs", text: "日志记录" },
@@ -217,11 +218,15 @@
                     title: '消息内容',
                     dataIndex: 'content',
                     width: '40%',
-                    render:(content)=>(
-                        <div style={{wordWrap:'break-word',wordBreak:'break-all'}}>
-                            <img src={`data:image/jpeg;base64,${content}`} width={100}/>
-                        </div>
-                    )
+                    render:(obj,content)=>{
+                       if(obj.type === 'image'){
+                            return  <div style={{wordWrap:'break-word',wordBreak:'break-all'}}>
+                                        <img src={`data:image/jpeg;base64,${content}`} width={100}/>
+                                    </div>
+                        }else{
+                            return <p>文本内容</p>
+                        }
+                    }
 
                 },
             ];

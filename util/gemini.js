@@ -39,7 +39,6 @@ export const stockCheck = async (query) => {
 }
 
 export const chat = async (query) => {
-    console.log(global_prompt)
     const result = await model.generateContent(global_prompt+"。"+query);
     return result.response.text()
 }

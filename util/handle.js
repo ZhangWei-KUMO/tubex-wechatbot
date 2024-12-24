@@ -9,6 +9,8 @@ import process from 'process';
 import schedule from 'node-schedule';
 import {getNews} from './group.js'
 import {saveFlashMemory} from '../db/flashmemories.js'
+import {getConfig} from '../db/config.js'
+let config = await getConfig();
 
 export const singleChat = async (talkerId,listenerId,text) => {
     if(talkerId!==listenerId && talkerId!=='weixin' && text!==''){
@@ -236,30 +238,84 @@ export const handleArticle = async (xmlstr,talkerId) => {
     });
 }
 
+function stringToArray(str) {
+  if (!str) {
+    return []; // 处理空字符串或 undefined 的情况
+  }
+
+  return str.split(',').map(item => item.trim()).filter(item => item !== "");
+}
+
+export const getBinanceRanker = async () => {
+  try {
+    const res = await fetch("https://www.binance.com/fapi/v1/ticker/24hr", {
+      method: 'GET',
+    });
+      const items = await res.json();
+      items.sort((a, b) => {
+          return b.priceChangePercent - a.priceChangePercent
+      })
+    // 遍历所有的交易对
+    const newItems = [];
+      items.forEach(item => {
+        // 删除symbol中的USDT,其余字段将字符串转换成数字
+         
+          // 过滤涨幅小于10%和交易量小于5000万的交易对
+          if(parseFloat(item.priceChangePercent) < 10 || parseFloat(item.quoteVolume) < 50000000) return
+          // 如果交易对位AGIXUSDT、OCEANUSDT则过滤，如果包含USDC则过滤
+          if(item.symbol === "AGIXUSDT" || item.symbol === "OCEANUSDT" || item.symbol.includes("USDC")) return
+          
+          // 如果交易量大于10亿则为市场热点
+          if(parseFloat(item.quoteVolume) > 1000000000) item.市场热点 = true
+          const obj = {
+              "数字货币":item.symbol.replace("USDT",""),
+              "交易额": (parseFloat(item.quoteVolume)/100000000).toFixed(2)+"亿",
+              "涨幅":(parseFloat(item.priceChangePercent).toFixed(1))+"%",
+              "当前价格":parseFloat(item.lastPrice).toFixed(3)+"$",
+          }
+          newItems.push(obj)
+      });
+      // 转换成字符串输出
+      let str = newItems.map((item) => {
+        return `数字货币：${item.数字货币} | 交易额：${item.交易额} | 涨幅：${item.涨幅} | 当前价格：${item.当前价格}`;
+      }).join("\n");
+   
+     return str
+  } catch (err) {
+    console.error(err);
+   
+  }
+};
+
 // 处理主动推送信息
 export const handlePush = async (rooms) => {
-    let id = ""
-    rooms.filter(room=>{
-      if(process.env.MANAGE_ROOMS.includes(room.payload.topic)){
-        id = room.id
-      }
-    });
-
-    if(process.env.IS_PUSH_MESSAGE){
+   let {groups,isPushEnable,isEnable,pushTime} = config;
+   // 当AI开启情况下，推送启动及各项配置均已满足则进入推送机制；
+   if(groups && isPushEnable && isEnable && pushTime){
+      let groupArray = stringToArray(groups);
       const rule = new schedule.RecurrenceRule();
-      rule.hour = process.env.SCHEDULE_HOUR
-      rule.minute =  process.env.SCHEDULE_MINUES
+      const times = pushTime.split(":")
+      rule.hour = times[0]
+      rule.minute =  times[1]
       rule.tz = 'Asia/Shanghai';
+      const filteredRooms = rooms.filter(room => {
+        if (!room || !room.payload || !room.payload.topic) {
+          return false;  // 如果 room, room.payload 或者 room.payload.topic 不存在则跳过
+        }
+        const topic = room.payload.topic;
+        return groupArray.some(group => topic.trim() === group.trim());
+      });
       schedule.scheduleJob(rule, async()=>{
         let {data} = await getNews();
-        if(data){
-          let answer = await think(id,`请根据当前的经济数据，对当前市场进行分析`)
-          answer = answer.replace(/\*/g, '');                
-          await sendMessage(id, answer);
-        }
-      });
-    }
-}
+        let cryptoInfo = await getBinanceRanker()
+        filteredRooms.forEach(async room => {
+          let answer = chat("请将下列文字转换成一个严肃专业的报告："+data+cryptoInfo);
+          await sendMessage(room.id, answer);
+        });
+      })
+    };
+   }
+  
 // 处理图片，该函数的触发条件是指用户在当前文本信息之前发送了一张图片
 export const handleImage = async (message, talkerId) => {
   try{

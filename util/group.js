@@ -1,13 +1,14 @@
 /* eslint-disable no-undef */
 
 // import {transporter,mailOptionsBigquant} from './mailer.js';
-
+const NEWS_ENDPOINT="https://api-one-wscn.awtmt.com/apiv1/search/live?channel=global-channel&limit=40&score=2"
+const NEWS_ETAG="VKikV7rHg+OhU+DW+HiofA=="
 export const getNews = async () => {
   try {
-    const res = await fetch(process.env.NEWS_ENDPOINT, {
+    const res = await fetch(NEWS_ENDPOINT, {
       method: 'GET',
       headers: {
-        'If-None-Match': process.env.NEWS_ETAG
+        'If-None-Match': NEWS_ETAG
       },
     });
     const wallstreetNews = await res.json();

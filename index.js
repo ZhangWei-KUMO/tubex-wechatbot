@@ -101,8 +101,6 @@ export async function prepareBot() {
       const selfAvatarFileBox = await selfContact.avatar();
       if (selfAvatarFileBox.buffer) {
         const buffer = await selfAvatarFileBox.toBuffer();
-        // const image = await Jimp.read(buffer);
-        // const compressedBuffer = await image.getBufferAsync(Jimp.MIME_JPEG);
         const base64 = buffer.toString('base64');
         dataUrl = `data:image/jpeg;base64,${base64}`;
       }
@@ -113,9 +111,8 @@ export async function prepareBot() {
     log('info', "机器人登录成功，账号名："+user.payload.name);
   })
 
-  bot.on('logout', async ()=>{
+  bot.on('logout', async (user)=>{
     log('info', user.payload.name+"退出登录");
-    await logout()
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
         return console.log(error);

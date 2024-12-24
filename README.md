@@ -12,9 +12,7 @@
     <img src="public/bot.jpg" alt="logo" width="300"/>
 </div>
 
-这是一个基于Gemini大语言模型开源的微信机器人AI智能体，可以识别微信小程序、转账、文本聊天、语音聊天、图片，并做出及时反应。同时，它集成了中国实时经济新闻、数字货币信息。用户只需配置自己的api key即可使用。
-
-This is an open-source WeChat robot project based on WechatY, Gemini, and Microsoft Azure ASR voice services. After users fill in the Dify API information and Microsoft ASR KEY in the configuration file, they can quickly deploy their own AI robot.
+作为TubeX Chat商业智能产品中的重要一环，TubeX微信机器人依托于Google Gemini大模型、线上分析处理技术、数据挖掘，通过微信渠道实时分发数据分析结果实现商业价值。用户只需扫码即可实现自用微信向BI商业智能体的转变。
 
 |function|功能|progress|
 |--|--|--|
@@ -30,14 +28,8 @@ This is an open-source WeChat robot project based on WechatY, Gemini, and Micros
 | Self-running business | 自我运维 |✅|
 | Crypto Coin Market Analysis | 数字货币市场分析 |✅|
 | Chinese Financial Market Analysis | 中国金融市场数据获取及分析 |✅|
-| USNG | 天然气CFD |✅|
-| UKOIL | 布伦特原油 |✅|
-| USGC | 纽约黄金价格 |✅|
 | Inpainting | 机器人集群启动 |✅|
-| Websocket监听通信 | Websocket监听通信 |✅|
 | SQLite | 支持SQLite数据库 |✅|
-| Group Chat Export | 群聊天记录的导出 |✅|
-
 
 
 ## Workflow
@@ -92,17 +84,6 @@ pm2 logs tubex-wechatbot
 由于市场分析的难度较大，建议开发者使用GPT-4o、Gemini 1.5、Gemini flash等海外大模型。
 本机器人未来会接入StochRSI技术数据，以1小时线为基础向用户推送。对于普通用户来说，我们不建议您参与数字货币的投机。
 
-### 数字货币数据标注
-
-当符合如下条件之一，该数字货币将会被标注为空
-
-1. MACD快慢线数值均低于正数数据1/2之下且MACD值为负数
-2. 涨幅超过30%且当日交易额低于1亿；
-
-当符合如下条件之一，该数字货币将会被标注为多：
-
-1. MACD快慢线数值均低于正数数据1/2之上；
-2. 当日交易额高于10亿；
 
 ### Cooperation
 
