@@ -12,6 +12,8 @@
     <img src="public/bot.jpg" alt="logo" width="300"/>
 </div>
 
+> 注意：因微信官方对于外挂产品的清理，本项目中所依赖的wechat4U包已被列入外挂风控监管状态，此repo代码已不能用于生产环境，仅供大家参考学习。
+
 作为TubeX Chat商业智能产品中的重要一环，TubeX微信机器人依托于Google Gemini大模型、线上分析处理技术、数据挖掘，通过微信渠道实时分发数据分析结果实现商业价值。用户只需扫码即可实现自用微信向BI商业智能体的转变。
 
 |function|功能|progress|
